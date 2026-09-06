@@ -176,17 +176,62 @@
       font-size: 15px;
     }
     .compare td:first-child { font-weight: 600; width: 28%; }
+    .role-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    @media (max-width: 800px) { .role-grid { grid-template-columns: 1fr; } }
+    .quiz-toolbar {
+      display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
+      justify-content: space-between; margin: 18px 0 8px;
+    }
+    .quiz-meta { color: var(--muted); font-size: 15px; }
+    .progress {
+      height: 8px; background: var(--line); width: 100%; margin: 8px 0 22px;
+    }
+    .progress > span { display: block; height: 8px; background: var(--accent); width: 0; }
+    .qcard {
+      background: var(--paper); border: 1px solid var(--line);
+      padding: 18px 20px; margin: 0 0 16px;
+    }
+    .qnum { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+    .qcard h3 { font-size: 1.12rem; margin: 6px 0 12px; }
+    .opts label {
+      display: block; border: 1px solid var(--line); padding: 10px 12px;
+      margin: 8px 0; cursor: pointer; background: #fff;
+    }
+    .opts label:hover { border-color: var(--accent); }
+    .opts input { margin-right: 8px; }
+    .opts label.picked { border-color: var(--accent); background: var(--accent-soft); }
+    .quiz-actions { display: flex; flex-wrap: wrap; gap: 10px; margin: 20px 0; }
+    button.btn, a.btn {
+      appearance: none; border: 0; background: var(--nav); color: #f3ece3;
+      padding: 12px 18px; font: inherit; font-weight: 600; cursor: pointer;
+      text-decoration: none; display: inline-block;
+    }
+    button.btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+    #quiz-result { display: none; margin: 28px 0; }
+    .bar-row { display: grid; grid-template-columns: 180px 1fr 64px; gap: 10px; align-items: center; margin: 8px 0; font-size: 15px; }
+    @media (max-width: 800px) { .bar-row { grid-template-columns: 1fr; } }
+    .bar { height: 12px; background: var(--line); }
+    .bar > i { display: block; height: 12px; background: var(--green); font-style: normal; }
+    .bar.gap > i { background: var(--accent); }
+    .gap-list { margin: 0; padding-left: 18px; }
+    .gap-list li { margin: 10px 0; }
+    .sessions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 16px 0 22px; }
+    @media (max-width: 800px) { .sessions { grid-template-columns: 1fr; } }
+    .sessions article { background: var(--paper); border: 1px solid var(--line); padding: 14px 16px; }
+    .sessions h4 { margin: 0 0 8px; font-size: 1rem; }
+    .step { font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; color: var(--accent); margin: 0 0 6px; }
   </style>
 </head>
 <body>
   <div class="wrap">
     <header class="hero">
-      <div class="eyebrow">Trilha 4 · 6 semanas · linguagem de leigo</div>
+      <div class="eyebrow">Trilha 4 · 6 semanas · rumo a Tech Lead backend</div>
       <h1>Apache Kafka, explicado como um caderno infinito</h1>
       <p class="lede">
-        Esta página destrincha o plano da trilha Kafka tema a tema.
-        A ideia não é decorar jargão: é entender o modelo. Se o modelo cola,
-        as perguntas de entrevista deixam de ser memorização.
+        Esta página é para quem quer deixar de “já usei um listener” e virar
+        a pessoa que o time consulta — e, no limite, um Tech Lead de backend
+        que decide <em>quando</em> Kafka entra, como o contrato vive e o que
+        acontece quando o cluster falha. Linguagem de leigo, modelo de verdade.
       </p>
     </header>
 
@@ -199,7 +244,9 @@
       <a href="#s3">Semana 3 · operação</a>
       <a href="#s4">Semana 4 · padrões</a>
       <a href="#s5">Semana 5 · laboratório</a>
-      <a href="#s6">Semana 6 · entrevista</a>
+      <a href="#s6">Semana 6 · síntese</a>
+      <a href="#techlead">Virar referência / Tech Lead</a>
+      <a href="#simulador">Simulador · 50 perguntas</a>
     </nav>
 
     <section id="ideia">
@@ -524,9 +571,33 @@ Grupo "analytics"    ── lê o mesmo log, offset independente</div>
     <section id="s1" class="week">
       <h2>Semana 1 — Do zero ao modelo mental</h2>
       <p>
-        Objetivo da semana: desenhar de memória o diagrama tópico → partições → offsets → dois grupos,
-        e explicar cada caixa em voz alta.
+        Esta semana não é para ligar o Spring. É para o modelo colar.
+        Objetivo: desenhar de memória o diagrama tópico → partições → offsets → dois grupos,
+        e explicar cada caixa em voz alta para um colega que nunca viu Kafka.
       </p>
+      <div class="sessions">
+        <article>
+          <div class="tag">Sessão 1 · 45 min</div>
+          <h4>Fila vs caderno</h4>
+          <p>Leia a ideia central e o mapa mental. Desenhe o caderno com 3 colunas. Diga em voz alta: quem escreve, quem lê, o que é o clipe.</p>
+        </article>
+        <article>
+          <div class="tag">Sessão 2 · 45 min</div>
+          <h4>Glossário em voz alta</h4>
+          <p>Evento, tópico, partição, offset, key. Sem olhar. Se travar, volte no cartão e explique de novo com a analogia, não com a definição decorada.</p>
+        </article>
+        <article>
+          <div class="tag">Sessão 3 · 45 min</div>
+          <h4>Réplica + exercício de papel</h4>
+          <p>Broker, líder, ISR, retenção. Depois o desenho: 3 partições, 2 grupos, 4 consumidores no A e 1 no B. Se o desenho falhar, a semana não fechou.</p>
+        </article>
+      </div>
+      <div class="ok">
+        <strong>No fim da semana você consegue:</strong>
+        explicar por que faturamento e analytics não brigam; por que 4 consumidores em 3 partições deixam um ocioso;
+        por que ordem não é global; o que o offset guarda e o que o Kafka <em>não</em> executa.
+      </div>
+      <p>As perguntas abaixo são o roteiro da sessão 2 e 3. Abra, responda sem olhar, só então leia a explicação.</p>
 
       <details open>
         <summary>Kafka é uma fila de mensagens?</summary>
@@ -610,11 +681,21 @@ Grupo "analytics"    ── lê o mesmo log, offset independente</div>
         </p>
       </details>
       <div class="callout">
-        <strong>Exercício de papel.</strong>
+        <strong>Exercício de papel (não pule).</strong>
         Desenhe um tópico com 3 partições, 2 grupos, 4 consumidores no grupo A e 1 no grupo B.
-        Grupo A: no máximo 3 trabalham, 1 fica ocioso. Grupo B: o único lê as 3 partições.
-        Offsets independentes. Se não conseguir desenhar, volte ao mapa mental.
+        Grupo A: no máximo 3 trabalham, 1 fica ocioso. Grupo B: o único lê as 3 partições (sozinho, em loop).
+        Offsets independentes: A pode estar no 80 e B no 12 na mesma coluna.
+        Marque um pedido com key <code>pedido-X</code> sempre na mesma coluna.
+        Se não conseguir desenhar, volte ao <a href="#caderno">mapa mental</a> — o glossário ainda não colou.
       </div>
+      <article class="term">
+        <h3>Como estudar esta semana de verdade</h3>
+        <ul class="tight">
+          <li>Não abra o Spring ainda. Código cedo vira memorização de annotation.</li>
+          <li>Explique cada palavra do <a href="#glossario">glossário</a> para o espelho: o que é, para que serve, o erro comum.</li>
+          <li>No trabalho: pegue um tópico que o time já usa e descubra quantas partições, qual a key, quantos group.id. Se ninguém souber, você já achou o gap do time.</li>
+        </ul>
+      </article>
     </section>
 
     <section id="s2" class="week">
@@ -623,6 +704,23 @@ Grupo "analytics"    ── lê o mesmo log, offset independente</div>
         Aqui a conversa deixa de ser “o que é Kafka” e vira “o que acontece quando algo cai no meio”.
         A frase que entrevistador sênior quer ouvir: <strong>at-least-once + consumidor idempotente</strong>.
       </p>
+      <div class="sessions">
+        <article>
+          <div class="tag">Sessão 1 · 45 min</div>
+          <h4>As três promessas</h4>
+          <p>Desenhe a linha do tempo: chega mensagem → processa (cobra) → commita offset. Marque onde o processo morre em cada promessa e o que sobra no mundo real.</p>
+        </article>
+        <article>
+          <div class="tag">Sessão 2 · 45 min</div>
+          <h4>Idempotência de verdade</h4>
+          <p>Inbox, upsert, versão, operação que “define estado”. Separe isso da idempotência do <em>produtor</em> (retry na escrita). São dois cadeados diferentes.</p>
+        </article>
+        <article>
+          <div class="tag">Sessão 3 · 45 min</div>
+          <h4>Commit e lag</h4>
+          <p>Automático vs manual vs lote. O que é lag, o que não é. No fim: explique por que acks=all não impede cobrança duplicada.</p>
+        </article>
+      </div>
 
       <table class="compare">
         <thead>
@@ -648,46 +746,91 @@ Grupo "analytics"    ── lê o mesmo log, offset independente</div>
       </table>
 
       <h3>Como garantir processamento único na prática</h3>
-      <p>Você não “liga exactly-once e esquece”. Você torna o efeito repetível sem dano:</p>
+      <p>
+        Você não “liga exactly-once e esquece”. Exactly-once do Kafka é uma bolha: vale quando
+        você lê um tópico e escreve em outro <em>dentro</em> do Kafka, com transação.
+        Banco, e-mail e API de cartão estão fora. Na prática você torna o efeito <strong>repetível sem dano</strong>:
+      </p>
       <ul class="tight">
-        <li>guardar o <code>messageId</code> já processado numa tabela e ignorar repetidos (inbox);</li>
-        <li>upsert em vez de insert;</li>
+        <li>guardar o <code>messageId</code> / <code>eventId</code> já processado numa tabela e ignorar repetidos (inbox);</li>
+        <li>upsert em vez de insert (a segunda vez só reescreve o mesmo estado);</li>
         <li>só aplicar o evento se a versão for maior que a atual;</li>
         <li>operação naturalmente idempotente (definir um estado, não incrementar um contador).</li>
       </ul>
+      <div class="warn">
+        Incrementar “estoque -= 1” duas vezes é desastre. “estoque = 7 porque o evento diz que ficou 7” tolera replay.
+        Cobrar cartão precisa de idempotency key na API do emissor, não só de esperança.
+      </div>
 
       <h3>Produtor idempotente</h3>
+      <p class="analogy">Analogia: o carteiro numera os envelopes. Se ele bater na porta duas vezes com o envelope 17, o broker diz “já tenho o 17” e joga o segundo fora.</p>
       <p>
         Com <code>enable.idempotence=true</code>, o produtor ganha um ID e numera as mensagens.
         O broker descarta duplicatas causadas por retry do <em>mesmo</em> producer.
-        Isso não protege o consumo e não protege dois producers diferentes.
+        Isso não protege o consumo e não protege dois producers diferentes (dois serviços publicando o mesmo fato).
         Transações (<code>transactional.id</code>) vão além: escrever em vários tópicos e commit de offsets na mesma transação Kafka.
       </p>
 
-      <h3>O consumidor cai no meio</h3>
+      <h3>O consumidor cai no meio — linha do tempo</h3>
+      <ol>
+        <li>Lê o recado “cobrar pedido 99”.</li>
+        <li>Chama o cartão. O cartão cobra. O mundo real já mudou.</li>
+        <li>O processo morre <em>antes</em> de commitar o offset.</li>
+        <li>Outro membro (ou o restart) relê a partir do último clipe. O recado 99 volta.</li>
+      </ol>
       <p>
-        O offset não foi commitado. Depois do rebalance, alguém reprocessa a partir do último commit.
-        Se o cartão já foi cobrado e o clipe não andou, a duplicata é de negócio, não de log.
+        O log está certo. A duplicata é de negócio. Por isso inbox / idempotency key.
+        Se você tivesse commitado <em>antes</em> do passo 2, o clipe andaria e a cobrança nunca aconteceria — perda, não duplicata.
       </p>
 
       <h3>Commit automático ou manual?</h3>
       <p>
-        Automático commita por tempo e pode marcar mensagens ainda não processadas — perde dado em queda.
-        Manual: processar, então commitar. Commit por lote é mais rápido; se o processo morre no meio, reprocessa o lote inteiro.
-        De novo: idempotência.
+        Automático (<code>enable.auto.commit=true</code>) commita por tempo, no fundo.
+        Pode marcar mensagens ainda não processadas — perde dado em queda.
+        Manual: processar, então commitar. No Spring isso aparece como <code>AckMode</code>
+        (<code>MANUAL</code>, <code>RECORD</code>, <code>BATCH</code>).
+        Commit por lote é mais rápido; se o processo morre no meio, reprocessa o lote inteiro.
+        De novo: idempotência. Sem ela, lote maior = explosão maior na falha.
       </p>
 
       <h3>Consumer lag</h3>
+      <p class="analogy">Analogia: o caderno já tem linha 10_000. Seu clipe está na 8_400. Lag = 1_600 linhas atrasadas.</p>
       <p>
-        A distância entre a última linha escrita na partição e o clipe do grupo.
+        É a distância entre a última linha escrita na partição e o clipe do grupo.
         Lag alto sustentado = o grupo não está acompanhando a produção.
-        Lag instantâneo pequeno é normal. É a métrica número um do consumidor.
+        Lag instantâneo pequeno é normal (você poll de tempos em tempos).
+        É a métrica número um do consumidor. Sem ela, você opera no escuro.
       </p>
+      <div class="callout">
+        <strong>Teste da sexta-feira.</strong>
+        Explique em um minuto, sem jargão: por que “acks=all + idempotência do produtor” ainda permite cobrar duas vezes.
+        Se a resposta misturar os eixos, volte nesta semana.
+      </div>
     </section>
 
     <section id="s3" class="week">
       <h2>Semana 3 — Operação, rebalance e tuning</h2>
-      <p>Quando o cluster “está estranho”, quase sempre é um destes: rebalance em loop, lag crescendo, partição quente ou mensagem venenosa.</p>
+      <p>
+        Quando o cluster “está estranho”, quase sempre é um destes: rebalance em loop, lag crescendo, partição quente ou mensagem venenosa.
+        Esta semana é a do plantão: você aprende a diagnosticar, não a decorar nomes de config.
+      </p>
+      <div class="sessions">
+        <article>
+          <div class="tag">Sessão 1 · 45 min</div>
+          <h4>Rebalance</h4>
+          <p>O que dispara, por que o consumo para, o loop max.poll, CooperativeSticky e group.instance.id. Desenhe o ciclo no papel.</p>
+        </article>
+        <article>
+          <div class="tag">Sessão 2 · 45 min</div>
+          <h4>Lag e hot key</h4>
+          <p>Ordem do diagnóstico. Por que 12 consumidores em 3 partições não drenam lag. Sintoma de partição quente: uma coluna atrasada, as outras zeradas.</p>
+        </article>
+        <article>
+          <div class="tag">Sessão 3 · 45 min</div>
+          <h4>Configs + DLT</h4>
+          <p>O que cada knob realmente controla (durabilidade, lote, heartbeat). Poison pill vs erro transitório. O que alertar.</p>
+        </article>
+      </div>
 
       <article class="term">
         <h3>Rebalance: o que dispara e por que dói</h3>
@@ -725,22 +868,23 @@ Grupo "analytics"    ── lê o mesmo log, offset independente</div>
         <article class="term">
           <h3>Produtor: o que realmente importa</h3>
           <ul class="tight">
-            <li><code>acks</code> — durabilidade</li>
-            <li><code>enable.idempotence</code></li>
-            <li><code>retries</code> + <code>delivery.timeout.ms</code></li>
-            <li><code>linger.ms</code> e <code>batch.size</code> — esperar um pouco agrupa mais, sobe throughput, sobe latência</li>
-            <li><code>compression.type</code> lz4/zstd</li>
-            <li><code>max.in.flight.requests.per.connection</code> — com idempotência, até 5 preserva ordem</li>
+            <li><code>acks</code> — 0 perde escrita; 1 o líder gravou; all espera o ISR. É durabilidade, não consumo.</li>
+            <li><code>enable.idempotence</code> — retry do mesmo producer não duplica no log.</li>
+            <li><code>retries</code> + <code>delivery.timeout.ms</code> — até quando insistir. Sem teto, o send fica preso para sempre.</li>
+            <li><code>linger.ms</code> e <code>batch.size</code> — esperar uns milissegundos junta envelopes. Sobe throughput, sobe latência.</li>
+            <li><code>compression.type</code> lz4/zstd — menos bytes na rede e no disco.</li>
+            <li><code>max.in.flight.requests.per.connection</code> — com idempotência, até 5 ainda preserva ordem na partição.</li>
           </ul>
         </article>
         <article class="term">
           <h3>Consumidor: o que realmente importa</h3>
           <ul class="tight">
-            <li><code>max.poll.records</code> e <code>max.poll.interval.ms</code></li>
-            <li><code>session.timeout.ms</code> / <code>heartbeat.interval.ms</code></li>
-            <li><code>auto.offset.reset</code> — earliest para pipeline, latest para stream ao vivo</li>
-            <li><code>fetch.min.bytes</code> / <code>fetch.max.wait.ms</code></li>
-            <li><code>enable.auto.commit</code></li>
+            <li><code>max.poll.records</code> — tamanho do lote. Lote enorme + processamento lento = rebalance.</li>
+            <li><code>max.poll.interval.ms</code> — quanto tempo você pode ficar sem “oi, ainda estou vivo e processando”.</li>
+            <li><code>session.timeout.ms</code> / <code>heartbeat.interval.ms</code> — o pulso. Heartbeat some → o grupo acha que você morreu.</li>
+            <li><code>auto.offset.reset</code> — earliest para pipeline/histórico; latest para “só o ao vivo”. Só vale sem commit prévio.</li>
+            <li><code>fetch.min.bytes</code> / <code>fetch.max.wait.ms</code> — esperar um pouco para buscar mais linhas de uma vez.</li>
+            <li><code>enable.auto.commit</code> — quase sempre você quer controle manual no serviço de negócio.</li>
           </ul>
         </article>
       </div>
@@ -772,14 +916,41 @@ Grupo "analytics"    ── lê o mesmo log, offset independente</div>
           ou splittar o trabalho depois da leitura.
         </p>
       </article>
+      <article class="term">
+        <h3>Mini-runbook (cole no Notion do time)</h3>
+        <ol>
+          <li><strong>Lag em todas as partições:</strong> produção subiu ou o consumidor ficou lento? Olhe o banco/API. Só então pense em mais partições.</li>
+          <li><strong>Lag numa partição só:</strong> poison pill (erro no log) ou hot key. Não “dá scale” no grupo inteiro.</li>
+          <li><strong>Consumidores restartando:</strong> max.poll, OOM, deploy sem static membership.</li>
+          <li><strong>DLT enchendo:</strong> payload mudou? Schema incompatível? Ou alguém mandou timeout de banco para o cemitério?</li>
+        </ol>
+        <p>Se você não consegue seguir essa ordem num incidente simulado, a semana 3 não fechou — config decorada não opera cluster.</p>
+      </article>
     </section>
 
     <section id="s4" class="week">
       <h2>Semana 4 — Padrões de integração</h2>
       <p>
         Esta semana separa quem “já usou Kafka” de quem entendeu o problema de verdade:
-        banco e broker não compartilham uma transação mágica.
+        banco e broker não compartilham uma transação mágica. Sem outbox/inbox, o restante é teatro.
       </p>
+      <div class="sessions">
+        <article>
+          <div class="tag">Sessão 1 · 45 min</div>
+          <h4>Outbox</h4>
+          <p>Desenhe save+send falhando no meio. Depois a caixinha na mesma transação e o carteiro (poller ou Debezium). Anti-padrão de cor.</p>
+        </article>
+        <article>
+          <div class="tag">Sessão 2 · 45 min</div>
+          <h4>Inbox + schema</h4>
+          <p>Tabela de eventId na mesma transação do efeito. Schema Registry: backward vs forward. Campo opcional vs rename.</p>
+        </article>
+        <article>
+          <div class="tag">Sessão 3 · 45 min</div>
+          <h4>Contrato e fronteira</h4>
+          <p>Notification vs state. Quando não usar Kafka. Consumer Spring vs Streams. Isso é julgamento de Lead, não de tutorial.</p>
+        </article>
+      </div>
 
       <article class="term">
         <h3>Outbox — salvar no banco e publicar no Kafka “juntos”</h3>
@@ -787,21 +958,32 @@ Grupo "analytics"    ── lê o mesmo log, offset independente</div>
         <p>
           Não existe transação distribuída entre o seu Postgres e o Kafka.
           A solução é gravar o evento numa tabela <code>outbox</code> <strong>dentro da mesma transação</strong> do dado de negócio.
-          Um processo separado (poller ou CDC com Debezium) lê a tabela e publica, marcando como enviado.
+          Um processo separado lê a tabela e publica, marcando como enviado:
+        </p>
+        <ul class="tight">
+          <li><strong>Poller:</strong> um job da aplicação (“tem recado novo?”). Simples de operar. Pode atrasar uns segundos.</li>
+          <li><strong>CDC (Debezium):</strong> lê o log de transação do banco e publica. Menos código seu, mais peça para operar.</li>
+        </ul>
+        <p>
           Se a publicação falhar, tenta de novo — at-least-once, tratado com idempotência no consumidor.
+          A tabela típica tem: id, payload, criado_em, publicado_em (nulo até o carteiro conseguir).
         </p>
         <div class="warn">
           Anti-padrão: <code>salvar(); kafka.send();</code>
-          O processo pode morrer no meio e ficar só um dos dois. Ou o inverso: publicar antes de commitar o banco.
+          O processo pode morrer no meio e ficar só um dos dois. Ou o inverso: publicar antes de commitar o banco
+          (o caderno anuncia um pedido que o banco desfez no rollback).
         </div>
       </article>
 
       <article class="term">
         <h3>Inbox — o inverso, no consumidor</h3>
+        <p class="analogy">Analogia: na portaria tem uma lista “já entrei este envelope”. Envelope 17 de novo? Não cobra de novo. A lista e o efeito (baixa no estoque) são a mesma canetada.</p>
         <p>
-          Guardar os IDs já processados numa tabela e ignorar repetições, na mesma transação do efeito.
-          É a implementação concreta da idempotência.
+          Guardar os IDs já processados numa tabela e ignorar repetidos, <strong>na mesma transação do efeito</strong>.
+          Se você grava o ID e o efeito falha depois, o ID não pode ter sido commitado — senão você “esquece” de aplicar.
+          Se aplica o efeito e não grava o ID, o replay duplica.
         </p>
+        <p>É a implementação concreta da idempotência. Sem inbox (ou equivalente), outbox só empurra duplicata para o outro lado.</p>
       </article>
 
       <article class="term">
@@ -857,10 +1039,12 @@ Grupo "analytics"    ── lê o mesmo log, offset independente</div>
 
       <article class="term">
         <h3>Kafka Streams / ksqlDB vs um consumer Spring</h3>
+        <p class="analogy">Analogia: o consumer Spring é o funcionário que lê o recado e liga para o banco e o cartão. Streams é uma máquina que só trabalha em cima do próprio caderno — junta páginas, conta janelas, guarda um rascunho local.</p>
         <p>
           A maior parte dos microsserviços: consumer “burro” + sua aplicação (chamar banco, chamar API de pagamento).
-          Kafka Streams: quando o processamento é <em>sobre o log</em> — janelas, join entre tópicos, agregação, estado local com changelog.
-          Não comece por Streams se o problema é “chamar o banco e a API”.
+          Kafka Streams: quando o processamento é <em>sobre o log</em> — janelas de tempo, join entre tópicos, agregação, estado local com changelog.
+          ksqlDB é a mesma ideia com cara de SQL.
+          Não comece por Streams se o problema é “chamar o banco e a API”. Você vai empilhar estado, rebalance e changelog sem necessidade.
         </p>
       </article>
     </section>
@@ -868,39 +1052,191 @@ Grupo "analytics"    ── lê o mesmo log, offset independente</div>
     <section id="s5" class="week">
       <h2>Semana 5 — Spring Kafka e laboratório</h2>
       <p>
-        No Spring, <code>KafkaTemplate</code> escreve. <code>@KafkaListener</code> lê.
-        <code>concurrency</code> cria N consumidores no mesmo grupo — limitado pelo número de partições.
-        Lembrete: concurrency 6 num tópico de 3 partições deixa 3 threads ociosas.
-        O número mágico é <code>min(concurrency, partitions)</code>.
+        Até aqui o caderno era analogia. Esta semana você <strong>vê o modelo no log</strong>.
+        Sem os labs, a trilha não fecha — é a diferença entre explicar Kafka e ter sentido o clipe andar.
+        Ambiente: Docker Compose com um broker, ou Testcontainers no teste. Spring Boot + spring-kafka.
       </p>
+      <div class="sessions">
+        <article>
+          <div class="tag">Sessão 1 · 45 min</div>
+          <h4>Peças do Spring</h4>
+          <p>Template, Listener, concurrency, AckMode, serializer. Entenda cada nome <em>antes</em> de copiar YAML. Labs 1–3.</p>
+        </article>
+        <article>
+          <div class="tag">Sessão 2 · 45 min</div>
+          <h4>Falha e grupo</h4>
+          <p>Labs 4–7: rebalance, ocioso, poison pill, duplicata. Mate processo de propósito. Anote o que o log mostrou versus o que você esperava.</p>
+        </article>
+        <article>
+          <div class="tag">Sessão 3 · 45 min</div>
+          <h4>Integração e carga</h4>
+          <p>Labs 8–9: outbox com Kafka fora; lag e hot key. No fim, explique cada lab em 60 segundos sem olhar o código.</p>
+        </article>
+      </div>
+
+      <h3>As peças do Spring, em linguagem de leigo</h3>
       <p>
-        Outros nomes que vão aparecer: <code>AckMode</code>, serializers,
-        <code>ErrorHandlingDeserializer</code> (payload malformado não deve derrubar o listener),
-        <code>RetryableTopic</code>.
+        O Spring não muda o Kafka. Ele só é a fiação: quem escreve, quem lê, quantas mãos no caderno, quando o clipe anda.
       </p>
-      <p>
-        Os laboratórios são o coração da trilha. Faça cada um <strong>narrando em voz alta</strong>
-        o que espera ver <em>antes</em> de rodar. Docker Compose ou Testcontainers.
-      </p>
-      <ol class="tight">
-        <li><strong>Anatomia.</strong> Tópico de 3 partições. 9 mensagens sem key e 9 com key pedido-1/2/3. Imprima partition, offset, key, value. Sem key, a ordem global é um caos. Com key, cada pedido é sequencial na sua partição. Offsets de partições diferentes são números independentes.</li>
-        <li><strong>Ordem.</strong> Mesmo pedido sem key e com key. Ver a bagunça no primeiro caso.</li>
-        <li><strong>Dois grupos.</strong> Dois group.id no mesmo tópico. Ambos recebem tudo. Offsets não se atrapalham.</li>
-        <li><strong>Rebalance.</strong> 3 consumidores, mate um, observe a pausa nos logs.</li>
-        <li><strong>Ociosos.</strong> 2 partições e 4 consumidores. Dois ficam parados.</li>
-        <li><strong>Poison pill.</strong> Payload inválido trava a partição em loop. Depois DLT com backoff e o comportamento correto.</li>
-        <li><strong>Duplicação.</strong> Mate o consumidor entre processar e commitar. A mensagem roda duas vezes. Tabela de deduplicação: o efeito passa a ser único.</li>
-        <li><strong>Outbox.</strong> Tabela outbox + publicador. Simule Kafka fora: o dado fica no banco e publica quando o broker volta.</li>
-        <li><strong>Lag.</strong> Carga alta, lag cresce, escale consumidores, lag drena. Depois 90% das mensagens com a mesma key: lag só numa partição.</li>
-      </ol>
+      <article class="term">
+        <h3>KafkaTemplate — quem escreve</h3>
+        <p class="analogy">Analogia: a caneta da sua aplicação. Você diz tópico, key e value; o template serializa e manda para o líder da coluna.</p>
+        <p>
+          É o produtor. <code>template.send("pedidos.criados", pedidoId, evento)</code>.
+          A key no segundo argumento é a que escolhe a partição. Sem key, o Spring/cliente espalha — e a ordem por pedido some.
+          Trate erro de send: “mandei” não é “o ISR confirmou”. Com <code>acks=all</code> você espera a confirmação; ignore isso e o checkout mente para o usuário.
+        </p>
+      </article>
+      <article class="term">
+        <h3>@KafkaListener — quem lê</h3>
+        <p class="analogy">Analogia: a pessoa do time com o crachá <code>group.id</code>, olhando a coluna que o Kafka atribuiu.</p>
+        <p>
+          O método anota “quando chegar recado neste tópico, rode isto”.
+          O <code>groupId</code> é o crachá. Mude o groupId e você lê o caderno de novo, do seu próprio clipe.
+          Dá para receber o objeto já desserializado ou o <code>ConsumerRecord</code> cru (aí você imprime partition, offset, key — obrigatório nos labs).
+        </p>
+      </article>
+      <article class="term">
+        <h3>concurrency — quantas mãos no mesmo crachá</h3>
+        <p>
+          <code>ConcurrentKafkaListenerContainerFactory</code> cria N consumidores no <em>mesmo</em> grupo.
+          Cada um pode ficar com partições. O teto é o número de partições.
+          <strong>concurrency = 6</strong> num tópico de <strong>3 partições</strong> deixa 3 threads olhando o teto.
+          O número que importa é <code>min(concurrency, partitions)</code>.
+          Subir replica no Kubernetes é a mesma conta: 8 pods × tópico de 3 partições = 5 ociosos.
+        </p>
+      </article>
+      <article class="term">
+        <h3>AckMode — quando o clipe anda</h3>
+        <p>
+          <code>BATCH</code>: o Spring commita o lote depois de processar (rápido; morte no meio = replay do lote).
+          <code>RECORD</code>: commita cada recado (mais chatice, menos replay).
+          <code>MANUAL</code> / <code>MANUAL_IMMEDIATE</code>: você chama ack depois do efeito — o lugar certo se cobra cartão.
+          Auto-commit ligado no consumer factory é o atalho que perde mensagem. Nos labs de duplicata, use manual de propósito.
+        </p>
+      </article>
+      <article class="term">
+        <h3>Serializer, ErrorHandlingDeserializer, RetryableTopic</h3>
+        <ul class="tight">
+          <li><strong>Serializer / deserializer:</strong> transforma objeto ↔ bytes. JSON é didático. Avro/Protobuf + Schema Registry é o que time grande usa.</li>
+          <li><strong>ErrorHandlingDeserializer:</strong> JSON quebrado não deve derrubar o listener inteiro. Sem isso, a poison pill vira loop de crash.</li>
+          <li><strong>RetryableTopic / DefaultErrorHandler + DLT:</strong> tenta de novo com espera; depois manda para o tópico cemitério. Erro permanente ≠ timeout de banco.</li>
+        </ul>
+      </article>
+      <div class="warn">
+        Narrar em voz alta <em>antes</em> de rodar: “eu espero ver as 9 keys pedido-1/2/3 cada uma numa coluna só”.
+        Se o resultado surpreender e você não souber por quê, o lab falhou mesmo com o teste verde.
+      </div>
+
+      <h3>Os nove laboratórios (coração da trilha)</h3>
+      <p>Monte um tópico de teste. Imprima sempre: partition, offset, key, value, groupId. Sem isso você está voando cego.</p>
+
+      <article class="term">
+        <div class="step">Lab 1 · Anatomia</div>
+        <h3>Ver as colunas de verdade</h3>
+        <p><strong>Montar.</strong> Tópico com 3 partições. Um producer, um consumer que só loga.</p>
+        <p><strong>Fazer.</strong> Publique 9 mensagens <em>sem</em> key. Depois 9 com keys <code>pedido-1</code>, <code>pedido-2</code>, <code>pedido-3</code> (3 de cada, em sequência).</p>
+        <p><strong>Ver.</strong> Sem key: as linhas saltam de coluna; “ordem global” não existe. Com key: cada pedido fica numa coluna só; offsets 0,1,2 da partição 0 não são os mesmos números da partição 1.</p>
+        <p><strong>Prova.</strong> Offset é por coluna. Key cola entidade na coluna.</p>
+        <div class="warn">Erro comum: olhar só o value e achar que “chegou em ordem” porque o log do console misturou as três colunas na hora da impressão.</div>
+      </article>
+      <article class="term">
+        <div class="step">Lab 2 · Ordem</div>
+        <h3>O mesmo pedido, com e sem key</h3>
+        <p><strong>Fazer.</strong> Publique, bem rápido, <code>Criado</code> → <code>Pago</code> → <code>Enviado</code> do pedido Z, primeiro sem key, depois com key <code>Z</code>.</p>
+        <p><strong>Ver.</strong> Sem key, o consumidor pode ver Pago antes de Criado (colunas diferentes, threads diferentes). Com key, a sequência daquela entidade se mantém.</p>
+        <p><strong>Prova.</strong> Ordem não é relógio. É append na mesma partição.</p>
+      </article>
+      <article class="term">
+        <div class="step">Lab 3 · Dois grupos</div>
+        <h3>Dois crachás, o mesmo caderno</h3>
+        <p><strong>Fazer.</strong> Dois <code>@KafkaListener</code> com <code>groupId</code> diferentes no mesmo tópico. Publique 10 mensagens.</p>
+        <p><strong>Ver.</strong> Os dois imprimem as 10. Os offsets commitados de cada grupo são independentes (olhe no kafka-consumer-groups ou no Actuator).</p>
+        <p><strong>Prova.</strong> Fan-out. Faturamento e analytics não se atrasam um ao outro.</p>
+      </article>
+      <article class="term">
+        <div class="step">Lab 4 · Rebalance</div>
+        <h3>Matar um colega e ver a pausa</h3>
+        <p><strong>Montar.</strong> Tópico de 3 partições, 3 instâncias (ou concurrency 3) no mesmo groupId. Logar assignment.</p>
+        <p><strong>Fazer.</strong> Mate uma instância (Ctrl+C ou kill do pod). Observe logs: revoked / assigned. Meça quanto tempo o consumo para.</p>
+        <p><strong>Ver.</strong> As colunas da instância morta passam para as vivas. Durante o rebalance clássico, <em>ninguém</em> lê.</p>
+        <p><strong>Prova.</strong> Restart não é de graça. Daí static membership na semana 3.</p>
+      </article>
+      <article class="term">
+        <div class="step">Lab 5 · Ociosos</div>
+        <h3>Gente demais para pouca coluna</h3>
+        <p><strong>Fazer.</strong> Tópico de 2 partições, 4 consumidores no mesmo grupo.</p>
+        <p><strong>Ver.</strong> Dois recebem assignment vazio ou não processam nada. Os outros dois carregam o mundo.</p>
+        <p><strong>Prova.</strong> Escalar pod sem escalar partição é desperdício. Anote isso para a conversa de Kubernetes depois.</p>
+      </article>
+      <article class="term">
+        <div class="step">Lab 6 · Poison pill</div>
+        <h3>Um JSON podre no meio da coluna</h3>
+        <p><strong>Fazer.</strong> Publique um body que o deserializer não engole. Sem error handler. Depois ligue <code>ErrorHandlingDeserializer</code> + DLT com backoff.</p>
+        <p><strong>Ver.</strong> Sem DLT: aquela partição grita o mesmo erro para sempre; as outras colunas podem seguir. Com DLT: o recado ruim vai para o cemitério depois de N tentativas; o clipe da coluna boa anda.</p>
+        <p><strong>Prova.</strong> Erro permanente não pode segurar a fila invisível da partição. Não mande timeout de banco para o DLT neste lab — isso é o lab errado.</p>
+      </article>
+      <article class="term">
+        <div class="step">Lab 7 · Duplicação</div>
+        <h3>Cobrar duas vezes de propósito</h3>
+        <p><strong>Fazer.</strong> Listener: “persiste pagamento” e só então ack. Coloque um <code>System.exit</code> (ou kill) entre os dois. Rode de novo. Depois crie tabela inbox (eventId unique) na mesma transação do insert.</p>
+        <p><strong>Ver.</strong> Sem inbox: duas linhas de pagamento. Com inbox: a segunda vez cai no “já vi este id” e não duplica o efeito.</p>
+        <p><strong>Prova.</strong> At-least-once não é bug do Kafka. É o modelo. Idempotência é o seu trabalho.</p>
+      </article>
+      <article class="term">
+        <div class="step">Lab 8 · Outbox</div>
+        <h3>Kafka desligado, pedido salvo</h3>
+        <p><strong>Montar.</strong> Tabela <code>outbox</code>. Transação: insert pedido + insert outbox. Um poller publica e marca enviado.</p>
+        <p><strong>Fazer.</strong> Pare o broker. Crie um pedido pela API. Suba o broker. Espere o poller.</p>
+        <p><strong>Ver.</strong> O pedido está no banco mesmo com Kafka morto. Quando o broker volta, o recado aparece no tópico. Compare com save+send: nesse anti-padrão, ou o pedido some, ou o evento some.</p>
+        <p><strong>Prova.</strong> A canetada única é no banco. O carteiro é outra peça.</p>
+      </article>
+      <article class="term">
+        <div class="step">Lab 9 · Lag e partição quente</div>
+        <h3>Atraso visível, depois uma coluna só</h3>
+        <p><strong>Fazer.</strong> Publique milhares de mensagens rápido, com consumer lento (sleep). Olhe lag (CLI, JMX, Prometheus). Suba concurrency até o número de partições e veja o lag descer. Depois publique 90% com a mesma key.</p>
+        <p><strong>Ver.</strong> Primeiro: lag em várias colunas, drena quando há mãos de verdade. Depois: uma partição com lag, as outras em zero — hot key. Escalar o grupo não conserta a coluna quente.</p>
+        <p><strong>Prova.</strong> Diagnóstico da semana 3, agora com número na tela. É isso que o Lead olha no Grafana.</p>
+      </article>
+      <div class="ok">
+        <strong>Critério de pronto da semana 5.</strong>
+        Você explica cada lab sem abrir o código, e aponta o trecho desta página (partição, offset, grupo, DLT, outbox, lag) que o lab ilustra.
+        Teste verde sem narrativa não conta.
+      </div>
     </section>
 
     <section id="s6" class="week">
-      <h2>Semana 6 — Síntese e entrevista</h2>
+      <h2>Semana 6 — Síntese (antes do simulador)</h2>
       <p>
-        Releia o glossário em voz alta, sem olhar. Se travar numa palavra, volte nela.
-        Não avance para as perguntas-síntese no chute.
+        Semana de fechar a boca e falar. Releia o glossário em voz alta, sem olhar.
+        Se travar numa palavra, volte nela. Não avance para as perguntas-síntese no chute
+        e não abra o <a href="#simulador">simulador</a> como prova surpresa sem ter ensaiado.
       </p>
+      <div class="sessions">
+        <article>
+          <div class="tag">Sessão 1 · 45 min</div>
+          <h4>Glossário cego</h4>
+          <p>Evento, tópico, partição, offset, key, ISR, group, retenção. 60 segundos cada. Grave áudio. Ouça onde você enrolou.</p>
+        </article>
+        <article>
+          <div class="tag">Sessão 2 · 45 min</div>
+          <h4>Perguntas-síntese</h4>
+          <p>As oito abaixo, no quadro, como se o entrevistador estivesse na sala. Depois abra a resposta e corrija o desenho, não a frase decorada.</p>
+        </article>
+        <article>
+          <div class="tag">Sessão 3 · 45 min</div>
+          <h4>Simulador + gaps</h4>
+          <p>As 50 questões. Mapa de gaps. Estude só os temas abaixo de 80%. Refaça. Lead não é gabarito 50/50 na primeira — é saber onde voltar.</p>
+        </article>
+      </div>
+      <article class="term">
+        <h3>Como ensaiar (não é reler)</h3>
+        <ul class="tight">
+          <li>Desenhe o caderno no papel. Se precisar do HTML para lembrar o que é partição, a semana 1 não está pronta.</li>
+          <li>Pegue um serviço real do trabalho e critique: tem outbox? key certa? DLT? lag no dashboard?</li>
+          <li>Explique Kafka para alguém de produto em três minutos. Se aparecer “fila mais rápida”, recomece.</li>
+        </ul>
+      </article>
 
       <h3>Perguntas-síntese (com o jeito de pensar, não a cola pronta)</h3>
       <details>
@@ -979,11 +1315,334 @@ Grupo "analytics"    ── lê o mesmo log, offset independente</div>
       </ul>
     </section>
 
+    <section id="techlead" class="week">
+      <h2>Virar a referência — e o Tech Lead de backend</h2>
+      <p>
+        Referência em Kafka não é quem recita <code>linger.ms</code>.
+        É quem explica o caderno no quadro, recusa Kafka quando o problema é HTTP,
+        e segura o time num incidente de lag sem pânico. Tech Lead backend
+        usa Kafka como <strong>ferramenta de contrato e de falha</strong>, não como medalha no currículo.
+      </p>
+
+      <div class="role-grid">
+        <article class="term">
+          <div class="tag">O que muda</div>
+          <h3>De usuário a dono do contrato</h3>
+          <p>
+            O listener “funciona no meu serviço” é o chão. O próximo degrau:
+            o tópico é um contrato entre times. Você define nome do fato, key,
+            schema, retenção, quem pode publicar e o que acontece no retry.
+            Sem dono, cada squad inventa um <code>PedidoUpdated</code> e o cluster vira lixão.
+          </p>
+        </article>
+        <article class="term">
+          <div class="tag">O que muda</div>
+          <h3>De feature a operação</h3>
+          <p>
+            Lead não pergunta só “deu merge?”. Pergunta: qual o SLO de lag?
+            Quem acorda se a partição 7 parar? O DLT tem dono?
+            Reprocessar 3 dias é um runbook ou uma oração?
+            Se ninguém sabe, você ainda não é referência — o sistema é um hobby em produção.
+          </p>
+        </article>
+        <article class="term">
+          <div class="tag">O que muda</div>
+          <h3>De “usa Kafka” a “sabe dizer não”</h3>
+          <p>
+            O atalho de carreira medíocre é propor Kafka em toda reunião.
+            O atalho de Lead é: volume baixo? fila simples. Precisa de resposta na hora? HTTP.
+            Time sem capacidade de operar cluster? não. Kafka brilha em fan-out, replay e desacoplar escritores de leitores.
+          </p>
+        </article>
+      </div>
+
+      <h3>O que uma referência precisa saber decidir</h3>
+      <table class="compare">
+        <thead>
+          <tr><th>Decisão</th><th>Pergunta que o Lead faz</th><th>Resposta fraca vs forte</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Key e partições</td>
+            <td>O que precisa ficar em ordem? Qual o pico de paralelismo?</td>
+            <td>Fraca: “põe 32 partições por padrão”. Forte: ordem por pedidoId, partições suficientes para o grupo, ciente de que aumentar depois dói.</td>
+          </tr>
+          <tr>
+            <td>Garantia</td>
+            <td>Perder evento é pior do que duplicar?</td>
+            <td>Fraca: “vamos ligar exactly-once”. Forte: at-least-once + inbox/outbox; exactly-once só na bolha Kafka.</td>
+          </tr>
+          <tr>
+            <td>Retenção</td>
+            <td>Quanto tempo o negócio precisa reler o passado?</td>
+            <td>Fraca: “deixa o default”. Forte: 3–7 dias vs compaction de estado; Kafka não é backup eterno.</td>
+          </tr>
+          <tr>
+            <td>Schema</td>
+            <td>Quem quebra se eu mudar o JSON?</td>
+            <td>Fraca: “é só um campo a mais”. Forte: compatibilidade, campo opcional, nunca reaproveitar nome com outro significado.</td>
+          </tr>
+          <tr>
+            <td>Fronteira</td>
+            <td>Banco e Kafka precisam “cometer juntos”?</td>
+            <td>Fraca: <code>save(); send();</code>. Forte: outbox na mesma transação, publicador à parte.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <article class="term">
+        <h3>Checklist de review (o Lead recusa o PR se faltar)</h3>
+        <ul class="tight">
+          <li>O evento tem nome de fato (<code>PagamentoAprovado</code>), não de destinatário.</li>
+          <li>Tem <code>eventId</code> estável e key de entidade. Sem key “porque assim espalha melhor”, se a ordem importa.</li>
+          <li>Commit de offset é depois do efeito, ou o efeito é idempotente de verdade.</li>
+          <li>Erro permanente vai para DLT; erro transitório retenta. Poison pill não pode congelar a partição.</li>
+          <li>Não há chamada HTTP lenta no poll da partição crítica sem isolamento.</li>
+          <li>Há métrica de lag por partição e alerta de lag sustentado — não de pico de um segundo.</li>
+          <li>Schema / JSON versionado. Campo novo opcional. Ninguém removeu obrigatório “só aqui no meu serviço”.</li>
+        </ul>
+      </article>
+
+      <div class="grid2">
+        <article class="term">
+          <h3>Como o time te vê como referência</h3>
+          <ol>
+            <li>Ensine o caderno no quadro até um júnior desenhar sozinho.</li>
+            <li>Faça os labs da semana 5 narrando o que espera ver <em>antes</em> de rodar.</li>
+            <li>Escreva o runbook: “lag subiu”, “rebalance em loop”, “reprocessar o dia D”.</li>
+            <li>Seja a pessoa que diz não ao Kafka desnecessário — e sim ao outbox no lugar certo.</li>
+            <li>Depois de cada incidente, uma página: o que o modelo previa, o que o time não mediu.</li>
+          </ol>
+        </article>
+        <article class="term">
+          <h3>Perguntas que vão te fazer em entrevista de Lead</h3>
+          <p>Não pedem a definição de offset. Pedem julgamento:</p>
+          <ul class="tight">
+            <li>Como você impediria cobrança duplicada num Black Friday?</li>
+            <li>O consumidor chama um gateway lento. O que você muda no desenho?</li>
+            <li>Precisamos de 12 partições. O tópico hoje tem 6. Qual o plano?</li>
+            <li>Dois times querem o mesmo evento com schemas diferentes. O que você faz?</li>
+            <li>Por que Kafka e não a fila que o time já opera?</li>
+          </ul>
+          <p>Treine isso no simulador. Se errar o bloco “Liderança”, o gap não é vocabulário — é decisão.</p>
+        </article>
+      </div>
+      <div class="callout">
+        <strong>Régua honesta.</strong>
+        Saber o glossário = júnior consciente. Ligar garantia + outbox + DLT = pleno.
+        Decidir partições, contratos entre times, runbook e “não usamos Kafka aqui” = o Lead que o time segue.
+      </div>
+    </section>
+
+    <section id="simulador" class="week">
+      <h2>Simulador de entrevista — 50 perguntas</h2>
+      <p>
+        Uma pergunta por vez, como na mesa. Você escolhe, a próxima aparece.
+        Sem gabarito embaixo. No fim, só o mapa de temas — para saber onde estudar, não para colar a alternativa certa.
+      </p>
+      <div class="quiz-toolbar">
+        <div class="quiz-meta" id="quiz-count">Pergunta 1 de 50</div>
+        <div class="quiz-meta">O progresso fica neste navegador até você recomeçar.</div>
+      </div>
+      <div class="progress" aria-hidden="true"><span id="quiz-bar"></span></div>
+      <div id="quiz-root"></div>
+      <div class="quiz-actions">
+        <button type="button" class="btn ghost" id="quiz-back">Pergunta anterior</button>
+        <button type="button" class="btn ghost" id="quiz-reset">Recomeçar</button>
+      </div>
+      <div id="quiz-result"></div>
+    </section>
+
     <footer>
       Baseado no plano da Trilha 4 — Apache Kafka (6 semanas, 3 sessões de 45 min).
       Pré-requisito útil: trilha de Spring, mas as semanas 1 e 2 funcionam do zero.
       Recursos: Kafka: The Definitive Guide (2ª ed.), documentação oficial em kafka.apache.org, verbetes Outbox e Saga em microservices.io.
     </footer>
   </div>
+  <script>
+    const TOPICS = {
+      modelo: { name: "Modelo mental", href: "#ideia" },
+      ordem: { name: "Partição, key e ordem", href: "#particao" },
+      consumo: { name: "Offset e consumer group", href: "#offset" },
+      durabilidade: { name: "Réplica, ISR e acks", href: "#isr" },
+      entrega: { name: "Garantias de entrega", href: "#s2" },
+      operacao: { name: "Rebalance, lag e DLT", href: "#s3" },
+      integracao: { name: "Outbox, inbox e schema", href: "#s4" },
+      lideranca: { name: "Julgamento de Tech Lead", href: "#techlead" }
+    };
+
+    const QUESTIONS = [
+      { t: "modelo", q: "Alguém lê uma mensagem no Kafka. O que acontece com a linha no caderno?", o: ["Some na hora, como numa fila do banco.", "Continua lá. Quem lê só move o próprio clipe (offset).", "Some só se o produtor pedir delete.", "Some quando todos os grupos tiverem lido."], a: 1, w: "Leitura não é destrutiva. A linha some depois, por retenção ou compaction — não porque alguém leu." },
+      { t: "modelo", q: "Qual frase descreve um evento de verdade?", o: ["Cobre este cartão agora.", "PedidoCriado: o pedido 99 foi aberto.", "Faturamento, por favor atualize a nota.", "GET /pedidos/99."], a: 1, w: "Evento é fato do passado. Comando pede o futuro. HTTP é pergunta/resposta síncrona." },
+      { t: "modelo", q: "Como você nomeia o tópico?", o: ["para-o-faturamento, porque só eles leem.", "pedidos.criados — o fato. Quem quiser se inscreve.", "joao-local-dev.", "queue-1, para parecer fila."], a: 1, w: "O tópico é o contrato do fato. Vários grupos vão ler a mesma página." },
+      { t: "modelo", q: "O que é um broker?", o: ["A analogia do caderno, só didática.", "Um servidor Kafka: guarda partições, recebe escrita e atende leitura.", "O consumer group.", "O Schema Registry."], a: 1, w: "Você fala com um broker (bootstrap), que aponta para os líderes das partições." },
+      { t: "modelo", q: "Em cluster novo, a coordenação (quem é líder, o que fazer se um broker cai) roda onde?", o: ["Obrigatoriamente no ZooKeeper.", "Em KRaft, consenso dentro do próprio Kafka. ZooKeeper é o jeito antigo.", "No Postgres da aplicação.", "No consumer group."], a: 1, w: "Entrevista moderna: ZooKeeper é legado. Clusters novos são KRaft." },
+      { t: "modelo", q: "Dois times (faturamento e analytics) leem o mesmo tópico. Eles brigam pelo recado?", o: ["Sim: o primeiro que ler apaga.", "Não: cada group.id tem o próprio clipe. Os dois veem o mesmo caderno.", "Só se usarem a mesma key.", "Só com acks=all."], a: 1, w: "Fan-out nasce do log compartilhado, não de copiar fila para cada time." },
+      { t: "modelo", q: "O Kafka executa a regra de negócio (cobrar, baixar estoque)?", o: ["Sim, se o tópico tiver o nome certo.", "Não. Ele guarda bytes e entrega. A regra mora no seu consumidor.", "Sim, via ISR.", "Só com Kafka Streams."], a: 1, w: "Streams processa sobre o log; ainda assim a regra de cartão/banco é da sua aplicação." },
+      { t: "ordem", q: "Kafka garante ordem de todas as mensagens do tópico?", o: ["Sim, sempre.", "Não. Ordem total só dentro de uma partição (uma coluna).", "Sim, se acks=all.", "Sim, se a key for nula."], a: 1, w: "O caderno inteiro não tem uma ordem única. Cada coluna tem a sua." },
+      { t: "ordem", q: "Para os eventos do mesmo pedido ficarem em ordem, você faz o quê?", o: ["Manda sem key, para espalhar.", "Usa a mesma key (pedidoId) para cair sempre na mesma partição.", "Cria um tópico por pedido.", "Liga exactly-once."], a: 1, w: "hash(key) % N escolhe a coluna. Mesma key → mesma coluna → ordem daquela entidade." },
+      { t: "ordem", q: "Mais partições é sempre melhor?", o: ["Sim, throughput infinito de graça.", "Não. Cada uma custa arquivos, réplicas, memória e rebalance. E diminuir depois é sofrido.", "Sim, desde que replication.factor=1.", "Só importa no consumidor."], a: 1, w: "Escolha cedo. Partição é unidade de paralelismo — e de custo operacional." },
+      { t: "ordem", q: "Você aumenta o tópico de 6 para 12 partições. O que acontece com a key cliente-7?", o: ["Continua na mesma coluna para sempre.", "O hash redistribui: a key pode mudar de partição e a ordem histórica daquela entidade quebra no tópico antigo.", "O Kafka migra o log em ordem automaticamente, sem custo.", "Nada, offset é global."], a: 1, w: "Plano de Lead: tópico novo, dual-write ou replay, migrar consumidores. Não é “só clicar 12”." },
+      { t: "ordem", q: "Lag só na partição 2; as outras em zero. Hipótese mais útil?", o: ["O cluster inteiro acabou.", "Partição quente (key enviesada) ou mensagem venenosa naquela coluna.", "Falta acks=all.", "Schema Registry caiu."], a: 1, w: "Kafka não espalha carga dentro da partição. Uma key gigante = uma coluna entupida." },
+      { t: "ordem", q: "Tópico com 3 partições, group.id com 5 consumidores. Quantos trabalham de verdade?", o: ["5, o Kafka clona partições.", "No máximo 3. Dois ficam olhando o teto.", "1, o líder do grupo.", "15, 5 vezes 3."], a: 1, w: "Cada partição → exatamente um membro do grupo. Escalar de verdade = mais partições e mais consumidores." },
+      { t: "ordem", q: "Key aleatória ou timestamp como key: efeito típico?", o: ["Melhora a ordem por pedido.", "Destrói a ordem por entidade e ainda pode esquentar uma coluna.", "Ativa compaction.", "Impede rebalance."], a: 1, w: "Key existe para colar a história de uma entidade na mesma coluna." },
+      { t: "consumo", q: "Offset 42 da partição 0 e offset 42 da partição 1 são o mesmo recado?", o: ["Sim, offset é ID global.", "Não. Offset é número de linha daquela coluna. São recados diferentes.", "Sim, se a key for igual.", "Só se o group.id for igual."], a: 1, w: "Offset não é ID de negócio e não atravessa partições." },
+      { t: "consumo", q: "auto.offset.reset entra em cena quando?", o: ["A cada poll.", "Quando aquele grupo ainda não tem committed offset na partição.", "Quando o ISR cai.", "Quando o produtor retenta."], a: 1, w: "Depois do primeiro commit, o grupo continua do clipe — não do reset." },
+      { t: "consumo", q: "Job precisa reler o histórico ainda retido. Qual reset?", o: ["latest — cola no fim e ignora o passado.", "earliest — desde o começo ainda guardado.", "Não existe reset para isso.", "acks=0."], a: 1, w: "latest num job de replay é bug silencioso: você “funciona” e não processa o passado." },
+      { t: "consumo", q: "Commitar o offset ANTES de processar dá qual promessa?", o: ["At-least-once (pode duplicar).", "At-most-once (pode perder se cair no meio).", "Exactly-once de verdade, inclusive no cartão.", "Nenhuma, offset é só métrica."], a: 1, w: "Clipe anda, efeito não aconteceu, processo morre = recado perdido." },
+      { t: "consumo", q: "Ler uma mensagem apaga ela para os outros grupos?", o: ["Sim.", "Não. Cada grupo tem clipe próprio. Ler não rasga a página.", "Só com compaction.", "Só no Rabbit dentro do Kafka."], a: 1, w: "Quem lembra ou esquece é o seu grupo, via offset — não o broker “entregando e sumindo”." },
+      { t: "consumo", q: "O que é committed offset?", o: ["O último offset escrito pelo produtor.", "Até onde o grupo jura que já processou, por partição.", "O ISR.", "O eventId."], a: 1, w: "Crash → o grupo retoma dali. Se o efeito já tinha acontecido e o clipe não andou, vem duplicata." },
+      { t: "durabilidade", q: "O que é ISR?", o: ["A fila interna do consumidor.", "O conjunto de réplicas em dia com o líder da partição.", "Um tipo de schema.", "O nome antigo do tópico."], a: 1, w: "Se o líder morre, o controller promove alguém do ISR — não uma cópia atrasada." },
+      { t: "durabilidade", q: "acks=all + min.insync.replicas=2 quer dizer:", o: ["O consumidor não vai ver duplicata.", "A escrita só confirma quando pelo menos duas cópias em dia têm o dado.", "A mensagem some após a leitura.", "O produtor não retenta."], a: 1, w: "É durabilidade da escrita. Eixo diferente de duplicata no consumo." },
+      { t: "durabilidade", q: "replication.factor=1 em produção:", o: ["É o default saudável.", "Um broker cai, a partição some. Inaceitável para dado que importa.", "Garante exactly-once.", "Acelera o ISR."], a: 1, w: "Sem cópia, não há failover. Custo baixo, risco máximo." },
+      { t: "durabilidade", q: "acks=0 é:", o: ["A opção mais durável.", "Fogo e esquece: máximo throughput, pode perder a escrita.", "Obrigatório com idempotência.", "O mesmo que all."], a: 1, w: "acks=1 = líder gravou. all = ISR. 0 = nem espera." },
+      { t: "durabilidade", q: "Se o ISR ficar menor que min.insync.replicas, o que o Lead prefere?", o: ["Confirmar a escrita mesmo assim, para não falhar o checkout.", "Falhar a escrita do produtor. Melhor erro visível do que confirmar e perder o disco do líder.", "Trocar a key.", "Desligar o consumidor."], a: 1, w: "Disponibilidade de escrita vs durabilidade: o Lead escolhe com o negócio, não no feeling." },
+      { t: "durabilidade", q: "Retenção por tempo faz o quê?", o: ["Arquiva no S3 automaticamente.", "Apaga segmentos velhos. Quem não leu a tempo, perdeu — Kafka não é backup eterno.", "Mantém todas as versões por key.", "Impede compaction."], a: 1, w: "Compaction é outro modo: última versão por key, não o filme completo." },
+      { t: "entrega", q: "A frase que o entrevistador sênior quer ouvir no caso geral:", o: ["Exactly-once em tudo, inclusive no cartão.", "At-least-once + consumidor (e efeitos) idempotentes.", "At-most-once, porque duplicata é pior sempre.", "acks=all resolve consumo."], a: 1, w: "Padrão prático. Exactly-once Kafka não cobre banco externo nem API de cartão." },
+      { t: "entrega", q: "Exactly-once do Kafka vale onde?", o: ["No mundo inteiro, cartão incluso.", "Dentro da bolha Kafka (tópico → tópico, com transação). Fora dela, não.", "Só no consumer group.", "Só com Rabbit na frente."], a: 1, w: "Transação Kafka não é transação com o Postgres da sua aplicação." },
+      { t: "entrega", q: "enable.idempotence=true no produtor substitui a tabela inbox?", o: ["Sim, pode apagar a inbox.", "Não. Idempotência do produtor evita retry do mesmo producer. Inbox evita o mesmo evento causar o efeito duas vezes no seu lado.", "Sim, se acks=all.", "Só se a key for nula."], a: 1, w: "Queda do consumidor, dois producers e API externa continuam existindo." },
+      { t: "entrega", q: "acks=all impede duplicata no consumidor?", o: ["Sim.", "Não. Acks é durabilidade da escrita. Duplicata no consumo nasce de reprocessar sem o clipe ter andado.", "Sim, com compaction.", "Sim, com latest."], a: 1, w: "Dois eixos. Quem mistura os dois se perde na entrevista." },
+      { t: "entrega", q: "O consumidor processou (cobrou o cartão) e morreu antes de commitar o offset. E agora?", o: ["A cobrança nunca vai repetir, o Kafka lembra.", "Outro membro (ou o restart) relê a partir do último commit: o efeito pode rodar de novo. Por isso inbox / idempotency key.", "O ISR desfaz a cobrança.", "O DLT apaga sozinho."], a: 1, w: "A duplicata é de negócio, não de “bug do log”." },
+      { t: "entrega", q: "Commit automático por tempo, risco principal?", o: ["Throughput baixo demais.", "Pode marcar como lida mensagem ainda não processada — e perder se cair.", "Quebra a key.", "Desliga o ISR."], a: 1, w: "Manual: processa, depois commita. Lote inteiro pode repetir: de novo, idempotência." },
+      { t: "entrega", q: "Qual técnica NÃO ajuda a ficar “processamento único” na prática?", o: ["Guardar eventId na inbox na mesma transação do efeito.", "Upsert / “só aplica se a versão for maior”.", "Ligar acks=0 para não duplicar.", "Idempotency key na API do cartão."], a: 2, w: "acks=0 piora perda, não duplicata de consumo." },
+      { t: "operacao", q: "Processamento do lote demora mais que max.poll.interval.ms. O clássico é:", o: ["Throughput sobe.", "O cluster acha que o consumidor morreu → rebalance → o trabalho recomeça → loop.", "A partição compacta sozinha.", "O offset vai para earliest."], a: 1, w: "Correção: lote menor, processamento mais rápido, ou intervalo maior — e olhar OOM no pod." },
+      { t: "operacao", q: "Consumer lag é:", o: ["Quantos brokers estão fora do ISR.", "A distância entre a última linha escrita na partição e o clipe do grupo.", "O tamanho do schema.", "O número de tópicos."], a: 1, w: "Métrica número um do consumidor. Alerta em lag crescente e sustentado, não em pico de um segundo." },
+      { t: "operacao", q: "Lag alto, 3 partições, 3 consumidores. Você sobe para 12 consumidores. Resolve?", o: ["Sim, 4x mais velocidade.", "Não. Sem mais partições, 9 ficam ociosos. Escalar consumo exige as duas coisas.", "Sim, se acks=all.", "Sim, com compaction."], a: 1, w: "Diagnóstico de Lead: gargalo no consumidor, na dependência, ou hot key?" },
+      { t: "operacao", q: "Poison pill (JSON quebrado no meio da coluna) sem DLT. Sintoma?", o: ["Todas as partições aceleram.", "Aquela partição trava em loop de erro; as outras podem seguir.", "O tópico inteiro compacta.", "O produtor para de aceitar acks."], a: 1, w: "Erro permanente → DLT. Erro transitório (banco fora) → retry. Inverter os dois perde dado ou trava coluna." },
+      { t: "operacao", q: "Mandar timeout de banco (erro transitório) direto para o DLT:", o: ["É o padrão ouro.", "Pode perder dado que daria certo dois minutos depois. Retry com espera; DLT para erro permanente.", "É igual a compaction.", "Corrige hot partition."], a: 1, w: "Lead escreve a política: o que é retry, o que é cemitério, quem reprocessa o DLT." },
+      { t: "operacao", q: "group.instance.id (membership estático) serve para:", o: ["Aumentar partições sem redistribuir keys.", "Evitar rebalance em restart planejado daquele consumidor.", "Trocar at-least-once por exactly-once.", "Desligar heartbeat."], a: 1, w: "Assignor cooperativo também reduz a “parada geral” do rebalance clássico." },
+      { t: "integracao", q: "Por que outbox existe?", o: ["Para compactar o tópico.", "Porque Postgres e Kafka não compartilham uma transação mágica. O evento nasce na mesma canetada do dado, e um carteiro publica depois.", "Para substituir o ISR.", "Para nomear o tópico."], a: 1, w: "Se o carteiro falhar, o recado continua na caixinha. At-least-once na publicação, inbox no outro lado." },
+      { t: "integracao", q: "salvar(); kafka.send(); — o anti-padrão. Por quê?", o: ["É lento demais.", "O processo pode morrer no meio: fica só o banco, ou só o caderno, ou os dois dessincronizados.", "O Spring não deixa.", "Acks=all proíbe."], a: 1, w: "Publicar antes de commitar o banco é o outro gêmeo do mesmo bug." },
+      { t: "integracao", q: "Inbox, em uma frase:", o: ["A fila do produtor.", "Tabela (ou store) dos eventIds já aplicados, na mesma transação do efeito, para ignorar repetidos.", "O DLT.", "O controller KRaft."], a: 1, w: "É a idempotência concreta no consumidor." },
+      { t: "integracao", q: "Compatibilidade backward (a mais usada) significa:", o: ["Consumidor antigo lê dado novo.", "Consumidor novo consegue ler dado antigo.", "Ninguém pode adicionar campo.", "O tópico muda de nome sozinho."], a: 1, w: "Forward é o inverso. Prática: campo opcional com default; não remova obrigatório; não reaproveite nome com outro significado." },
+      { t: "integracao", q: "Evento só com o ID (“pedido 123 mudou”) vs evento com o estado necessário. Trade-off?", o: ["ID sempre é errado.", "ID: payload magro, mas o consumidor liga de volta (acopla). Estado: desacopla, payload maior, pode envelhecer.", "Estado sempre é errado.", "Não há diferença."], a: 1, w: "Escolha consciente, não religião. Lead documenta o porquê." },
+      { t: "integracao", q: "Quando você NÃO usaria Kafka?", o: ["Quando vários times precisam do mesmo fato.", "Resposta síncrona, volume baixo que fila simples resolve, prioridade por mensagem, ou time sem capacidade de operar o cluster.", "Quando precisa de replay.", "Quando analytics e faturamento leem juntos."], a: 1, w: "Saber dizer não é parte da referência. Kafka Streams: processamento sobre o log (janela, join). Chamar banco/API: consumer “burro” + aplicação." },
+      { t: "lideranca", q: "Lag de 40 segundos no faturamento. É inconsistência de negócio?", o: ["Sim, o sistema está errado para sempre.", "Não por si. Eventual = as cópias convergem; atraso observável. Inconsistente = cobrou duas vezes, regra quebrada sem compensação.", "Sim, se acks=all.", "Só se houver 12 partições."], a: 1, w: "Lead explica para produto: atraso ≠ corrupção. Duplicata sem inbox é corrupção." },
+      { t: "lideranca", q: "Reprocessar 3 dias. Primeira pergunta do Lead?", o: ["Aumentar concurrency para 64.", "A retenção ainda guarda esses 3 dias? Sem isso, o caderno já esqueceu.", "Trocar a key para timestamp.", "Desligar o Schema Registry."], a: 1, w: "Depois: grupo novo ou rewind de offset + inbox/upsert. Sem idempotência, você duplica o mundo real." },
+      { t: "lideranca", q: "Gateway de pagamento lento no pico, no mesmo poll da partição. O que você muda?", o: ["Nada, retries infinitos.", "Não deixe a chamada lenta no caminho crítico do poll: isole (outro tópico/workers), lote menor, timeout, DLT para erro permanente — senão max.poll estoura e começa o loop de rebalance.", "Aumente replication.factor para 10.", "Mude o nome do tópico."], a: 1, w: "Isso é desenho. Config sozinha não salva API de 2 segundos." },
+      { t: "lideranca", q: "Dois times querem o mesmo fato com JSON incompatível. Você, como Lead:", o: ["Deixa cada um publicar no mesmo tópico “que é mais ágil”.", "Um contrato (schema + dono). Evolução compatível, ou novo tipo/tópico e migração. Sem lixão compartilhado.", "Pede para pararem de usar Kafka.", "Manda os dois usarem key nula."], a: 1, w: "Tópico sem dono vira acoplamento invisível. Referência = governança leve, não burocracia infinita." },
+      { t: "lideranca", q: "PR de um pleno: save(); kafka.send(); concurrency 8 num tópico de 2 partições; sem eventId; chamada HTTP no listener. Você:", o: ["Aprova: “depois a gente vê operação”.", "Recusa. Pede outbox, eventId/inbox, concurrency ≤ partições (ou mais partições com plano), e isolar I/O lento. Explica o modelo, não só o nit.", "Pede só para aumentar linger.ms.", "Manda ligar exactly-once e mergear."], a: 1, w: "O Lead ensina no review. Checklist: fato nomeado, key, offset depois do efeito, DLT, lag, schema." }
+    ];
+
+    const STORE = "trilha-kafka-quiz-v2";
+    const root = document.getElementById("quiz-root");
+    const countEl = document.getElementById("quiz-count");
+    const barEl = document.getElementById("quiz-bar");
+    const resultEl = document.getElementById("quiz-result");
+    const backBtn = document.getElementById("quiz-back");
+
+    function empty() { return { a: {}, i: 0 }; }
+    function load() {
+      try {
+        const raw = JSON.parse(localStorage.getItem(STORE) || "null");
+        if (!raw || typeof raw !== "object" || !raw.a) return empty();
+        return { a: raw.a, i: Number(raw.i) || 0 };
+      } catch (e) { return empty(); }
+    }
+    function save(state) { localStorage.setItem(STORE, JSON.stringify(state)); }
+
+    function answeredCount(state) {
+      return Object.keys(state.a).filter(function (k) { return state.a[k] !== "" && state.a[k] != null; }).length;
+    }
+
+    function showResult(state) {
+      root.innerHTML = "";
+      backBtn.style.display = "none";
+      countEl.textContent = "50 de 50 respondidas";
+      barEl.style.width = "100%";
+      const byTopic = {};
+      Object.keys(TOPICS).forEach(function (k) { byTopic[k] = { ok: 0, total: 0 }; });
+      let score = 0;
+      QUESTIONS.forEach(function (item, i) {
+        byTopic[item.t].total += 1;
+        if (Number(state.a[i]) === item.a) {
+          score += 1;
+          byTopic[item.t].ok += 1;
+        }
+      });
+      const rows = Object.keys(TOPICS).map(function (k) {
+        const t = byTopic[k];
+        const pct = Math.round((t.ok / t.total) * 100);
+        return { k: k, pct: pct, ok: t.ok, total: t.total, gap: pct < 80 };
+      }).sort(function (a, b) { return a.pct - b.pct; });
+      const weak = rows.filter(function (r) { return r.gap; });
+      const gapHtml = weak.length
+        ? "<p>Estude nesta ordem (pior primeiro). O gabarito não aparece: volte ao texto e refaça o simulador.</p><ul class='gap-list'>" +
+          weak.map(function (r) {
+            return "<li><a href='" + TOPICS[r.k].href + "'>" + TOPICS[r.k].name + "</a> — " +
+              r.ok + "/" + r.total + " (" + r.pct + "%). Abaixo de 80% é o que a entrevista vai expor.</li>";
+          }).join("") + "</ul>"
+        : "<p class='ok'>Nenhum tema ficou abaixo de 80%. Desenhe o caderno de memória e explique um PR ruim para um júnior — próximo degrau de Lead.</p>";
+      const bars = rows.map(function (r) {
+        return "<div class='bar-row'><div>" + TOPICS[r.k].name + "</div>" +
+          "<div class='bar" + (r.gap ? " gap" : "") + "'><i style='width:" + r.pct + "%'></i></div>" +
+          "<div>" + r.ok + "/" + r.total + "</div></div>";
+      }).join("");
+      const p = score / QUESTIONS.length;
+      let faixa = "Faixa fundamento: volte ao caderno e ao glossário. Sem o modelo, o resto é memorização.";
+      if (p >= 0.9) faixa = "Faixa Lead: o modelo está no sangue. Polir o tema mais fraco e ensinar o time.";
+      else if (p >= 0.75) faixa = "Faixa pleno forte: você aguenta a mesa. Os gaps abaixo são o que um Lead vai cutucar.";
+      else if (p >= 0.55) faixa = "Faixa pleno em construção: vocabulário existe, julgamento ainda fura. Estude os temas em laranja.";
+      resultEl.style.display = "block";
+      resultEl.innerHTML =
+        "<div class='callout'><strong>" + score + " de " + QUESTIONS.length + ".</strong> " + faixa + "</div>" +
+        "<h3>Mapa de gaps por tema</h3>" + bars + gapHtml;
+    }
+
+    function render() {
+      const state = load();
+      resultEl.style.display = "none";
+      resultEl.innerHTML = "";
+      if (state.i >= QUESTIONS.length) {
+        showResult(state);
+        return;
+      }
+      backBtn.style.display = state.i > 0 ? "" : "none";
+      const item = QUESTIONS[state.i];
+      const topic = TOPICS[item.t];
+      const chosen = state.a[state.i];
+      const n = answeredCount(state);
+      countEl.textContent = "Pergunta " + (state.i + 1) + " de " + QUESTIONS.length;
+      barEl.style.width = Math.round((n / QUESTIONS.length) * 100) + "%";
+      const opts = item.o.map(function (text, j) {
+        const on = String(chosen) === String(j);
+        return "<label class='" + (on ? "picked" : "") + "'><input type='radio' name='qnow' value='" + j + "'" +
+          (on ? " checked" : "") + " /> " + text + "</label>";
+      }).join("");
+      root.innerHTML = "<article class='qcard'>" +
+        "<div class='qnum'>Pergunta " + (state.i + 1) + " · " + topic.name + "</div>" +
+        "<h3>" + item.q + "</h3>" +
+        "<div class='opts'>" + opts + "</div>" +
+        "</article>";
+    }
+
+    root.addEventListener("change", function (ev) {
+      const input = ev.target;
+      if (!input || input.name !== "qnow") return;
+      const state = load();
+      if (state.i >= QUESTIONS.length) return;
+      state.a[state.i] = Number(input.value);
+      state.i += 1;
+      save(state);
+      render();
+      document.getElementById("simulador").scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+
+    backBtn.addEventListener("click", function () {
+      const state = load();
+      if (state.i <= 0) return;
+      state.i -= 1;
+      save(state);
+      render();
+    });
+
+    document.getElementById("quiz-reset").addEventListener("click", function () {
+      localStorage.removeItem(STORE);
+      render();
+      window.location.hash = "simulador";
+    });
+
+    render();
+  </script>
 </body>
 </html>
