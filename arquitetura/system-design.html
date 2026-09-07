@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>System design — Arquitetura</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../trilhas.css" />
+  
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <p class="crumb"><a href="../index.html">Trilhas</a> · <a href="index.html">Arquitetura</a></p>
+      <div class="eyebrow">Trilha 7 · Arquitetura</div>
+      <h1>Semanas 6–8 — System design</h1>
+      
+    </header>
+    <nav class="toc" aria-label="Índice"><a href="index.html">Início</a>
+      <a href="fundamentos.html">Fundamentos</a>
+      <a href="semana-1.html">Semana 1</a>
+      <a href="semana-2.html">Semana 2</a>
+      <a href="semana-3.html">Semana 3</a>
+      <a href="semana-4.html">Semana 4</a>
+      <a href="semana-5.html">Semana 5</a>
+      <a href="system-design.html">Design 6–8</a>
+      <a href="staff.html">Nível Staff</a>
+      <a href="catalogo.html">Catálogo</a>
+      <a href="referencia.html">Arquiteto</a>
+      <a href="simulador.html">Simulador</a></nav>
+    <section id="s6" class="week">
+      <h2>Semanas 6–8 — System design</h2>
+      <p>
+        Um sistema por semana, 45 min cronometrados, falando em voz alta.
+        Antes do primeiro desenho: recitar o glossário. Se travar, não desenhe ainda.
+      </p>
+
+      <h3>Framework de resposta (45 min)</h3>
+      <table class="compare">
+        <thead>
+          <tr><th>Min</th><th>Bloco</th><th>O que o arquiteto faz</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>5</td>
+            <td>Requisitos</td>
+            <td>Funcionais e não-funcionais. <strong>Fazer perguntas</strong> — o entrevistador espera isso e desconta de quem sai desenhando. Quantos usuários? Leitura ou escrita pesada? Latência aceitável? Consistência forte é obrigatória? Várias regiões?</td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td>Estimativas</td>
+            <td>QPS, volume por dia/ano, banda. Ordem de grandeza basta — para justificar depois (“são 50k escritas/s, um único Postgres não aguenta, então…”).</td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td>API</td>
+            <td>Poucos endpoints, contratos claros, idempotência onde o efeito não pode duplicar.</td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td>Modelo de dados</td>
+            <td>Escolha do armazenamento <strong>com justificativa</strong>. Chave de shard se precisar.</td>
+          </tr>
+          <tr>
+            <td>10</td>
+            <td>Alto nível</td>
+            <td>Cliente → gateway → serviços → cache/banco/fila. Dono do dado marcado.</td>
+          </tr>
+          <tr>
+            <td>10</td>
+            <td>Aprofundar 1–2 pontos</td>
+            <td>Deixar o entrevistador escolher, ou apontar o gargalo mais interessante.</td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td>Gargalos e trade-offs</td>
+            <td>Ponto único de falha, hot partition, o que quebra se o tráfego dobrar, o que você faria diferente com mais tempo.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Sistemas para praticar</h3>
+      <table>
+        <thead>
+          <tr><th>#</th><th>Sistema</th><th>O que ele exercita</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td>Encurtador de URL</td><td>Geração de ID, cache, leitura pesada, sharding</td></tr>
+          <tr><td>2</td><td>Rate limiter</td><td>Token bucket, estado distribuído, Redis</td></tr>
+          <tr><td>3</td><td>Feed de rede social</td><td>Fan-out on write vs on read, hot user</td></tr>
+          <tr><td>4</td><td>Sistema de notificações</td><td>Filas, retry, DLT, idempotência</td></tr>
+          <tr><td>5</td><td><strong>Processador de pagamento</strong></td><td>Saga, Outbox, idempotência, consistência — casa com o stack da trilha</td></tr>
+          <tr><td>6</td><td>Chat em tempo real</td><td>WebSocket, presença, ordenação de mensagens</td></tr>
+          <tr><td>7</td><td>Upload e processamento de arquivo</td><td>Storage, processamento assíncrono, status</td></tr>
+          <tr><td>8</td><td>Sistema de reservas (assentos)</td><td>Concorrência, lock, consistência forte</td></tr>
+        </tbody>
+      </table>
+      <p>Para cada um: desenhar no papel, gravar a explicação em áudio, ouvir depois. Desconfortável e altamente eficaz.</p>
+      <div class="warn">
+        Sem o glossário na ponta da língua (latência, p99, CAP, quando <em>não</em> microsserviço), o desenho vira teatro. Recite antes.
+      </div>
+      <article class="term">
+        <h3>Perguntas-síntese (as que mais aparecem)</h3>
+        <ul class="tight">
+          <li>Descreva a arquitetura do sistema em que você trabalha hoje, com os trade-offs, em 3 minutos. <em>A abertura mais comum em entrevista sênior. Precisa estar ensaiada.</em></li>
+          <li>Qual foi a decisão de arquitetura mais difícil que você tomou e por quê?</li>
+          <li>Conte um incidente de produção que você resolveu — da detecção ao post-mortem.</li>
+          <li>O que você faria diferente se recomeçasse o projeto atual?</li>
+          <li>Como você convence o time a adotar (ou a não adotar) uma tecnologia nova?</li>
+          <li>Um serviço está com p99 de 3 segundos. Descreva sua investigação passo a passo.</li>
+          <li>Como você garante que um sistema distribuído não perca dado?</li>
+          <li>Eventual vs inconsistente — dê um exemplo de cada no seu domínio.</li>
+        </ul>
+      </article>
+      <article class="term">
+        <h3>Checklist de fluência (60 segundos)</h3>
+        <ul class="tight">
+          <li>Arquitetura = decisão cara de reverter</li>
+          <li>Latência vs throughput vs p99</li>
+          <li>CAP só durante partição; PACELC no dia a dia</li>
+          <li>Eventual ≠ invariante quebrada</li>
+          <li>Timeout primeiro na resiliência</li>
+          <li>Quando <strong>não</strong> microsserviço</li>
+          <li>Banco por serviço; Outbox; Saga</li>
+          <li>Log / métrica / trace</li>
+          <li>System design: perguntar requisitos antes de desenhar</li>
+        </ul>
+      </article>
+    </section>
+    <nav class="pager"><a href="semana-5.html">← Semana 5</a><a class="next" href="staff.html">Nível Staff →</a></nav>
+    <footer>
+      Baseado no plano da Trilha 7 — Arquitetura e Microsserviços (8 semanas, sessão longa no sábado + leitura).
+      Pré-requisito útil: trilhas de Kafka e Kubernetes já em andamento.
+      Recursos: Designing Data-Intensive Applications (Kleppmann); Building Microservices (Sam Newman, 2ª ed.); microservices.io (Chris Richardson); Fundamentals of Software Architecture (Richards &amp; Ford); modelo C4 em c4model.com.
+    </footer>
+  </div>
+  
+</body>
+</html>

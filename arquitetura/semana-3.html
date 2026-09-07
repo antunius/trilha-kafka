@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Semana 3 — Arquitetura</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../trilhas.css" />
+  
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <p class="crumb"><a href="../index.html">Trilhas</a> · <a href="index.html">Arquitetura</a></p>
+      <div class="eyebrow">Trilha 7 · Arquitetura</div>
+      <h1>Semana 3 — Decomposição</h1>
+      
+    </header>
+    <nav class="toc" aria-label="Índice"><a href="index.html">Início</a>
+      <a href="fundamentos.html">Fundamentos</a>
+      <a href="semana-1.html">Semana 1</a>
+      <a href="semana-2.html">Semana 2</a>
+      <a href="semana-3.html">Semana 3</a>
+      <a href="semana-4.html">Semana 4</a>
+      <a href="semana-5.html">Semana 5</a>
+      <a href="system-design.html">Design 6–8</a>
+      <a href="staff.html">Nível Staff</a>
+      <a href="catalogo.html">Catálogo</a>
+      <a href="referencia.html">Arquiteto</a>
+      <a href="simulador.html">Simulador</a></nav>
+    <section id="s3" class="week">
+      <h2>Semana 3 — Decomposição em serviços</h2>
+      <p>
+        Comece por <strong>quando você não usaria microsserviços</strong> — é a resposta madura.
+        Microsserviço é solução organizacional que cobra preço técnico alto.
+      </p>
+      <div class="sessions">
+        <article>
+          <div class="tag">Sessão 1</div>
+          <h4>Quando não</h4>
+          <p>Time pequeno, domínio instável, produto sem escala. Ensaie a frase do monolito modular em voz alta.</p>
+        </article>
+        <article>
+          <div class="tag">Sessão 2</div>
+          <h4>Fronteiras</h4>
+          <p>Bounded context: Pedido no checkout ≠ Pedido no fiscal. Se toda feature muda três repos, a fronteira está errada.</p>
+        </article>
+        <article>
+          <div class="tag">Sessão 3</div>
+          <h4>Migração</h4>
+          <p>Strangler Fig. Dado compartilhado via eventos, nunca tabela do outro. Nunca big bang rewrite.</p>
+        </article>
+      </div>
+      <div class="ok">
+        <strong>No fim da semana você consegue:</strong>
+        recusar microsserviço com argumento; definir fronteira por capacidade; defender banco por serviço; explicar Strangler; duplicação controlada; bounded context numa frase.
+      </div>
+
+      <details>
+        <summary>Quando você não usaria microsserviços? ⭐</summary>
+        <p>Time pequeno, domínio ainda instável, produto sem escala que justifique. Microsserviço é uma solução <strong>organizacional</strong> (times deployarem independentemente) que cobra um preço <strong>técnico</strong> alto: latência de rede, consistência distribuída, observabilidade, complexidade de deploy, debug muito mais difícil. <strong>Monolito modular</strong> é a escolha padrão correta na maioria dos casos, e permite extrair serviços depois, quando as fronteiras estiverem claras.</p>
+      </details>
+      <details>
+        <summary>Como você define as fronteiras de um serviço?</summary>
+        <p>Por <strong>capacidade de negócio</strong> / bounded context do DDD — o que muda junto fica junto. Nunca por camada técnica (serviço-de-banco, serviço-de-API) nem por entidade isolada. Indicador prático: se toda feature exige alterar três serviços ao mesmo tempo, as fronteiras estão erradas.</p>
+      </details>
+      <details>
+        <summary>Por que cada serviço deve ter seu próprio banco?</summary>
+        <p>Porque banco compartilhado torna o schema um contrato implícito entre times — ninguém consegue evoluir sem quebrar o outro, e a independência de deploy (única justificativa de microsserviço) desaparece. Banco compartilhado + serviços separados = <strong>monolito distribuído</strong>, o pior dos dois mundos.</p>
+      </details>
+      <details>
+        <summary>Como migrar um monolito para serviços?</summary>
+        <p><strong>Strangler Fig:</strong> colocar um roteamento na frente do monolito e extrair funcionalidade por funcionalidade, redirecionando as rotas conforme cada pedaço fica pronto. Começar pelo que tem fronteira mais clara e menos acoplamento de dados. Nunca big bang rewrite.</p>
+      </details>
+      <details>
+        <summary>Como você lida com dado que dois serviços precisam?</summary>
+        <p>Duplicação controlada via eventos: o serviço dono publica mudanças e os outros mantêm uma cópia local somente-leitura, aceitando consistência eventual. Alternativa é consulta síncrona (mais simples, mais acoplada). O que não vale é acessar a tabela do outro.</p>
+      </details>
+      <details>
+        <summary>O que é bounded context, numa frase?</summary>
+        <p>Um recorte do domínio onde as palavras têm um significado estável (Pedido no checkout ≠ Pedido no fiscal) e o modelo pode evoluir sem vazar para o outro recorte.</p>
+      </details>
+      <div class="callout">
+        <strong>Exercício.</strong>
+        Pegue o sistema em que você trabalha. Liste três mudanças recentes. Se cada uma tocou os mesmos três repositórios, você não tem microsserviços — tem um monolito com YAML. Anote o bounded context que você extrairia primeiro e o dado que travaria a extração.
+      </div>
+    </section>
+    <nav class="pager"><a href="semana-2.html">← Semana 2</a><a class="next" href="semana-4.html">Semana 4 · Dados →</a></nav>
+    <footer>
+      Baseado no plano da Trilha 7 — Arquitetura e Microsserviços (8 semanas, sessão longa no sábado + leitura).
+      Pré-requisito útil: trilhas de Kafka e Kubernetes já em andamento.
+      Recursos: Designing Data-Intensive Applications (Kleppmann); Building Microservices (Sam Newman, 2ª ed.); microservices.io (Chris Richardson); Fundamentals of Software Architecture (Richards &amp; Ford); modelo C4 em c4model.com.
+    </footer>
+  </div>
+  
+</body>
+</html>

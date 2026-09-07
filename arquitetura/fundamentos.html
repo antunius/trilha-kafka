@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Fundamentos — Arquitetura</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../trilhas.css" />
+  
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <p class="crumb"><a href="../index.html">Trilhas</a> · <a href="index.html">Arquitetura</a></p>
+      <div class="eyebrow">Trilha 7 · Arquitetura</div>
+      <h1>Ideia, mapa e glossário</h1>
+      <p class="lede">Leia isto antes de desenhar caixas. Sem o vocabulário, CAP e Saga viram podcast.</p>
+    </header>
+    <nav class="toc" aria-label="Índice"><a href="index.html">Início</a>
+      <a href="fundamentos.html">Fundamentos</a>
+      <a href="semana-1.html">Semana 1</a>
+      <a href="semana-2.html">Semana 2</a>
+      <a href="semana-3.html">Semana 3</a>
+      <a href="semana-4.html">Semana 4</a>
+      <a href="semana-5.html">Semana 5</a>
+      <a href="system-design.html">Design 6–8</a>
+      <a href="staff.html">Nível Staff</a>
+      <a href="catalogo.html">Catálogo</a>
+      <a href="referencia.html">Arquiteto</a>
+      <a href="simulador.html">Simulador</a></nav>
+    <section id="ideia">
+      <h2>A ideia central (leia isto primeiro)</h2>
+      <p>
+        Arquitetura é o conjunto de decisões <strong>caras de reverter</strong>:
+        onde está o dado, quem fala com quem, o que acontece se um pedaço cair.
+        Não é diagrama bonito nem “quantos microsserviços”. Sem o vocabulário do zero
+        (latência, consistência, serviço, contrato), CAP e Saga viram palavras de podcast.
+      </p>
+      <div class="grid2">
+        <article class="term">
+          <div class="tag">Resposta fraca</div>
+          <h3>Sai desenhando caixas</h3>
+          <p>Assume milhões de usuários, desenha dez serviços, põe Kafka e Redis “porque escala”, e não pergunta se o débito pode aparecer 2 segundos atrasado. Recita CAP como se fosse clima: “eu escolho AP”.</p>
+        </article>
+        <article class="term">
+          <div class="tag">Resposta madura</div>
+          <h3>Pergunta, justifica, nomeia o custo</h3>
+          <p>Quantos usuários? Leitura ou escrita? p99 aceitável? Consistência forte é obrigatória? Depois escolhe. Toda seta no desenho tem um preço: lote ↑ throughput ↓ latência; microsserviço ↑ autonomia ↓ debug; cache ↑ velocidade ↓ dado velho.</p>
+        </article>
+      </div>
+      <div class="callout">
+        <strong>Régua da mesa de arquiteto.</strong>
+        Júnior descreve o que o sistema faz. Pleno descreve como as peças se falam.
+        Arquiteto descreve o que <em>não</em> pode quebrar, o que custa reverter, e o que você faria diferente com mais tempo — em voz alta, com números de ordem de grandeza.
+      </div>
+    </section>
+
+<section id="curriculo">
+      <h2>Mapa do currículo de system design</h2>
+      <p>
+        Cursos tipo “The System Design Interview” são um <strong>catálogo de peças</strong>.
+        Esta trilha é o <strong>julgamento</strong>: o que perguntar, o que recusar, o custo de cada seta.
+        As peças profundas de Kafka, Kubernetes e paginação no Spring continuam nas trilhas irmãs — aqui entra a ponte e o que faltava no desenho.
+      </p>
+      <table class="compare">
+        <thead>
+          <tr><th>Bloco do curso</th><th>Onde está</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Basics: template, desafios web-scale, como escalar, study guide</td>
+            <td>Esta página: <a href="#ideia">ideia</a>, <a href="system-design.html#s6">semanas 6–8</a>, <a href="catalogo.html#escala">como cresce</a>, simulador</td>
+          </tr>
+          <tr>
+            <td>API: intro, exemplo, paginação, authn/authz, gateway</td>
+            <td>Gateway/BFF na <a href="semana-2.html#s2">semana 2</a>. Paginação, authn/authz, gateway vs LB em <a href="catalogo.html#api">API de contrato</a>. Keyset também na trilha Spring</td>
+          </tr>
+          <tr>
+            <td>NFR: HA, latência, throughput, componentes, stacks de HA</td>
+            <td><a href="#latencia">Glossário</a>, <a href="staff.html#sre">noves / error budget</a>, <a href="staff.html#escala-falha">células e multi-região</a>, <a href="catalogo.html#escala">LB e multi-AZ</a></td>
+          </tr>
+          <tr>
+            <td>Resource estimation: QPS, envelope, exemplos</td>
+            <td><a href="system-design.html#s6">Framework 45 min</a> + <a href="staff.html#sre">capacidade</a></td>
+          </tr>
+          <tr>
+            <td>Microservices vs monolito</td>
+            <td><a href="semana-3.html#s3">Semana 3</a> (quando não usar)</td>
+          </tr>
+          <tr>
+            <td>Sync: timeout, retry, breaker, fallback, discovery</td>
+            <td><a href="semana-2.html#s2">Semana 2</a>. Discovery / Service / Ingress: trilha Kubernetes</td>
+          </tr>
+          <tr>
+            <td>Async: filas, Redis queue, Kafka, labs</td>
+            <td>Quando usar: <a href="#sync">glossário</a> + <a href="catalogo.html#dataflow">fluxo</a>. Profundidade e lab: <a href="../kafka/">trilha Kafka</a>. Redis como fila: não tutorial — ver <a href="catalogo.html#dataflow">two-stage</a></td>
+          </tr>
+          <tr>
+            <td>Horizontal scaling: stateless, LB, auto-scale</td>
+            <td><a href="catalogo.html#escala">Como um sistema cresce</a>. HPA: trilha Kubernetes</td>
+          </tr>
+          <tr>
+            <td>Read-write split e CQRS</td>
+            <td>Réplica: <a href="#repl">glossário</a> + <a href="catalogo.html#escala">escala</a>. CQRS: <a href="semana-4.html#s4">semana 4</a></td>
+          </tr>
+          <tr>
+            <td>Caching (camadas, CDN, chave, eviction, HA, cold start)</td>
+            <td>Básico na semana 1. Completo em <a href="catalogo.html#cache-camadas">cache em camadas</a></td>
+          </tr>
+          <tr>
+            <td>Dataflow push vs pull / timeline</td>
+            <td><a href="catalogo.html#dataflow">Fluxo de dados</a> + walkthrough de <a href="staff.html#reservas">feed</a></td>
+          </tr>
+          <tr>
+            <td>Storage: SQL/NoSQL, KV, doc, search, blob, OLTP/OLAP, B-tree, LSM</td>
+            <td>SQL vs NoSQL na semana 1. Miolo em <a href="catalogo.html#storage">por dentro do storage</a></td>
+          </tr>
+          <tr>
+            <td>Replicação, CDC, failover</td>
+            <td><a href="staff.html#consistencia-real">Quorum</a>, Outbox/CDC na <a href="semana-4.html#s4">semana 4</a> e <a href="catalogo.html#dataflow">fluxo</a>. Kafka Connect: trilha Kafka</td>
+          </tr>
+          <tr>
+            <td>Particionamento, consistent hashing, IDs</td>
+            <td>Sharding na semana 1. Hashing + Snowflake em <a href="catalogo.html#particionar">particionar de verdade</a></td>
+          </tr>
+          <tr>
+            <td>Batch/stream: Spark, Flink, watermarks, Lambda/Kappa, ETL, backfill</td>
+            <td>Nível arquiteto em <a href="catalogo.html#pipeline">batch e stream</a>. Replay/DLT: trilha Kafka. Labs Spark/Flink: fora desta página</td>
+          </tr>
+          <tr>
+            <td>Padrões: rate limit, fan-out, saga, ID, two-stage, cache-first</td>
+            <td>Saga/outbox/feed já existiam. Rate limit + comentários em <a href="catalogo.html#rate-limit">abaixo</a></td>
+          </tr>
+          <tr>
+            <td>Template: comentários em rede social</td>
+            <td><a href="catalogo.html#comentarios">Walkthrough comentários</a></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="ok">
+        Labs (Redis queue tutorial, load-balancing codelab, cache drills, Kafka exercise) não são copiados aqui.
+        Exercício de Kafka: <a href="../kafka/">trilha-kafka.html</a>. Service, Ingress, HPA: trilha Kubernetes.
+      </div>
+    </section>
+
+<section id="mapa">
+      <h2>O mapa mental: o caminho que o usuário sente</h2>
+      <p>
+        Comece pelo que a pessoa sente (latência, erro, dado errado) e desça.
+        Cada camada é uma decisão de fronteira, não um carimbo de tecnologia.
+      </p>
+      <ol class="flow" aria-label="Caminho que o usuário sente">
+        <li>
+          <span class="kicker">1 · Quem sente</span>
+          <strong>Usuário</strong>
+          <span class="hint">A entrevista começa aqui, não no desenho do Kafka.</span>
+        </li>
+        <li>
+          <span class="kicker">2 · O que ele sente</span>
+          <strong>Latência / SLO</strong>
+          <span class="hint">p99, erro, dado errado — não a média do Grafana.</span>
+        </li>
+        <li>
+          <span class="kicker">3 · Entrada</span>
+          <strong>API / gateway</strong>
+          <span class="hint">Contrato, auth, rate limit. Não é a regra de checkout.</span>
+        </li>
+        <li>
+          <span class="kicker">4 · Fronteira</span>
+          <strong>Serviços</strong>
+          <span class="hint">Capacidade de negócio, não pasta no Git.</span>
+        </li>
+        <li>
+          <span class="kicker">5 · Dono do dado</span>
+          <strong>Dados + cache + filas</strong>
+          <span class="hint">Onde mora a verdade, o atalho e o recado.</span>
+        </li>
+        <li>
+          <span class="kicker">6 · Quando cai</span>
+          <strong>Falha</strong>
+          <span class="hint">Timeout, retry, breaker, degradação — nesta ordem.</span>
+        </li>
+      </ol>
+      <div class="cols" aria-label="Três custos típicos">
+        <div class="col">
+          <h4>Lote / batch</h4>
+          <div class="msg">↑ throughput</div>
+          <div class="msg">↓ latência da primeira mensagem</div>
+          <p>Kafka <code>linger.ms</code>, flush de disco, agregação. Peça o requisito: “é p99 de 50ms ou 50k writes/s?”</p>
+        </div>
+        <div class="col">
+          <h4>Microsserviço</h4>
+          <div class="msg">↑ autonomia de time</div>
+          <div class="msg">↓ simplicidade de debug</div>
+          <p>Preço técnico alto. Escolha organizacional. Monolito modular é o default até o domínio e o time pedirem outra coisa.</p>
+        </div>
+        <div class="col">
+          <h4>Cache</h4>
+          <div class="msg">↑ velocidade</div>
+          <div class="msg">↓ risco de dado velho</div>
+          <p>Stampede, hot key, invalidação. A pergunta madura: “qual o custo de mostrar 2 segundos atrasado?”</p>
+        </div>
+      </div>
+      <div class="ok">
+        <strong>Memorize o caminho, não o stack.</strong>
+        Na entrevista você desenha esse esqueleto em 30 segundos. Tecnologia entra só depois dos requisitos.
+      </div>
+    </section>
+
+<section id="glossario">
+      <h2>Glossário do zero</h2>
+      <p>
+        Cada cartão: o que é, analogia, para que serve, erro comum.
+        Recite em voz alta. Se travar no system design, volte aqui — não desenhe ainda.
+      </p>
+
+      <article class="term" id="sistema">
+        <div class="tag">Vocabulário</div>
+        <h3>Sistema, componente e fronteira</h3>
+        <p class="analogy">Analogia: o restaurante inteiro é o sistema. A cozinha é um componente. O cardápio é o contrato: o cliente não entra na geladeira.</p>
+        <p><strong>Sistema</strong> é o todo que entrega uma capacidade (“cobrar e confirmar pedido”). <strong>Componente / serviço</strong> é um processo deployável com fronteira: API ou tópico que outros usam. Dentro você muda à vontade; do lado de fora, o contrato é lei. <strong>Contrato</strong> é o que o consumidor pode assumir: campos, semântica, erros, idempotência, versão. Quebrar contrato é incidente, mesmo com código “certo” no produtor.</p>
+        <div class="warn">Erro comum: tratar “serviço” como pasta no repositório. Sem fronteira de deploy e de dado, é módulo com DNS.</div>
+      </article>
+
+      <article class="term" id="latencia">
+        <div class="tag">Vocabulário</div>
+        <h3>Latência, throughput e percentil</h3>
+        <p class="analogy">Analogia: latência é o tempo da sua vez no caixa. Throughput é quantas pessoas o supermercado atende por hora. Média esconde a fila do caixa lento.</p>
+        <p><strong>Latência</strong> é o tempo de <em>uma</em> operação (ida e volta). <strong>Throughput</strong> é quantas operações por unidade de tempo. <strong>p99</strong> = 99% das requests abaixo daquele valor; a cauda é o 1% restante. SLO se escreve em percentil + recorte de tempo. Melhorar um pode piorar o outro.</p>
+        <div class="warn">Erro comum: otimizar a média. Usuários com mais dados (os mais valiosos) costumam estar na cauda.</div>
+      </article>
+
+      <article class="term" id="disponibilidade">
+        <div class="tag">Vocabulário</div>
+        <h3>Disponibilidade e consistência</h3>
+        <p class="analogy">Analogia: loja aberta (disponível) versus o estoque no sistema bater com a prateleira (consistente). Abrir com etiqueta errada não é “eventual” — é mentira se nunca corrige.</p>
+        <p><strong>Disponibilidade</strong> é a fração do tempo em que o sistema responde de forma útil. Dois noves (99%) ≠ três noves (99,9%) — a diferença é ordem de grandeza de downtime. <strong>Consistência forte</strong>: depois do write, o read vê o novo valor (num modelo simples). <strong>Eventual</strong>: réplicas convergem; por um tempo podem divergir. <strong>Inconsistente de verdade</strong>: não converge, ou viola invariante (cobrou duas vezes e os dois commits ficaram). Eventual não é desculpa para invariante quebrada — é atraso até convergir.</p>
+      </article>
+
+      <article class="term" id="cap">
+        <div class="tag">Vocabulário</div>
+        <h3>CAP e PACELC</h3>
+        <p class="analogy">Analogia: o telefone entre duas filiais caiu (partição). Você fecha o caixa até a linha voltar (C) ou vende mesmo sem saber o estoque da outra loja (A). No dia ensolarado o telefone funciona — aí o dilema é outro: esperar a outra loja confirmar (lento e coerente) ou responder já (rápido e talvez velho).</p>
+        <p><strong>Partição</strong>: pedacinhos do sistema não se falam. <strong>CAP</strong> só vale <em>durante partição</em>: consistência (recusar) ou disponibilidade (responder talvez com dado velho). <strong>PACELC</strong>: sem partição, o trade-off cotidiano é latência vs consistência (replicar síncrono é mais lento e mais coerente).</p>
+        <div class="warn">Erro comum: dizer “escolhi AP” sem mencionar que a partição é o gatilho. É decoreba.</div>
+      </article>
+
+      <article class="term" id="acid">
+        <div class="tag">Vocabulário</div>
+        <h3>ACID (um banco) vs mundo distribuído</h3>
+        <p class="analogy">Analogia: um caixa único consegue desfazer a venda inteira. Dois caixas em lojas diferentes não compartilham a mesma borracha — cada um anota o seu e depois alguém reconcilia.</p>
+        <p>ACID (atomicidade, consistência de invariantes do <em>banco</em>, isolamento, durabilidade) vale no <strong>mesmo</strong> resource manager. Dois bancos, ou banco + Kafka: não há transação mágica. Aí entram Outbox, Saga, idempotência.</p>
+      </article>
+
+      <article class="term" id="monolito">
+        <div class="tag">Vocabulário</div>
+        <h3>Monolito, módulo e microsserviço</h3>
+        <p class="analogy">Analogia: uma casa com cômodos bem separados (monolito modular) versus um condomínio em que cada apartamento tem chave, conta de luz e geladeira próprias (serviço). O pior: apartamentos separados que compartilham a mesma geladeira (monolito distribuído).</p>
+        <p><strong>Monolito</strong>: um deploy. Pode ser modular — escolha padrão até o domínio e o time pedirem outra coisa. <strong>Microsserviço</strong>: deploy independente, banco próprio, time capaz de operar. Preço: rede, observabilidade, consistência distribuída. <strong>Monolito distribuído</strong>: vários deploys <em>e</em> banco compartilhado / features que sempre mudam três repos juntos.</p>
+      </article>
+
+      <article class="term" id="sync">
+        <div class="tag">Vocabulário</div>
+        <h3>Síncrono vs assíncrono</h3>
+        <p class="analogy">Analogia: ligar e esperar a pessoa atender versus deixar um recado no caderno. Ligação é simples; se o outro caiu, você cai junto. Recado absorve pico; a resposta chega depois.</p>
+        <p>REST/gRPC: chamou, esperou. Simples; <strong>acopla disponibilidade</strong>. Fila/log: publicou um fato; o outro processa depois. Consistência eventual; rastreio mais difícil. Regra prática: consulta que o usuário espera → síncrono; efeito colateral e fato consumado → assíncrono.</p>
+      </article>
+
+      <article class="term" id="cache">
+        <div class="tag">Vocabulário</div>
+        <h3>Cache</h3>
+        <p class="analogy">Analogia: um post-it na mesa com o preço do café. Mais rápido que ir ao estoque. Se o preço mudou e ninguém rasgou o post-it, você mente para o cliente.</p>
+        <p><strong>Cache-aside</strong>: app pergunta no cache; miss → banco → preenche. <strong>Write-through</strong>: escreve nos dois — consistente, mais lento. <strong>Write-behind</strong>: escreve no cache e persiste depois — rápido, arriscado. Riscos: stampede (TTL estoura, mil vão ao banco), hot key, invalidação (o problema difícil).</p>
+      </article>
+
+      <article class="term" id="repl">
+        <div class="tag">Vocabulário</div>
+        <h3>Replicação vs sharding</h3>
+        <p class="analogy">Analogia: fotocópia do mesmo livro (lê mais, um exemplar pode queimar) versus fatiar a enciclopédia por letra (escreve mais; a letra A vira inferno se todo mundo se chama Ana).</p>
+        <p>Replicação resolve <strong>leitura</strong> e falha de um nó; o custo é <em>replication lag</em> (“gravei e não vejo”). Sharding resolve <strong>escrita</strong> e volume; chave ruim = hot shard e query cross-shard. A escolha da chave é a decisão mais difícil.</p>
+      </article>
+
+      <article class="term" id="indice">
+        <div class="tag">Vocabulário</div>
+        <h3>Índice</h3>
+        <p class="analogy">Analogia: o índice remissivo do livro acelera <em>aquele</em> tipo de busca e deixa a edição mais lenta — cada página nova precisa atualizar o índice.</p>
+        <p>Acelera leitura; atrasa escrita; ocupa espaço. Índice composto segue a ordem das colunas da query. Índice não usado é só custo.</p>
+      </article>
+
+      <article class="term" id="resiliencia">
+        <div class="tag">Vocabulário</div>
+        <h3>Resiliência (a ordem que importa)</h3>
+        <p class="analogy">Analogia: primeiro o despertador (timeout). Depois tentar de novo com espera aleatória. Depois parar de ligar para o morto (breaker). Depois não deixar um telefone ocupar todas as linhas (bulkhead). Por último, atender com o cardápio de ontem (fallback).</p>
+        <ol>
+          <li><strong>Timeout</strong> — sem ele, thread presa para sempre.</li>
+          <li><strong>Retry + backoff + jitter</strong> — só erro transitório + operação idempotente.</li>
+          <li><strong>Circuit breaker</strong> — para de martelar o morto.</li>
+          <li><strong>Bulkhead</strong> — pool isolado por dependência.</li>
+          <li><strong>Fallback</strong> — degradar em vez de 500.</li>
+        </ol>
+        <div class="warn">Retry sem limite e sem breaker transforma degradação em queda total. Retry em operação não-idempotente duplica cobrança.</div>
+      </article>
+
+      <article class="term" id="observabilidade">
+        <div class="tag">Vocabulário</div>
+        <h3>Observabilidade, SLI, SLO</h3>
+        <p class="analogy">Analogia: o painel do carro (métrica) diz que está ruim. O GPS do percurso (trace) diz onde. O diário de bordo (log) diz por quê.</p>
+        <p><strong>Log</strong>: um evento, com contexto (<code>traceId</code>). <strong>Métrica</strong>: número no tempo (barata, agregada). RED: Rate, Errors, Duration. <strong>Trace</strong>: o caminho da request entre serviços. <strong>SLI</strong> é a medida; <strong>SLO</strong> é a meta; <strong>error budget</strong> é quanto de falha o produto aceita no período.</p>
+      </article>
+
+      <article class="term" id="padroes">
+        <div class="tag">Vocabulário</div>
+        <h3>Saga, Outbox, CQRS, Event Sourcing</h3>
+        <p class="analogy">Analogia: nomes de ferramentas, não religião. Martelo não prova que o problema era prego.</p>
+        <p><strong>Saga</strong>: passos locais + compensação (não há rollback distribuído). Coreografia (eventos) vs orquestração (maestro). <strong>Outbox</strong>: evento na mesma transação do dado; publicador depois. <strong>CQRS</strong>: modelo de escrita ≠ modelo de leitura — caro; só quando os requisitos divergem de verdade. <strong>Event Sourcing</strong>: estado = replay de eventos. Auditoria incrível; custo operacional alto. Raro.</p>
+      </article>
+    </section>
+    <nav class="pager"><span></span><a class="next" href="semana-1.html">Semana 1 · Fundamentos →</a></nav>
+    <footer>
+      Baseado no plano da Trilha 7 — Arquitetura e Microsserviços (8 semanas, sessão longa no sábado + leitura).
+      Pré-requisito útil: trilhas de Kafka e Kubernetes já em andamento.
+      Recursos: Designing Data-Intensive Applications (Kleppmann); Building Microservices (Sam Newman, 2ª ed.); microservices.io (Chris Richardson); Fundamentals of Software Architecture (Richards &amp; Ford); modelo C4 em c4model.com.
+    </footer>
+  </div>
+  
+</body>
+</html>

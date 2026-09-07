@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nível Staff — Arquitetura</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../trilhas.css" />
+  
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <p class="crumb"><a href="../index.html">Trilhas</a> · <a href="index.html">Arquitetura</a></p>
+      <div class="eyebrow">Trilha 7 · Arquitetura</div>
+      <h1>Nível big tech</h1>
+      <p class="lede">O que a mesa de Staff cobra além do glossário clássico.</p>
+    </header>
+    <nav class="toc" aria-label="Índice"><a href="index.html">Início</a>
+      <a href="fundamentos.html">Fundamentos</a>
+      <a href="semana-1.html">Semana 1</a>
+      <a href="semana-2.html">Semana 2</a>
+      <a href="semana-3.html">Semana 3</a>
+      <a href="semana-4.html">Semana 4</a>
+      <a href="semana-5.html">Semana 5</a>
+      <a href="system-design.html">Design 6–8</a>
+      <a href="staff.html">Nível Staff</a>
+      <a href="catalogo.html">Catálogo</a>
+      <a href="referencia.html">Arquiteto</a>
+      <a href="simulador.html">Simulador</a></nav>
+    <section id="bigtech" class="week">
+      <h2>Nível big tech — o que a mesa de Staff cobra</h2>
+      <p>
+        As oito semanas cobrem a entrevista clássica. Daqui para baixo é o vocabulário
+        de quem escreve RFC, defende ADR em comitê e desenha blast radius para milhões de usuários.
+        Ainda analogia primeiro; o jargão entra depois de ter nomeado o custo.
+      </p>
+
+      <h3 id="decide">Como um arquiteto decide</h3>
+      <p>
+        Tecnologia é consequência. Primeiro as <strong>características arquiteturais</strong>
+        (Richards &amp; Ford): o que o sistema precisa ser, mensurável, não “escalável” como slogan.
+      </p>
+      <div class="grid2">
+        <article class="term">
+          <div class="tag">Características</div>
+          <h3>O que você prioriza — e o que sacrifica</h3>
+          <ul class="tight">
+            <li><strong>Availability / latency</strong> — SLO do usuário, não uptime do pod.</li>
+            <li><strong>Scalability</strong> — eixo de leitura, escrita ou ambos; com número.</li>
+            <li><strong>Evolvability</strong> — quão caro é mudar a fronteira daqui a um ano.</li>
+            <li><strong>Cost</strong> — em big tech, custo é requisito. Replica síncrona em 3 regiões não é grátis.</li>
+            <li><strong>Security / privacy</strong> — blast radius de um token, PII, tenancy.</li>
+          </ul>
+          <p><em>Fitness function</em>: um teste automatizado da característica (“p99 de checkout &lt; 300ms no canário”; “nenhum serviço importa o pacote interno de outro bounded context”). Arquitetura que não se mede vira opinião.</p>
+        </article>
+        <article class="term">
+          <div class="tag">Artefatos</div>
+          <h3>ADR e C4 — o que desenhar onde</h3>
+          <p><strong>ADR</strong> (Architecture Decision Record): contexto, decisão, consequências. Uma página. Sem ADR, o time reabre a mesma briga a cada trimestre. Consequências incluem o que você <em>não</em> escolheu.</p>
+          <p><strong>C4</strong>: contexto (quem usa o sistema) → container (processo deployável: serviço, banco, fila) → componente (módulos dentro). Na entrevista, fique em contexto + container. No RFC interno, desça a componente só no pedaço quente. Código (nível 4) quase nunca entra no desenho de arquiteto — entra no PR.</p>
+        </article>
+      </div>
+      <div class="grid2">
+        <div class="steps" aria-label="Passos de um ADR">
+          <div><strong>Problema e restrições</strong><p>SLO, compliance, time, prazo.</p></div>
+          <div><strong>Opções</strong><p>Duas ou três de verdade — nunca uma só.</p></div>
+          <div><strong>Decisão + consequências</strong><p>Custo, falha, evolvability, o que você <em>não</em> escolheu.</p></div>
+          <div><strong>Fitness function</strong><p>Como saber daqui a seis meses que ainda vale.</p></div>
+        </div>
+        <div>
+          <p class="kicker" style="margin-bottom:8px">C4 na mesa</p>
+          <ol class="flow">
+            <li><span class="kicker">Contexto</span><strong>Quem usa</strong><span class="hint">Clientes, pagamentos, antifraude.</span></li>
+            <li><span class="kicker">Container</span><strong>O que sobe</strong><span class="hint">API, workers, Postgres, Kafka, Redis.</span></li>
+            <li><span class="kicker">Componente</span><strong>Só o miolo quente</strong><span class="hint">Se o entrevistador pedir. Código fica no PR.</span></li>
+          </ol>
+        </div>
+      </div>
+
+      <h3 id="consistencia-real">Consistência de verdade</h3>
+      <p>
+        “Eventual” é o começo da conversa, não o fim. Em big tech você nomeia o modelo
+        e o que o cliente pode observar.
+      </p>
+      <table class="compare">
+        <thead>
+          <tr><th>Modelo</th><th>O que o cliente pode assumir</th><th>Onde aparece</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Linearizability</td>
+            <td>Depois que o write confirma, qualquer read em qualquer réplica vê esse valor (como se houvesse um único relógio). Caro.</td>
+            <td>Leader + quorum de escrita; Spanner/TrueTime; lock de assento.</td>
+          </tr>
+          <tr>
+            <td>Sequential</td>
+            <td>Operações de todos os clientes aparecem numa ordem total que respeita a ordem de cada cliente. Mais fraco que linearizável.</td>
+            <td>Alguns logs replicados; não é o default do seu Redis.</td>
+          </tr>
+          <tr>
+            <td>Causal</td>
+            <td>Se B “aconteceu depois” de A (viu A), ninguém vê B sem A. Comentário não aparece antes do post.</td>
+            <td>Feeds, colaboração, CRDT em alguns casos.</td>
+          </tr>
+          <tr>
+            <td>Eventual</td>
+            <td>Se as escritas pararem, as cópias convergem. No meio do caminho, divergem.</td>
+            <td>DNS, caches, réplicas assíncronas, contadores.</td>
+          </tr>
+          <tr>
+            <td>Session (RYW)</td>
+            <td>Read-your-writes / monotonic reads: eu vejo o que eu gravei. Não garante o vizinho.</td>
+            <td>Sticky session, “ler do primary depois do write”, version vector.</td>
+          </tr>
+        </tbody>
+      </table>
+      <article class="term">
+        <h3>Quorum: R + W &gt; N</h3>
+        <p class="analogy">Analogia: três cadernos. Se você grava em dois e lê em dois, pelo menos um caderno da leitura viu a gravação. Se grava em um e lê em um, pode pegar o caderno velho.</p>
+        <p>N réplicas. W = quantas precisam confirmar o write. R = quantas você consulta no read. Se <strong>R + W &gt; N</strong>, o conjunto de leitura intercepta o de escrita — você não lê um valor que “já foi superado” pelo quorum de write (em falhas simples, sem reconfiguração esquisita). Típico: N=3, W=2, R=2. W=N é o mais seguro e o mais lento. W=1 é rápido e pode perder o disco do líder.</p>
+        <p><strong>Replication lag</strong> (“gravei no primary, o read replica ainda não viu”) é eventual. <strong>Inconsistente de verdade</strong> é cobrou duas vezes sem compensação, ou dois líderes aceitando writes (split-brain). Não misture os dois na mesa.</p>
+      </article>
+
+      <h3 id="escala-falha">Escala e falha em big tech</h3>
+      <div class="grid2">
+        <article class="term">
+          <div class="tag">Região</div>
+          <h3>Multi-região</h3>
+          <p><strong>Active-passive:</strong> uma região escreve; a outra é standby. Failover é um evento. Mais simples; RPO/RTO precisam estar no ADR. <strong>Active-active:</strong> as duas escrevem. Latência local boa; conflito de escrita é o preço (last-write-wins é uma escolha, não uma lei; CRDT quando o tipo de dado permite). Não venda active-active para saldo de conta sem um protocolo de consenso ou um dono único por conta (home region).</p>
+        </article>
+        <article class="term">
+          <div class="tag">Blast radius</div>
+          <h3>Células (cell-based)</h3>
+          <p>Em vez de um cluster global, fatias autônomas (célula A, B, C): cada uma com seus pods, banco, cache. Um bug de deploy ou um hot tenant derruba <em>uma</em> fatia, não o planeta. Roteamento na borda por tenant/região. Migração de célula é operação rara e ensaiada. Isso é o que Google/Amazon/Meta chamam de isolar raio de explosão — não “mais replicas do Deployment”.</p>
+        </article>
+      </div>
+      <article class="term">
+        <h3>Overload: backpressure e load shedding</h3>
+        <p>Quando a chegada &gt; capacidade, você escolhe: fila cresce (latência explode), rejeita cedo (load shedding, 503 com retry-after), ou reduz trabalho (degradação: desliga recomendação, serve cache). <strong>Backpressure</strong> é o produtor desacelerar porque o consumidor não aguenta — HTTP não faz isso sozinho; fila com lag visível faz. Sem política explícita, o sistema escolhe para você: timeout em cascata. Em big tech isso entra no runbook de pico: o que desligamos primeiro, quem autoriza, qual o SLO mínimo (“modo sobrevivência”).</p>
+        <p><strong>Hot key / hot partition</strong> no desenho: um celebridade no feed, um SKU viral, um <code>userId</code> de crawler. Mitigações: shard local (cache L1 por pod + coalescing), loteria de escrita, split da entidade quente, isolamento em célula própria. Config de Kafka sozinha não resolve se a chave de negócio é uma só.</p>
+      </article>
+
+      <h3 id="contrato-dado">Contrato e dado como produto</h3>
+      <p>
+        Em empresa grande, o tópico e a tabela têm <strong>dono</strong>, SLA de compatibilidade e catálogo.
+        Sem dono, cada squad inventa um <code>PedidoUpdated</code> e o grafo vira lixão.
+      </p>
+      <ul class="tight">
+        <li>Dono do dado publica o fato; os outros copiam somente-leitura ou perguntam na API do dono. Ninguém <code>SELECT</code> na tabela alheia.</li>
+        <li>Schema: campo novo opcional; nunca reaproveitar nome com outro significado; depreciação com data. Consumer-driven contract no CI.</li>
+        <li>API pública de efeito: <code>Idempotency-Key</code> com TTL explícito (24h, 48h — documentado).</li>
+        <li>CQRS/Event Sourcing no review de arquiteto: “qual requisito de leitura/auditoria não cabe num modelo normalizado + outbox?” Se a resposta for “queria experimentar”, recusa.</li>
+      </ul>
+
+      <h3 id="sre">Confiabilidade como produto</h3>
+      <div class="cols">
+        <div class="col">
+          <h4>Noves (30 dias)</h4>
+          <div class="msg">99% ≈ 7,2 h fora</div>
+          <div class="msg">99,9% ≈ 43 min</div>
+          <div class="msg">99,99% ≈ 4,3 min</div>
+          <p>Cada nove a mais é ordem de grandeza de engenharia (células, multi-região, toil). Não prometa quatro noves com um Postgres único.</p>
+        </div>
+        <div class="col">
+          <h4>Error budget</h4>
+          <div class="msg">SLO 99,9% → 0,1% de falha “ok”</div>
+          <p>Budget estourado: freeze de feature, foco em estabilidade. Budget intacto: o produto pode arriscar. Isso é a conversa de arquiteto com PM, não “vamos ser resilientes”.</p>
+        </div>
+        <div class="col">
+          <h4>Capacidade</h4>
+          <div class="msg">QPS × payload × 86400</div>
+          <p>Back-of-envelope: 50k writes/s × 500 B ≈ 2 GB/min só de ingestão. Cabe num disco? Numa partição? A estimativa existe para matar desenho impossível cedo, não para acertar o terceiro dígito.</p>
+        </div>
+      </div>
+      <div class="ok">
+        Alerta de sintoma (taxa de erro, p99, lag sustentado) + runbook. CPU 80% pode ser o ponto ótimo de utilização. Arquiteto que alerta causa em vez de sintoma treina o time a ignorar pager.
+      </div>
+
+      <h3 id="walkthroughs">Dois walkthroughs Staff</h3>
+      <p>Requisitos que <em>perguntar</em>, desenho, o que quebra se o tráfego dobrar. Treine em 20–25 min cada, depois feche com trade-offs.</p>
+
+      <article class="term" id="pagamento">
+        <div class="tag">Walkthrough 1 · casa com Kafka / Outbox / Saga</div>
+        <h3>Processador de pagamento</h3>
+        <p><strong>Pergunte:</strong> PIX, cartão, carteira? Autorização síncrona na cara do usuário? Captura depois? Chargeback? Idempotência obrigatória na API pública? Pico (Black Friday) vs média? Regulatório (não perder o registro da tentativa)? Uma região ou active-passive?</p>
+        <div class="arch" aria-label="Fluxo do processador de pagamento">
+          <div class="arch-row">
+            <div class="arch-box"><span class="kicker">Cliente</span><strong>App / web</strong><small>double-tap possível</small></div>
+          </div>
+          <div class="arch-arrow" aria-hidden="true">↓</div>
+          <div class="arch-row">
+            <div class="arch-box"><span class="kicker">Borda</span><strong>Gateway</strong><small>auth, rate limit, Idempotency-Key</small></div>
+          </div>
+          <div class="arch-arrow" aria-hidden="true">↓</div>
+          <div class="arch-row">
+            <div class="arch-box"><span class="kicker">Síncrono</span><strong>API pagamentos</strong><small>intenção + status PENDENTE</small></div>
+            <div class="arch-box"><span class="kicker">Mesma tx</span><strong>Postgres</strong><small>pagamento + outbox</small></div>
+          </div>
+          <div class="arch-arrow" aria-hidden="true">↓</div>
+          <div class="arch-row">
+            <div class="arch-box"><span class="kicker">Assíncrono</span><strong>Worker outbox → Kafka</strong><small>PagamentoSolicitado</small></div>
+            <div class="arch-box"><span class="kicker">PSP</span><strong>Worker adquirente</strong><small>idempotente; timeout curto</small></div>
+          </div>
+          <div class="arch-arrow" aria-hidden="true">↓</div>
+          <div class="arch-row">
+            <div class="arch-box"><span class="kicker">Saga</span><strong>Aprovado / recusado</strong><small>pedido confirma · estoque reserva · compensação</small></div>
+          </div>
+        </div>
+        <ul class="tight">
+          <li>Síncrono: aceitar a intenção e devolver <code>pagamentoId</code> + status. Não segurar a thread 12s no PSP sem isolamento.</li>
+          <li>Assíncrono: notificar pedido/estoque. Compensação (“estornar reserva”) se o PSP recusar depois da reserva otimista — ou reserve só após aprovação: escolha explícita no ADR (conversão vs overselling).</li>
+          <li>Double-tap: mesma <code>Idempotency-Key</code> devolve o mesmo resultado. Inbox no consumidor do evento.</li>
+          <li><strong>Tráfego dobrou:</strong> hot merchant? shard por <code>merchantId</code> com cuidado de relatório cross-shard. PSP vira o gargalo: fila, bulkhead, shed de métodos não essenciais (parcelamento 12x), não “sobe o HPA e reza”. Célula por região/adquirente reduz blast radius de um PSP instável.</li>
+        </ul>
+      </article>
+
+      <article class="term" id="reservas">
+        <div class="tag">Walkthrough 2 · consistência forte vs fan-out</div>
+        <h3>Reservas de assento (e o primo: feed)</h3>
+        <p><strong>Assento:</strong> invariante “um assento, um dono”. Eventual aqui é oversell. Pergunte: hold de 10 min? pagamento depois? mapa de 400 assentos ou estádio?</p>
+        <ul class="tight">
+          <li>Lock otimista (versão na linha) ou <code>SELECT FOR UPDATE</code> no assento no mesmo banco. Sem dois serviços “donos” do mesmo assento.</li>
+          <li>Hold: estado <code>RESERVED</code> com TTL; worker expira e devolve. Pagamento é saga: se falhar, compensação libera o assento.</li>
+          <li>Cache do mapa: pode atrasar 1s no desenho da UI; o clique de comprar vai no primary. Não venda o cache como fonte da verdade.</li>
+          <li><strong>Tráfego dobrou (show da Taylor):</strong> hot event = hot shard se a chave for <code>eventId</code>. Fatia por setor/bloco (células de inventário). Fila virtual na borda (load shedding educado) em vez de 50k writes no mesmo row.</li>
+        </ul>
+        <p><strong>Feed (contraste):</strong> fan-out on write (precomputa timeline — caro no celebrity) vs on read (monta na hora — barato no write, p99 pior). Hot user: isolado, fan-out híbrido. Aqui eventual é aceitável; duplicar um tweet na timeline não é cobrar duas vezes. O arquiteto escolhe o eixo pelo invariante, não pelo hype do padrão.</p>
+      </article>
+      <div class="callout">
+        <strong>O que a mesa de big tech quer ouvir no fechamento.</strong>
+        “Se o tráfego dobrar, o primeiro gargalo é X; o ponto único de falha é Y; o que eu não fiz por tempo é Z (multi-região / células). O custo da escolha A é B.” Sem essa frase, o desenho ficou júnior.
+      </div>
+    </section>
+    <nav class="pager"><a href="system-design.html">← System design</a><a class="next" href="catalogo.html">Catálogo de componentes →</a></nav>
+    <footer>
+      Baseado no plano da Trilha 7 — Arquitetura e Microsserviços (8 semanas, sessão longa no sábado + leitura).
+      Pré-requisito útil: trilhas de Kafka e Kubernetes já em andamento.
+      Recursos: Designing Data-Intensive Applications (Kleppmann); Building Microservices (Sam Newman, 2ª ed.); microservices.io (Chris Richardson); Fundamentals of Software Architecture (Richards &amp; Ford); modelo C4 em c4model.com.
+    </footer>
+  </div>
+  
+</body>
+</html>

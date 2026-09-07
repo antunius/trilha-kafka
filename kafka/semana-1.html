@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Semana 1 — Kafka</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../trilhas.css" />
+  
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <p class="crumb"><a href="../index.html">Trilhas</a> · <a href="index.html">Kafka</a></p>
+      <div class="eyebrow">Trilha 4 · Kafka</div>
+      <h1>Semana 1 — Modelo mental</h1>
+      
+    </header>
+    <nav class="toc" aria-label="Índice"><a href="index.html">Início</a>
+      <a href="fundamentos.html">Modelo mental</a>
+      <a href="semana-1.html">Semana 1</a>
+      <a href="semana-2.html">Semana 2</a>
+      <a href="semana-3.html">Semana 3</a>
+      <a href="semana-4.html">Semana 4</a>
+      <a href="semana-5.html">Semana 5</a>
+      <a href="semana-6.html">Semana 6</a>
+      <a href="referencia.html">Tech Lead</a>
+      <a href="simulador.html">Simulador</a></nav>
+    <section id="s1" class="week">
+      <h2>Semana 1 — Do zero ao modelo mental</h2>
+      <p>
+        Esta semana não é para ligar o Spring. É para o modelo colar.
+        Objetivo: desenhar de memória o diagrama tópico → partições → offsets → dois grupos,
+        e explicar cada caixa em voz alta para um colega que nunca viu Kafka.
+      </p>
+      <div class="sessions">
+        <article>
+          <div class="tag">Sessão 1 · 45 min</div>
+          <h4>Fila vs caderno</h4>
+          <p>Leia a ideia central e o mapa mental. Desenhe o caderno com 3 colunas. Diga em voz alta: quem escreve, quem lê, o que é o clipe.</p>
+        </article>
+        <article>
+          <div class="tag">Sessão 2 · 45 min</div>
+          <h4>Glossário em voz alta</h4>
+          <p>Evento, tópico, partição, offset, key. Sem olhar. Se travar, volte no cartão e explique de novo com a analogia, não com a definição decorada.</p>
+        </article>
+        <article>
+          <div class="tag">Sessão 3 · 45 min</div>
+          <h4>Réplica + exercício de papel</h4>
+          <p>Broker, líder, ISR, retenção. Depois o desenho: 3 partições, 2 grupos, 4 consumidores no A e 1 no B. Se o desenho falhar, a semana não fechou.</p>
+        </article>
+      </div>
+      <div class="ok">
+        <strong>No fim da semana você consegue:</strong>
+        explicar por que faturamento e analytics não brigam; por que 4 consumidores em 3 partições deixam um ocioso;
+        por que ordem não é global; o que o offset guarda e o que o Kafka <em>não</em> executa.
+      </div>
+      <p>As perguntas abaixo são o roteiro da sessão 2 e 3. Abra, responda sem olhar, só então leia a explicação.</p>
+
+      <details open>
+        <summary>Kafka é uma fila de mensagens?</summary>
+        <p>
+          Não. É um log em que só se acrescenta no fim, fatiado em partições e replicado.
+          A mensagem não some quando é lida. Ela expira por tempo, por tamanho, ou some na compaction.
+          Cada grupo mantém o próprio cursor. Por isso dá para reprocessar, dá para vários leitores independentes,
+          e a leitura não é destrutiva. Na fila clássica, em geral a mensagem é entregue e retirada.
+        </p>
+      </details>
+      <details>
+        <summary>O que é um evento, e o que deve ir nele?</summary>
+        <p>
+          Um fato imutável, com nome (<code>PedidoCriado</code>), um identificador estável (<code>eventId</code> —
+          essencial para não processar duas vezes), a key de particionamento (<code>pedidoId</code>), timestamp,
+          e o estado necessário para o consumidor agir sem ligar de volta — ou só o ID, se for notificação.
+          Não coloque destinatário. Quem se importa se inscreve no tópico.
+        </p>
+      </details>
+      <details>
+        <summary>O que é uma partição e por que ela existe?</summary>
+        <p>
+          Unidade de paralelismo, de ordenação e de replicação. Throughput de escrita e de leitura (por grupo)
+          escala com o número de partições — e é limitado por ele. “Um consumidor por fatia” também nasce daqui.
+        </p>
+      </details>
+      <details>
+        <summary>Offset, committed offset e auto.offset.reset</summary>
+        <p>
+          Offset = posição na partição. Committed = até onde o grupo jura que já processou.
+          <code>auto.offset.reset</code> só vale quando ainda não há commit:
+          <code>earliest</code> relê desde o início ainda retido;
+          <code>latest</code> ignora o passado e cola no fim (stream ao vivo).
+          Escolher <code>latest</code> num job que deveria reprocessar histórico é bug silencioso.
+        </p>
+      </details>
+      <details>
+        <summary>Kafka garante ordem?</summary>
+        <p>
+          Só dentro de uma partição. Não existe ordem global no tópico.
+          Se a ordem importa para uma entidade, use a mesma key — ela cai na mesma partição
+          <em>enquanto o número de partições não muda</em>.
+          “Ordenados” significa: o consumidor vê a sequência de append no líder.
+          Dois produtores no mesmo pedido ao mesmo tempo: a ordem é a de chegada, não a do relógio.
+        </p>
+      </details>
+      <details>
+        <summary>Como funciona um consumer group?</summary>
+        <p>
+          Cada partição é atribuída a exatamente um consumidor do grupo.
+          Grupos diferentes recebem cópias independentes.
+          Mais consumidores que partições = ociosos.
+          Escalar consumo exige aumentar partições — e aumentar partições redistribui keys
+          (quebra ordenação histórica). Decida cedo.
+        </p>
+      </details>
+      <details>
+        <summary>O que é o ISR? E acks?</summary>
+        <p>
+          ISR = réplicas em dia com o líder. Combinado com <code>acks=all</code> e
+          <code>min.insync.replicas=2</code>, a mensagem foi replicada antes de ser confirmada.
+          Se o ISR cair abaixo do mínimo, o produtor recebe erro — melhor do que perder dado em silêncio.
+          <code>acks=0</code>: máximo throughput, pode perder.
+          <code>acks=1</code>: o líder gravou, o follower pode não ter.
+          <code>acks=all</code>: durabilidade de verdade.
+        </p>
+      </details>
+      <details>
+        <summary>Retenção e log compaction</summary>
+        <p>
+          Retenção apaga segmentos antigos. Compaction mantém a última mensagem por key.
+          O tópico passa a representar o estado atual, não o histórico.
+          Não é backup. Tombstone (value nulo) pede para apagar a key.
+        </p>
+      </details>
+      <details>
+        <summary>Producer, consumer, broker — uma frase cada</summary>
+        <p>
+          Broker guarda o log e replica. Producer appenda no líder da partição.
+          Consumer lê o log e move o próprio offset. O Kafka não executa a sua regra de negócio.
+        </p>
+      </details>
+      <div class="callout">
+        <strong>Exercício de papel (não pule).</strong>
+        Desenhe um tópico com 3 partições, 2 grupos, 4 consumidores no grupo A e 1 no grupo B.
+        Grupo A: no máximo 3 trabalham, 1 fica ocioso. Grupo B: o único lê as 3 partições (sozinho, em loop).
+        Offsets independentes: A pode estar no 80 e B no 12 na mesma coluna.
+        Marque um pedido com key <code>pedido-X</code> sempre na mesma coluna.
+        Se não conseguir desenhar, volte ao <a href="fundamentos.html#caderno">mapa mental</a> — o glossário ainda não colou.
+      </div>
+      <article class="term">
+        <h3>Como estudar esta semana de verdade</h3>
+        <ul class="tight">
+          <li>Não abra o Spring ainda. Código cedo vira memorização de annotation.</li>
+          <li>Explique cada palavra do <a href="fundamentos.html#glossario">glossário</a> para o espelho: o que é, para que serve, o erro comum.</li>
+          <li>No trabalho: pegue um tópico que o time já usa e descubra quantas partições, qual a key, quantos group.id. Se ninguém souber, você já achou o gap do time.</li>
+        </ul>
+      </article>
+    </section>
+    <nav class="pager"><a href="fundamentos.html">← Caderno</a><a class="next" href="semana-2.html">Semana 2 · Entrega →</a></nav>
+    <footer>
+      Baseado no plano da Trilha 4 — Apache Kafka (6 semanas, 3 sessões de 45 min).
+      Pré-requisito útil: trilha de Spring, mas as semanas 1 e 2 funcionam do zero.
+      Recursos: Kafka: The Definitive Guide (2ª ed.), documentação oficial em kafka.apache.org, verbetes Outbox e Saga em microservices.io.
+    </footer>
+  </div>
+  
+</body>
+</html>

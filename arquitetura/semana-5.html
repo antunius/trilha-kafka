@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Semana 5 — Arquitetura</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../trilhas.css" />
+  
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <p class="crumb"><a href="../index.html">Trilhas</a> · <a href="index.html">Arquitetura</a></p>
+      <div class="eyebrow">Trilha 7 · Arquitetura</div>
+      <h1>Semana 5 — Observabilidade</h1>
+      
+    </header>
+    <nav class="toc" aria-label="Índice"><a href="index.html">Início</a>
+      <a href="fundamentos.html">Fundamentos</a>
+      <a href="semana-1.html">Semana 1</a>
+      <a href="semana-2.html">Semana 2</a>
+      <a href="semana-3.html">Semana 3</a>
+      <a href="semana-4.html">Semana 4</a>
+      <a href="semana-5.html">Semana 5</a>
+      <a href="system-design.html">Design 6–8</a>
+      <a href="staff.html">Nível Staff</a>
+      <a href="catalogo.html">Catálogo</a>
+      <a href="referencia.html">Arquiteto</a>
+      <a href="simulador.html">Simulador</a></nav>
+    <section id="s5" class="week">
+      <h2>Semana 5 — Observabilidade</h2>
+      <p>
+        Métrica diz <em>que</em> está ruim; trace diz <em>onde</em>; log diz <em>por quê</em>.
+        Alerta de CPU a 80% não é arquitetura — é ruído.
+      </p>
+      <div class="sessions">
+        <article>
+          <div class="tag">Sessão 1</div>
+          <h4>Três pilares</h4>
+          <p>Log estruturado + traceId (inclusive no Kafka). RED no serviço, USE no recurso. OpenTelemetry.</p>
+        </article>
+        <article>
+          <div class="tag">Sessão 2</div>
+          <h4>SLI / SLO / budget</h4>
+          <p>99,9% em 30 dias. Calcule o error budget em minutos. O que o produto para de fazer quando estoura.</p>
+        </article>
+        <article>
+          <div class="tag">Sessão 3</div>
+          <h4>Alerta bom</h4>
+          <p>Sintoma do usuário, acionável, runbook. Alerta que ninguém age: delete.</p>
+        </article>
+      </div>
+      <div class="ok">
+        <strong>No fim da semana você consegue:</strong>
+        os três pilares; instrumentar sem logar PII; definir SLO e error budget; escrever um alerta de p99 / taxa de erro, não de CPU.
+      </div>
+
+      <details>
+        <summary>Quais são os três pilares e para que serve cada um?</summary>
+        <p><strong>Logs</strong> (o que aconteceu num evento específico), <strong>métricas</strong> (agregados numéricos ao longo do tempo, baratos de armazenar), <strong>traces</strong> (o caminho de uma requisição através dos serviços). Métrica diz <em>que</em> está ruim; trace diz <em>onde</em>; log diz <em>por quê</em>.</p>
+      </details>
+      <details>
+        <summary>Como você instrumenta corretamente?</summary>
+        <p>Logs estruturados em JSON, com <code>traceId</code> propagado em todo o fluxo (incluindo através do Kafka, via headers). Métricas com Micrometer → Prometheus: <strong>RED</strong> para serviços (Rate, Errors, Duration) e <strong>USE</strong> para recursos (Utilization, Saturation, Errors). Tracing com OpenTelemetry. Nunca logar dado sensível — PII, token, número de cartão.</p>
+      </details>
+      <details>
+        <summary>O que é SLI, SLO e error budget?</summary>
+        <p>SLI é a métrica medida (ex.: % de requisições abaixo de 300ms). SLO é a meta acordada (ex.: 99,9%). O error budget é o complemento (0,1%) — quanto de falha é aceitável no período. É o que traduz confiabilidade em decisão de produto: budget estourado significa parar features e trabalhar em estabilidade.</p>
+      </details>
+      <details>
+        <summary>Como você define um alerta bom?</summary>
+        <p>Alerta sobre <strong>sintoma percebido pelo usuário</strong> (taxa de erro, latência, lag crescente), não sobre causa (CPU a 80% pode ser normal). Todo alerta precisa ser acionável e ter um runbook. Alerta que dispara e ninguém age deve ser deletado — ruído de alerta mata a atenção da equipe.</p>
+      </details>
+      <div class="callout">
+        <strong>Exercício.</strong>
+        Um serviço está com p99 de 3 segundos. Escreva a investigação em ordem: o SLO foi violado? Qual o recorte (endpoint, região, cliente)? Métrica RED. Trace do percentil ruim. Log da span lenta. Dependência? Lock? GC? Hot key? Isso é a pergunta de síntese da trilha — ensaie em voz alta.
+      </div>
+    </section>
+    <nav class="pager"><a href="semana-4.html">← Semana 4</a><a class="next" href="system-design.html">System design →</a></nav>
+    <footer>
+      Baseado no plano da Trilha 7 — Arquitetura e Microsserviços (8 semanas, sessão longa no sábado + leitura).
+      Pré-requisito útil: trilhas de Kafka e Kubernetes já em andamento.
+      Recursos: Designing Data-Intensive Applications (Kleppmann); Building Microservices (Sam Newman, 2ª ed.); microservices.io (Chris Richardson); Fundamentals of Software Architecture (Richards &amp; Ford); modelo C4 em c4model.com.
+    </footer>
+  </div>
+  
+</body>
+</html>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tech Lead — Kafka</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../trilhas.css" />
+  
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <p class="crumb"><a href="../index.html">Trilhas</a> · <a href="index.html">Kafka</a></p>
+      <div class="eyebrow">Trilha 4 · Kafka</div>
+      <h1>Virar a referência</h1>
+      
+    </header>
+    <nav class="toc" aria-label="Índice"><a href="index.html">Início</a>
+      <a href="fundamentos.html">Modelo mental</a>
+      <a href="semana-1.html">Semana 1</a>
+      <a href="semana-2.html">Semana 2</a>
+      <a href="semana-3.html">Semana 3</a>
+      <a href="semana-4.html">Semana 4</a>
+      <a href="semana-5.html">Semana 5</a>
+      <a href="semana-6.html">Semana 6</a>
+      <a href="referencia.html">Tech Lead</a>
+      <a href="simulador.html">Simulador</a></nav>
+    <section id="techlead" class="week">
+      <h2>Virar a referência — e o Tech Lead de backend</h2>
+      <p>
+        Referência em Kafka não é quem recita <code>linger.ms</code>.
+        É quem explica o caderno no quadro, recusa Kafka quando o problema é HTTP,
+        e segura o time num incidente de lag sem pânico. Tech Lead backend
+        usa Kafka como <strong>ferramenta de contrato e de falha</strong>, não como medalha no currículo.
+      </p>
+
+      <div class="role-grid">
+        <article class="term">
+          <div class="tag">O que muda</div>
+          <h3>De usuário a dono do contrato</h3>
+          <p>
+            O listener “funciona no meu serviço” é o chão. O próximo degrau:
+            o tópico é um contrato entre times. Você define nome do fato, key,
+            schema, retenção, quem pode publicar e o que acontece no retry.
+            Sem dono, cada squad inventa um <code>PedidoUpdated</code> e o cluster vira lixão.
+          </p>
+        </article>
+        <article class="term">
+          <div class="tag">O que muda</div>
+          <h3>De feature a operação</h3>
+          <p>
+            Lead não pergunta só “deu merge?”. Pergunta: qual o SLO de lag?
+            Quem acorda se a partição 7 parar? O DLT tem dono?
+            Reprocessar 3 dias é um runbook ou uma oração?
+            Se ninguém sabe, você ainda não é referência — o sistema é um hobby em produção.
+          </p>
+        </article>
+        <article class="term">
+          <div class="tag">O que muda</div>
+          <h3>De “usa Kafka” a “sabe dizer não”</h3>
+          <p>
+            O atalho de carreira medíocre é propor Kafka em toda reunião.
+            O atalho de Lead é: volume baixo? fila simples. Precisa de resposta na hora? HTTP.
+            Time sem capacidade de operar cluster? não. Kafka brilha em fan-out, replay e desacoplar escritores de leitores.
+          </p>
+        </article>
+      </div>
+
+      <h3>O que uma referência precisa saber decidir</h3>
+      <table class="compare">
+        <thead>
+          <tr><th>Decisão</th><th>Pergunta que o Lead faz</th><th>Resposta fraca vs forte</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Key e partições</td>
+            <td>O que precisa ficar em ordem? Qual o pico de paralelismo?</td>
+            <td>Fraca: “põe 32 partições por padrão”. Forte: ordem por pedidoId, partições suficientes para o grupo, ciente de que aumentar depois dói.</td>
+          </tr>
+          <tr>
+            <td>Garantia</td>
+            <td>Perder evento é pior do que duplicar?</td>
+            <td>Fraca: “vamos ligar exactly-once”. Forte: at-least-once + inbox/outbox; exactly-once só na bolha Kafka.</td>
+          </tr>
+          <tr>
+            <td>Retenção</td>
+            <td>Quanto tempo o negócio precisa reler o passado?</td>
+            <td>Fraca: “deixa o default”. Forte: 3–7 dias vs compaction de estado; Kafka não é backup eterno.</td>
+          </tr>
+          <tr>
+            <td>Schema</td>
+            <td>Quem quebra se eu mudar o JSON?</td>
+            <td>Fraca: “é só um campo a mais”. Forte: compatibilidade, campo opcional, nunca reaproveitar nome com outro significado.</td>
+          </tr>
+          <tr>
+            <td>Fronteira</td>
+            <td>Banco e Kafka precisam “cometer juntos”?</td>
+            <td>Fraca: <code>save(); send();</code>. Forte: outbox na mesma transação, publicador à parte.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <article class="term">
+        <h3>Checklist de review (o Lead recusa o PR se faltar)</h3>
+        <ul class="tight">
+          <li>O evento tem nome de fato (<code>PagamentoAprovado</code>), não de destinatário.</li>
+          <li>Tem <code>eventId</code> estável e key de entidade. Sem key “porque assim espalha melhor”, se a ordem importa.</li>
+          <li>Commit de offset é depois do efeito, ou o efeito é idempotente de verdade.</li>
+          <li>Erro permanente vai para DLT; erro transitório retenta. Poison pill não pode congelar a partição.</li>
+          <li>Não há chamada HTTP lenta no poll da partição crítica sem isolamento.</li>
+          <li>Há métrica de lag por partição e alerta de lag sustentado — não de pico de um segundo.</li>
+          <li>Schema / JSON versionado. Campo novo opcional. Ninguém removeu obrigatório “só aqui no meu serviço”.</li>
+        </ul>
+      </article>
+
+      <div class="grid2">
+        <article class="term">
+          <h3>Como o time te vê como referência</h3>
+          <ol>
+            <li>Ensine o caderno no quadro até um júnior desenhar sozinho.</li>
+            <li>Faça os labs da semana 5 narrando o que espera ver <em>antes</em> de rodar.</li>
+            <li>Escreva o runbook: “lag subiu”, “rebalance em loop”, “reprocessar o dia D”.</li>
+            <li>Seja a pessoa que diz não ao Kafka desnecessário — e sim ao outbox no lugar certo.</li>
+            <li>Depois de cada incidente, uma página: o que o modelo previa, o que o time não mediu.</li>
+          </ol>
+        </article>
+        <article class="term">
+          <h3>Perguntas que vão te fazer em entrevista de Lead</h3>
+          <p>Não pedem a definição de offset. Pedem julgamento:</p>
+          <ul class="tight">
+            <li>Como você impediria cobrança duplicada num Black Friday?</li>
+            <li>O consumidor chama um gateway lento. O que você muda no desenho?</li>
+            <li>Precisamos de 12 partições. O tópico hoje tem 6. Qual o plano?</li>
+            <li>Dois times querem o mesmo evento com schemas diferentes. O que você faz?</li>
+            <li>Por que Kafka e não a fila que o time já opera?</li>
+          </ul>
+          <p>Treine isso no simulador. Se errar o bloco “Liderança”, o gap não é vocabulário — é decisão.</p>
+        </article>
+      </div>
+      <div class="callout">
+        <strong>Régua honesta.</strong>
+        Saber o glossário = júnior consciente. Ligar garantia + outbox + DLT = pleno.
+        Decidir partições, contratos entre times, runbook e “não usamos Kafka aqui” = o Lead que o time segue.
+      </div>
+    </section>
+    <nav class="pager"><a href="semana-6.html">← Semana 6</a><a class="next" href="simulador.html">Simulador →</a></nav>
+    <footer>
+      Baseado no plano da Trilha 4 — Apache Kafka (6 semanas, 3 sessões de 45 min).
+      Pré-requisito útil: trilha de Spring, mas as semanas 1 e 2 funcionam do zero.
+      Recursos: Kafka: The Definitive Guide (2ª ed.), documentação oficial em kafka.apache.org, verbetes Outbox e Saga em microservices.io.
+    </footer>
+  </div>
+  
+</body>
+</html>

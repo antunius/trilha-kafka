@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Semana 4 — Kafka</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../trilhas.css" />
+  
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <p class="crumb"><a href="../index.html">Trilhas</a> · <a href="index.html">Kafka</a></p>
+      <div class="eyebrow">Trilha 4 · Kafka</div>
+      <h1>Semana 4 — Padrões de integração</h1>
+      
+    </header>
+    <nav class="toc" aria-label="Índice"><a href="index.html">Início</a>
+      <a href="fundamentos.html">Modelo mental</a>
+      <a href="semana-1.html">Semana 1</a>
+      <a href="semana-2.html">Semana 2</a>
+      <a href="semana-3.html">Semana 3</a>
+      <a href="semana-4.html">Semana 4</a>
+      <a href="semana-5.html">Semana 5</a>
+      <a href="semana-6.html">Semana 6</a>
+      <a href="referencia.html">Tech Lead</a>
+      <a href="simulador.html">Simulador</a></nav>
+    <section id="s4" class="week">
+      <h2>Semana 4 — Padrões de integração</h2>
+      <p>
+        Esta semana separa quem “já usou Kafka” de quem entendeu o problema de verdade:
+        banco e broker não compartilham uma transação mágica. Sem outbox/inbox, o restante é teatro.
+      </p>
+      <div class="sessions">
+        <article>
+          <div class="tag">Sessão 1 · 45 min</div>
+          <h4>Outbox</h4>
+          <p>Desenhe save+send falhando no meio. Depois a caixinha na mesma transação e o carteiro (poller ou Debezium). Anti-padrão de cor.</p>
+        </article>
+        <article>
+          <div class="tag">Sessão 2 · 45 min</div>
+          <h4>Inbox + schema</h4>
+          <p>Tabela de eventId na mesma transação do efeito. Schema Registry: backward vs forward. Campo opcional vs rename.</p>
+        </article>
+        <article>
+          <div class="tag">Sessão 3 · 45 min</div>
+          <h4>Contrato e fronteira</h4>
+          <p>Notification vs state. Quando não usar Kafka. Consumer Spring vs Streams. Isso é julgamento de Lead, não de tutorial.</p>
+        </article>
+      </div>
+
+      <article class="term">
+        <h3>Outbox — salvar no banco e publicar no Kafka “juntos”</h3>
+        <p class="analogy">Analogia: na mesma canetada você anota o pedido e deixa um recado na caixinha “para publicar”. Um carteiro separado leva o recado ao caderno Kafka. Se o carteiro falhar, o recado continua na caixinha.</p>
+        <p>
+          Não existe transação distribuída entre o seu Postgres e o Kafka.
+          A solução é gravar o evento numa tabela <code>outbox</code> <strong>dentro da mesma transação</strong> do dado de negócio.
+          Um processo separado lê a tabela e publica, marcando como enviado:
+        </p>
+        <ul class="tight">
+          <li><strong>Poller:</strong> um job da aplicação (“tem recado novo?”). Simples de operar. Pode atrasar uns segundos.</li>
+          <li><strong>CDC (Debezium):</strong> lê o log de transação do banco e publica. Menos código seu, mais peça para operar.</li>
+        </ul>
+        <p>
+          Se a publicação falhar, tenta de novo — at-least-once, tratado com idempotência no consumidor.
+          A tabela típica tem: id, payload, criado_em, publicado_em (nulo até o carteiro conseguir).
+        </p>
+        <div class="warn">
+          Anti-padrão: <code>salvar(); kafka.send();</code>
+          O processo pode morrer no meio e ficar só um dos dois. Ou o inverso: publicar antes de commitar o banco
+          (o caderno anuncia um pedido que o banco desfez no rollback).
+        </div>
+      </article>
+
+      <article class="term">
+        <h3>Inbox — o inverso, no consumidor</h3>
+        <p class="analogy">Analogia: na portaria tem uma lista “já entrei este envelope”. Envelope 17 de novo? Não cobra de novo. A lista e o efeito (baixa no estoque) são a mesma canetada.</p>
+        <p>
+          Guardar os IDs já processados numa tabela e ignorar repetidos, <strong>na mesma transação do efeito</strong>.
+          Se você grava o ID e o efeito falha depois, o ID não pode ter sido commitado — senão você “esquece” de aplicar.
+          Se aplica o efeito e não grava o ID, o replay duplica.
+        </p>
+        <p>É a implementação concreta da idempotência. Sem inbox (ou equivalente), outbox só empurra duplicata para o outro lado.</p>
+      </article>
+
+      <article class="term">
+        <h3>Schema Registry e versionar sem quebrar ninguém</h3>
+        <p>
+          Versiona schemas e valida compatibilidade.
+          <strong>Backward</strong> (o mais usado): consumidor novo lê dado antigo.
+          <strong>Forward</strong>: consumidor antigo lê dado novo.
+          Regra prática: adicionar campo opcional é seguro; remover campo obrigatório ou renomear não é.
+        </p>
+        <p>
+          Só mudanças aditivas com valor padrão. Nunca reutilize nome de campo com outro significado.
+          Mudança incompatível: novo tópico ou nova versão do tipo de evento, e migre os consumidores aos poucos.
+        </p>
+      </article>
+
+      <article class="term">
+        <h3>Notificação vs estado no evento</h3>
+        <table class="compare">
+          <thead>
+            <tr><th></th><th>Notification</th><th>State transfer</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>O que viaja</td>
+              <td>Só o ID (“Pedido 123 mudou”)</td>
+              <td>O estado necessário para agir</td>
+            </tr>
+            <tr>
+              <td>Vantagem</td>
+              <td>Payload pequeno</td>
+              <td>Desacopla: não precisa ligar de volta</td>
+            </tr>
+            <tr>
+              <td>Custo</td>
+              <td>Acoplamento síncrono na volta (buscar o pedido)</td>
+              <td>Payload maior, pode ficar obsoleto</td>
+            </tr>
+          </tbody>
+        </table>
+        <p>A escolha é um trade-off legítimo, não uma religião.</p>
+      </article>
+
+      <article class="term">
+        <h3>Quando você não usaria Kafka</h3>
+        <ul class="tight">
+          <li>precisa de resposta síncrona (isso é request/response, não evento);</li>
+          <li>volume baixo e uma fila simples resolve com muito menos operação;</li>
+          <li>precisa de prioridade ou roteamento complexo por mensagem — Kafka não tem prioridade nativa;</li>
+          <li>o time não tem capacidade de operar o cluster.</li>
+        </ul>
+      </article>
+
+      <article class="term">
+        <h3>Kafka Streams / ksqlDB vs um consumer Spring</h3>
+        <p class="analogy">Analogia: o consumer Spring é o funcionário que lê o recado e liga para o banco e o cartão. Streams é uma máquina que só trabalha em cima do próprio caderno — junta páginas, conta janelas, guarda um rascunho local.</p>
+        <p>
+          A maior parte dos microsserviços: consumer “burro” + sua aplicação (chamar banco, chamar API de pagamento).
+          Kafka Streams: quando o processamento é <em>sobre o log</em> — janelas de tempo, join entre tópicos, agregação, estado local com changelog.
+          ksqlDB é a mesma ideia com cara de SQL.
+          Não comece por Streams se o problema é “chamar o banco e a API”. Você vai empilhar estado, rebalance e changelog sem necessidade.
+        </p>
+      </article>
+    </section>
+    <nav class="pager"><a href="semana-3.html">← Semana 3</a><a class="next" href="semana-5.html">Semana 5 · Lab →</a></nav>
+    <footer>
+      Baseado no plano da Trilha 4 — Apache Kafka (6 semanas, 3 sessões de 45 min).
+      Pré-requisito útil: trilha de Spring, mas as semanas 1 e 2 funcionam do zero.
+      Recursos: Kafka: The Definitive Guide (2ª ed.), documentação oficial em kafka.apache.org, verbetes Outbox e Saga em microservices.io.
+    </footer>
+  </div>
+  
+</body>
+</html>

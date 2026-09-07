@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Semana 2 — Kafka</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../trilhas.css" />
+  
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <p class="crumb"><a href="../index.html">Trilhas</a> · <a href="index.html">Kafka</a></p>
+      <div class="eyebrow">Trilha 4 · Kafka</div>
+      <h1>Semana 2 — Garantias de entrega</h1>
+      
+    </header>
+    <nav class="toc" aria-label="Índice"><a href="index.html">Início</a>
+      <a href="fundamentos.html">Modelo mental</a>
+      <a href="semana-1.html">Semana 1</a>
+      <a href="semana-2.html">Semana 2</a>
+      <a href="semana-3.html">Semana 3</a>
+      <a href="semana-4.html">Semana 4</a>
+      <a href="semana-5.html">Semana 5</a>
+      <a href="semana-6.html">Semana 6</a>
+      <a href="referencia.html">Tech Lead</a>
+      <a href="simulador.html">Simulador</a></nav>
+    <section id="s2" class="week">
+      <h2>Semana 2 — Garantias de entrega</h2>
+      <p>
+        Aqui a conversa deixa de ser “o que é Kafka” e vira “o que acontece quando algo cai no meio”.
+        A frase que entrevistador sênior quer ouvir: <strong>at-least-once + consumidor idempotente</strong>.
+      </p>
+      <div class="sessions">
+        <article>
+          <div class="tag">Sessão 1 · 45 min</div>
+          <h4>As três promessas</h4>
+          <p>Desenhe a linha do tempo: chega mensagem → processa (cobra) → commita offset. Marque onde o processo morre em cada promessa e o que sobra no mundo real.</p>
+        </article>
+        <article>
+          <div class="tag">Sessão 2 · 45 min</div>
+          <h4>Idempotência de verdade</h4>
+          <p>Inbox, upsert, versão, operação que “define estado”. Separe isso da idempotência do <em>produtor</em> (retry na escrita). São dois cadeados diferentes.</p>
+        </article>
+        <article>
+          <div class="tag">Sessão 3 · 45 min</div>
+          <h4>Commit e lag</h4>
+          <p>Automático vs manual vs lote. O que é lag, o que não é. No fim: explique por que acks=all não impede cobrança duplicada.</p>
+        </article>
+      </div>
+
+      <table class="compare">
+        <thead>
+          <tr><th>Promessa</th><th>Como nasce</th><th>O que o leigo precisa lembrar</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>At-most-once</td>
+            <td>Marca o clipe <em>antes</em> de processar</td>
+            <td>Se cair no meio, a mensagem se perde. Raramente aceitável.</td>
+          </tr>
+          <tr>
+            <td>At-least-once</td>
+            <td>Processa e <em>depois</em> marca o clipe</td>
+            <td>Padrão prático. Pode duplicar. Por isso idempotência.</td>
+          </tr>
+          <tr>
+            <td>Exactly-once</td>
+            <td>Produtor idempotente + transações Kafka</td>
+            <td>Vale <em>dentro</em> do Kafka (de tópico para tópico). Banco externo e API de cartão estão fora dessa bolha.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Como garantir processamento único na prática</h3>
+      <p>
+        Você não “liga exactly-once e esquece”. Exactly-once do Kafka é uma bolha: vale quando
+        você lê um tópico e escreve em outro <em>dentro</em> do Kafka, com transação.
+        Banco, e-mail e API de cartão estão fora. Na prática você torna o efeito <strong>repetível sem dano</strong>:
+      </p>
+      <ul class="tight">
+        <li>guardar o <code>messageId</code> / <code>eventId</code> já processado numa tabela e ignorar repetidos (inbox);</li>
+        <li>upsert em vez de insert (a segunda vez só reescreve o mesmo estado);</li>
+        <li>só aplicar o evento se a versão for maior que a atual;</li>
+        <li>operação naturalmente idempotente (definir um estado, não incrementar um contador).</li>
+      </ul>
+      <div class="warn">
+        Incrementar “estoque -= 1” duas vezes é desastre. “estoque = 7 porque o evento diz que ficou 7” tolera replay.
+        Cobrar cartão precisa de idempotency key na API do emissor, não só de esperança.
+      </div>
+
+      <h3>Produtor idempotente</h3>
+      <p class="analogy">Analogia: o carteiro numera os envelopes. Se ele bater na porta duas vezes com o envelope 17, o broker diz “já tenho o 17” e joga o segundo fora.</p>
+      <p>
+        Com <code>enable.idempotence=true</code>, o produtor ganha um ID e numera as mensagens.
+        O broker descarta duplicatas causadas por retry do <em>mesmo</em> producer.
+        Isso não protege o consumo e não protege dois producers diferentes (dois serviços publicando o mesmo fato).
+        Transações (<code>transactional.id</code>) vão além: escrever em vários tópicos e commit de offsets na mesma transação Kafka.
+      </p>
+
+      <h3>O consumidor cai no meio — linha do tempo</h3>
+      <ol>
+        <li>Lê o recado “cobrar pedido 99”.</li>
+        <li>Chama o cartão. O cartão cobra. O mundo real já mudou.</li>
+        <li>O processo morre <em>antes</em> de commitar o offset.</li>
+        <li>Outro membro (ou o restart) relê a partir do último clipe. O recado 99 volta.</li>
+      </ol>
+      <p>
+        O log está certo. A duplicata é de negócio. Por isso inbox / idempotency key.
+        Se você tivesse commitado <em>antes</em> do passo 2, o clipe andaria e a cobrança nunca aconteceria — perda, não duplicata.
+      </p>
+
+      <h3>Commit automático ou manual?</h3>
+      <p>
+        Automático (<code>enable.auto.commit=true</code>) commita por tempo, no fundo.
+        Pode marcar mensagens ainda não processadas — perde dado em queda.
+        Manual: processar, então commitar. No Spring isso aparece como <code>AckMode</code>
+        (<code>MANUAL</code>, <code>RECORD</code>, <code>BATCH</code>).
+        Commit por lote é mais rápido; se o processo morre no meio, reprocessa o lote inteiro.
+        De novo: idempotência. Sem ela, lote maior = explosão maior na falha.
+      </p>
+
+      <h3>Consumer lag</h3>
+      <p class="analogy">Analogia: o caderno já tem linha 10_000. Seu clipe está na 8_400. Lag = 1_600 linhas atrasadas.</p>
+      <p>
+        É a distância entre a última linha escrita na partição e o clipe do grupo.
+        Lag alto sustentado = o grupo não está acompanhando a produção.
+        Lag instantâneo pequeno é normal (você poll de tempos em tempos).
+        É a métrica número um do consumidor. Sem ela, você opera no escuro.
+      </p>
+      <div class="callout">
+        <strong>Teste da sexta-feira.</strong>
+        Explique em um minuto, sem jargão: por que “acks=all + idempotência do produtor” ainda permite cobrar duas vezes.
+        Se a resposta misturar os eixos, volte nesta semana.
+      </div>
+    </section>
+    <nav class="pager"><a href="semana-1.html">← Semana 1</a><a class="next" href="semana-3.html">Semana 3 · Operação →</a></nav>
+    <footer>
+      Baseado no plano da Trilha 4 — Apache Kafka (6 semanas, 3 sessões de 45 min).
+      Pré-requisito útil: trilha de Spring, mas as semanas 1 e 2 funcionam do zero.
+      Recursos: Kafka: The Definitive Guide (2ª ed.), documentação oficial em kafka.apache.org, verbetes Outbox e Saga em microservices.io.
+    </footer>
+  </div>
+  
+</body>
+</html>

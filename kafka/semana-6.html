@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Semana 6 — Kafka</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../trilhas.css" />
+  
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <p class="crumb"><a href="../index.html">Trilhas</a> · <a href="index.html">Kafka</a></p>
+      <div class="eyebrow">Trilha 4 · Kafka</div>
+      <h1>Semana 6 — Síntese</h1>
+      
+    </header>
+    <nav class="toc" aria-label="Índice"><a href="index.html">Início</a>
+      <a href="fundamentos.html">Modelo mental</a>
+      <a href="semana-1.html">Semana 1</a>
+      <a href="semana-2.html">Semana 2</a>
+      <a href="semana-3.html">Semana 3</a>
+      <a href="semana-4.html">Semana 4</a>
+      <a href="semana-5.html">Semana 5</a>
+      <a href="semana-6.html">Semana 6</a>
+      <a href="referencia.html">Tech Lead</a>
+      <a href="simulador.html">Simulador</a></nav>
+    <section id="s6" class="week">
+      <h2>Semana 6 — Síntese (antes do simulador)</h2>
+      <p>
+        Semana de fechar a boca e falar. Releia o glossário em voz alta, sem olhar.
+        Se travar numa palavra, volte nela. Não avance para as perguntas-síntese no chute
+        e não abra o <a href="simulador.html#simulador">simulador</a> como prova surpresa sem ter ensaiado.
+      </p>
+      <div class="sessions">
+        <article>
+          <div class="tag">Sessão 1 · 45 min</div>
+          <h4>Glossário cego</h4>
+          <p>Evento, tópico, partição, offset, key, ISR, group, retenção. 60 segundos cada. Grave áudio. Ouça onde você enrolou.</p>
+        </article>
+        <article>
+          <div class="tag">Sessão 2 · 45 min</div>
+          <h4>Perguntas-síntese</h4>
+          <p>As oito abaixo, no quadro, como se o entrevistador estivesse na sala. Depois abra a resposta e corrija o desenho, não a frase decorada.</p>
+        </article>
+        <article>
+          <div class="tag">Sessão 3 · 45 min</div>
+          <h4>Simulador + gaps</h4>
+          <p>As 50 questões. Mapa de gaps. Estude só os temas abaixo de 80%. Refaça. Lead não é gabarito 50/50 na primeira — é saber onde voltar.</p>
+        </article>
+      </div>
+      <article class="term">
+        <h3>Como ensaiar (não é reler)</h3>
+        <ul class="tight">
+          <li>Desenhe o caderno no papel. Se precisar do HTML para lembrar o que é partição, a semana 1 não está pronta.</li>
+          <li>Pegue um serviço real do trabalho e critique: tem outbox? key certa? DLT? lag no dashboard?</li>
+          <li>Explique Kafka para alguém de produto em três minutos. Se aparecer “fila mais rápida”, recomece.</li>
+        </ul>
+      </article>
+
+      <h3>Perguntas-síntese (com o jeito de pensar, não a cola pronta)</h3>
+      <details>
+        <summary>Explique Kafka para quem só conhece fila</summary>
+        <p>
+          Fila: pega e some. Kafka: caderno em colunas. A coluna tem ordem. O clipe de leitura é por grupo.
+          Vários times leem o mesmo caderno. A página não rasga quando alguém lê.
+        </p>
+      </details>
+      <details>
+        <summary>Fluxo de pagamento em que ninguém cobra duas vezes</summary>
+        <p>
+          At-least-once na entrega + inbox (eventId único) na mesma transação do efeito de cobrar,
+          ou operação de cobrança com idempotency key na API do cartão. Outbox na origem para não perder o evento.
+          Produtor idempotente evita duplicata de retry na escrita, mas não substitui o inbox.
+        </p>
+      </details>
+      <details>
+        <summary>API externa lenta no pico, sem travar a partição</summary>
+        <p>
+          Não faça a chamada lenta no poll do consumidor da partição crítica.
+          Reduza o lote, isole o trabalho lento (outro tópico, fila interna, workers assíncronos),
+          timeout e retry com DLT para erro permanente. Senão estoura max.poll e começa o loop de rebalance.
+        </p>
+      </details>
+      <details>
+        <summary>Reprocessar 3 dias sem duplicar efeitos</summary>
+        <p>
+          Confirme que a retenção ainda guarda esses 3 dias. Volte o offset do grupo (ou use um grupo novo).
+          Inbox / upsert / versão maior: o efeito já aplicado é ignorado. Sem isso, você reprocessa e duplica o mundo real.
+        </p>
+      </details>
+      <details>
+        <summary>Migrar de 6 para 12 partições sem quebrar ordem por cliente</summary>
+        <p>
+          Aumentar partições redistribui hash(key). A ordem histórica daquela key pode quebrar no tópico antigo.
+          Caminho típico: novo tópico com 12 partições, dual-write ou replay ordenado, consumidores migrando,
+          e só então desligar o tópico velho. Não existe “só clicar em 12” sem custo de ordenação.
+        </p>
+      </details>
+      <details>
+        <summary>Eventualmente consistente vs inconsistente</summary>
+        <p>
+          Eventual: as cópias vão convergir se ninguém escrever mais; o atraso é esperado e observável (lag).
+          Inconsistente: regras de negócio quebradas para sempre (cobrou duas vezes, estoque negativo sem compensação).
+          Lag não é bug. Duplicata sem idempotência é.
+        </p>
+      </details>
+      <details>
+        <summary>acks=all impede duplicata no consumidor?</summary>
+        <p>
+          Não. Acks fala de durabilidade da escrita no cluster. Duplicata no consumidor nasce de reprocessar
+          porque o offset ainda não commitou. São eixos diferentes.
+        </p>
+      </details>
+      <details>
+        <summary>Por que enable.idempotence=true não substitui a tabela inbox?</summary>
+        <p>
+          Idempotência do produtor evita o mesmo producer reenviar o mesmo batch. Inbox evita o mesmo evento
+          causar o mesmo efeito duas vezes no seu banco ou na API. Quedas do consumidor, dois producers,
+          e efeitos fora do Kafka continuam existindo.
+        </p>
+      </details>
+
+      <h3>Checklist de fluência (60 segundos cada)</h3>
+      <ul class="tight">
+        <li>Evento vs comando</li>
+        <li>Tópico vs partição vs offset</li>
+        <li>Key e ordem</li>
+        <li>Consumer group e ociosos</li>
+        <li>ISR / acks / retenção / compaction</li>
+        <li>At-least-once + idempotência</li>
+        <li>Outbox / Inbox</li>
+        <li>Rebalance e lag</li>
+        <li>Quando não usar Kafka</li>
+      </ul>
+    </section>
+    <nav class="pager"><a href="semana-5.html">← Semana 5</a><a class="next" href="referencia.html">Tech Lead →</a></nav>
+    <footer>
+      Baseado no plano da Trilha 4 — Apache Kafka (6 semanas, 3 sessões de 45 min).
+      Pré-requisito útil: trilha de Spring, mas as semanas 1 e 2 funcionam do zero.
+      Recursos: Kafka: The Definitive Guide (2ª ed.), documentação oficial em kafka.apache.org, verbetes Outbox e Saga em microservices.io.
+    </footer>
+  </div>
+  
+</body>
+</html>

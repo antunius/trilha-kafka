@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Semana 2 — Arquitetura</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../trilhas.css" />
+  
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <p class="crumb"><a href="../index.html">Trilhas</a> · <a href="index.html">Arquitetura</a></p>
+      <div class="eyebrow">Trilha 7 · Arquitetura</div>
+      <h1>Semana 2 — Comunicação e resiliência</h1>
+      
+    </header>
+    <nav class="toc" aria-label="Índice"><a href="index.html">Início</a>
+      <a href="fundamentos.html">Fundamentos</a>
+      <a href="semana-1.html">Semana 1</a>
+      <a href="semana-2.html">Semana 2</a>
+      <a href="semana-3.html">Semana 3</a>
+      <a href="semana-4.html">Semana 4</a>
+      <a href="semana-5.html">Semana 5</a>
+      <a href="system-design.html">Design 6–8</a>
+      <a href="staff.html">Nível Staff</a>
+      <a href="catalogo.html">Catálogo</a>
+      <a href="referencia.html">Arquiteto</a>
+      <a href="simulador.html">Simulador</a></nav>
+    <section id="s2" class="week">
+      <h2>Semana 2 — Comunicação e resiliência</h2>
+      <p>
+        Aqui a conversa deixa de ser vocabulário e vira “o que acontece quando B cai no meio da chamada de A”.
+        A ordem timeout → retry → breaker → bulkhead → fallback é o que o arquiteto recita de memória.
+      </p>
+      <div class="sessions">
+        <article>
+          <div class="tag">Sessão 1</div>
+          <h4>Sync vs async</h4>
+          <p>Para checkout: o que é síncrono (autorizar cartão na cara do usuário) e o que é recado (e-mail, estoque, analytics).</p>
+        </article>
+        <article>
+          <div class="tag">Sessão 2</div>
+          <h4>A ordem da resiliência</h4>
+          <p>Desenhe a cadeia. Explique por que retry sem jitter é thundering herd e por que retry em POST de pagamento é perigoso.</p>
+        </article>
+        <article>
+          <div class="tag">Sessão 3</div>
+          <h4>Gateway, BFF, contrato</h4>
+          <p>O que o gateway faz. O que o BFF faz. Como evoluir API sem quebrar: aditivo, depreciação, Pact.</p>
+        </article>
+      </div>
+      <div class="ok">
+        <strong>No fim da semana você consegue:</strong>
+        escolher sync/async com a regra prática; listar resiliência na ordem certa; explicar por que retry piora incidente; distinguir gateway de BFF; evoluir contrato sem big bang.
+      </div>
+
+      <details>
+        <summary>Síncrono ou assíncrono entre serviços?</summary>
+        <p>Síncrono (REST/gRPC) é simples e dá resposta imediata, mas <strong>acopla disponibilidade</strong>: se A chama B e B cai, A cai junto. Assíncrono (Kafka) desacopla no tempo, absorve picos e permite múltiplos consumidores, mas custa consistência eventual e dificuldade de rastrear o fluxo. Regra prática: consulta que o usuário está esperando → síncrono; efeito colateral e propagação de fato consumado → assíncrono.</p>
+      </details>
+      <details>
+        <summary>Quais mecanismos de resiliência, e em que ordem?</summary>
+        <p>1. <strong>Timeout</strong> — o mais importante. Chamada sem timeout é vazamento de thread e é assim que uma dependência lenta derruba o serviço inteiro. 2. <strong>Retry com backoff exponencial + jitter</strong> — sem jitter, todos tentam no mesmo instante (thundering herd). Só erro transitório e operação idempotente. 3. <strong>Circuit breaker</strong> — fechado → aberto (falha rápido) → meio-aberto (testa com poucas). 4. <strong>Bulkhead</strong> — pool isolado por dependência. 5. <strong>Fallback / degradação</strong> — cache, valor padrão, funcionalidade reduzida em vez de 500.</p>
+      </details>
+      <details>
+        <summary>Por que retry pode piorar um incidente?</summary>
+        <p>Porque multiplica a carga exatamente quando o sistema está sobrecarregado. Retry sem circuit breaker e sem limite transforma degradação em queda total. E retry em operação não-idempotente duplica efeitos (cobrança dobrada).</p>
+      </details>
+      <details>
+        <summary>O que é API Gateway e o que é BFF?</summary>
+        <p>Gateway: ponto único de entrada, com autenticação, rate limit, roteamento e TLS. BFF (Backend for Frontend): um backend por tipo de cliente (web, mobile), agregando chamadas e devolvendo exatamente o payload daquele cliente — evita que a API genérica seja puxada em direções conflitantes.</p>
+      </details>
+      <details>
+        <summary>Como você evolui uma API sem quebrar consumidores?</summary>
+        <p>Só mudanças aditivas (campo novo opcional); nunca remover ou renomear campo em uso; versionar quando a quebra for inevitável (<code>/v2</code> ou header), mantendo as duas por um período com prazo de depreciação comunicado; e <strong>contratos verificados automaticamente</strong> (consumer-driven contracts / Pact) para o CI detectar a quebra antes do deploy.</p>
+      </details>
+      <div class="callout">
+        <strong>Exercício.</strong>
+        Serviço A chama B, C e D. B está lento. Sem timeout, o pool de A esgota e o health check falha. Com timeout e sem bulkhead, B ainda pode comer todas as threads. Desenhe pools separados. Isso é o que um arquiteto de big tech chama de isolamento de falha — não de “pôr Hystrix no pom”.
+      </div>
+    </section>
+    <nav class="pager"><a href="semana-1.html">← Semana 1</a><a class="next" href="semana-3.html">Semana 3 · Serviços →</a></nav>
+    <footer>
+      Baseado no plano da Trilha 7 — Arquitetura e Microsserviços (8 semanas, sessão longa no sábado + leitura).
+      Pré-requisito útil: trilhas de Kafka e Kubernetes já em andamento.
+      Recursos: Designing Data-Intensive Applications (Kleppmann); Building Microservices (Sam Newman, 2ª ed.); microservices.io (Chris Richardson); Fundamentals of Software Architecture (Richards &amp; Ford); modelo C4 em c4model.com.
+    </footer>
+  </div>
+  
+</body>
+</html>

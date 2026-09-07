@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Semana 1 — Arquitetura</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../trilhas.css" />
+  
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <p class="crumb"><a href="../index.html">Trilhas</a> · <a href="index.html">Arquitetura</a></p>
+      <div class="eyebrow">Trilha 7 · Arquitetura</div>
+      <h1>Semana 1 — Fundamentos</h1>
+      
+    </header>
+    <nav class="toc" aria-label="Índice"><a href="index.html">Início</a>
+      <a href="fundamentos.html">Fundamentos</a>
+      <a href="semana-1.html">Semana 1</a>
+      <a href="semana-2.html">Semana 2</a>
+      <a href="semana-3.html">Semana 3</a>
+      <a href="semana-4.html">Semana 4</a>
+      <a href="semana-5.html">Semana 5</a>
+      <a href="system-design.html">Design 6–8</a>
+      <a href="staff.html">Nível Staff</a>
+      <a href="catalogo.html">Catálogo</a>
+      <a href="referencia.html">Arquiteto</a>
+      <a href="simulador.html">Simulador</a></nav>
+    <section id="s1" class="week">
+      <h2>Semana 1 — Fundamentos</h2>
+      <p>
+        Esta semana não é para desenhar dez caixas. É para o vocabulário colar.
+        Objetivo: distinguir latência de throughput, percentil de média, CAP de PACELC,
+        e recitar “o que é arquitetura” numa frase.
+      </p>
+      <div class="sessions">
+        <article>
+          <div class="tag">Sessão 1 · sábado</div>
+          <h4>Ideia + mapa</h4>
+          <p>Leia a ideia central e o mapa mental. Desenhe o caminho usuário → SLO → gateway → serviços → dados → falha. Diga em voz alta o custo de cada seta.</p>
+        </article>
+        <article>
+          <div class="tag">Sessão 2 · leitura</div>
+          <h4>Glossário em voz alta</h4>
+          <p>Latência, p99, CAP, eventual, monolito. Sem olhar. Se travar, volte no cartão e explique com a analogia, não com a definição decorada.</p>
+        </article>
+        <article>
+          <div class="tag">Sessão 3 · papel</div>
+          <h4>SQL vs NoSQL + cache</h4>
+          <p>Escolha armazenamento e cache para “catálogo de produtos” e para “saldo de conta”. Justifique pela carga, não pela moda.</p>
+        </article>
+      </div>
+      <div class="ok">
+        <strong>No fim da semana você consegue:</strong>
+        uma frase de arquitetura; latência vs throughput com exemplo de lote; por que p99; o que CAP realmente diz; quando eventual é aceitável; riscos de cache; replicação vs sharding; índice não acelera tudo.
+      </div>
+      <p>Abra, responda sem olhar, só então leia a explicação.</p>
+
+      <details open>
+        <summary>O que é arquitetura, numa frase?</summary>
+        <p>As decisões de estrutura cujo retrabalho é caro: fronteiras, dados, comunicação e falha. O resto é detalhe de implementação.</p>
+      </details>
+      <details>
+        <summary>Latência ou throughput — como você distingue?</summary>
+        <p>Latência é o tempo de uma operação; throughput é quantas operações por segundo. Melhorar um pode piorar o outro: agrupar mensagens em lote (Kafka <code>linger.ms</code>) aumenta o throughput e piora a latência. Precisa saber qual dos dois o requisito está pedindo.</p>
+      </details>
+      <details>
+        <summary>Por que percentil e não média?</summary>
+        <p>A média esconde a cauda. Com 1% das requisições em 5 segundos e o resto em 20ms, a média fica bonita e 1 em cada 100 usuários tem uma experiência horrível — e usuários com mais dados (os mais valiosos) costumam estar justamente na cauda. Medir p50, p95, p99. SLO se escreve em percentil.</p>
+      </details>
+      <details>
+        <summary>Explique CAP — e o que ele realmente diz</summary>
+        <p>Durante uma <strong>partição de rede</strong>, é preciso escolher entre consistência e disponibilidade. Fora de partição, não há escolha imposta — o trade-off real do dia a dia é entre <strong>latência e consistência</strong> (PACELC). Dizer “escolhi AP” sem mencionar que a partição é o gatilho é sinal de decoreba.</p>
+      </details>
+      <details>
+        <summary>O que é consistência eventual e quando ela é aceitável?</summary>
+        <p>As réplicas convergem para o mesmo estado depois de um tempo, mas podem divergir temporariamente. Aceitável em contador de curtidas, feed, catálogo. Inaceitável em saldo de conta no momento do débito, reserva de assento, controle de estoque com unidade única. A pergunta certa: <em>qual o custo de mostrar um dado 2 segundos desatualizado?</em></p>
+      </details>
+      <details>
+        <summary>Estratégias de cache e seus riscos</summary>
+        <p><strong>Cache-aside</strong> (o mais comum): a aplicação consulta o cache, e em caso de miss busca no banco e popula. <strong>Write-through:</strong> escreve nos dois ao mesmo tempo — consistente, mais lento. <strong>Write-behind:</strong> escreve no cache e persiste depois — rápido, arriscado. Riscos: dado obsoleto; <strong>cache stampede</strong> (o item expira e mil requisições vão ao banco — mitigar com jitter no TTL, lock ou refresh proativo); <strong>hot key</strong>; e invalidação, que é o problema difícil de verdade.</p>
+      </details>
+      <details>
+        <summary>Quando SQL e quando NoSQL?</summary>
+        <p>SQL para dados relacionais, transações ACID, consultas variadas e não previstas — a escolha padrão. NoSQL quando o padrão de acesso é conhecido e a escala horizontal ou o modelo justificam: documento (agregado auto-contido), chave-valor (cache, sessão), coluna larga (série temporal, escrita massiva), grafo (relacionamentos profundos). Justificar pela <strong>carga de trabalho</strong>, nunca por moda.</p>
+      </details>
+      <details>
+        <summary>Replicação e sharding — qual problema cada um resolve?</summary>
+        <p>Replicação resolve <strong>leitura</strong> e disponibilidade (réplicas de leitura, com replication lag — o clássico “gravei e não vejo”). Sharding resolve <strong>escrita</strong> e volume, dividindo os dados por uma chave. A escolha da chave de shard é a decisão mais difícil: chave ruim gera hot shard e consultas cross-shard.</p>
+      </details>
+      <details>
+        <summary>Índice acelera tudo?</summary>
+        <p>Não. Acelera leitura e <strong>atrasa escrita</strong> (todo insert/update mantém o índice), consome espaço, e um índice não usado é só custo. Índice composto só serve se a query respeitar a ordem das colunas.</p>
+      </details>
+      <div class="callout">
+        <strong>Exercício de papel (não pule).</strong>
+        Escreva três colunas: “pode atrasar 2s”, “não pode atrasar”, “não pode duplicar”. Coloque: curtida, saldo, reserva de assento, feed, catálogo de preço, cobrança de cartão. Se misturar as colunas, o glossário ainda não colou.
+      </div>
+    </section>
+    <nav class="pager"><a href="fundamentos.html">← Glossário</a><a class="next" href="semana-2.html">Semana 2 · Resiliência →</a></nav>
+    <footer>
+      Baseado no plano da Trilha 7 — Arquitetura e Microsserviços (8 semanas, sessão longa no sábado + leitura).
+      Pré-requisito útil: trilhas de Kafka e Kubernetes já em andamento.
+      Recursos: Designing Data-Intensive Applications (Kleppmann); Building Microservices (Sam Newman, 2ª ed.); microservices.io (Chris Richardson); Fundamentals of Software Architecture (Richards &amp; Ford); modelo C4 em c4model.com.
+    </footer>
+  </div>
+  
+</body>
+</html>
