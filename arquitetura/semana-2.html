@@ -58,6 +58,39 @@
         escolher sync/async com a regra prática; listar resiliência na ordem certa; explicar por que retry piora incidente; distinguir gateway de BFF; evoluir contrato sem big bang.
       </div>
 
+      <div class="lesson">
+        <h3>Sessão 1 — B lento sem timeout</h3>
+        <p><strong>O que você precisa entender.</strong> Chamada síncrona A→B sem timeout prende a thread de A. B lento derruba A. Consulta na cara do usuário pode ser sync; e-mail e analytics são recado.</p>
+        <p><strong>Exemplo concreto.</strong> Checkout chama serviço de risco com timeout infinito. Risco trava em 30 s. O pool de 50 threads do checkout enche. A home também passa pelo mesmo processo — o site inteiro parece morto. Com timeout de 200 ms + fallback “risco indisponível, segue com revisão manual”, o checkout sobrevive.</p>
+        <div class="flow">
+          <div class="box">Checkout A</div>
+          <div class="arrow" aria-hidden="true">→ sem timeout</div>
+          <div class="box">Risco B<br><small>30 s parado</small></div>
+          <div class="arrow" aria-hidden="true">→</div>
+          <div class="box">Pool de A cheio<br><small>site cai</small></div>
+        </div>
+        <div class="warn"><strong>Pegadinha.</strong> “B é 99,9% ok, não precisa timeout.” O 0,1% segura 100% das threads.</div>
+        <div class="callout"><strong>Agora você (5 min).</strong> No checkout: o que é sync (cartão na cara) e o que é evento (e-mail, estoque, analytics).</div>
+      </div>
+
+      <div class="lesson">
+        <h3>Sessão 2 — Retry storm</h3>
+        <p><strong>O que você precisa entender.</strong> Ordem: timeout → retry com backoff e jitter → breaker → bulkhead → fallback. Retry multiplica carga no incidente. Retry em POST de pagamento sem chave duplica cobrança.</p>
+        <p><strong>Exemplo concreto.</strong> Pagamento 99 falha com 503. 200 checkouts retentam imediatamente, depois de novo, depois de novo. O serviço de cartão que estava degradado recebe 800 req/s e cai de vez. Jitter espalha. Breaker abre e falha rápido. Sem idempotency key, três 503 que depois viram 200 cobram R$ 80 três vezes.</p>
+        <div class="warn"><strong>Pegadinha.</strong> Retry “porque resiliência” em todo HTTP. GET de catálogo talvez. POST de cobrança, só com chave e só erro transitório.</div>
+        <div class="callout"><strong>Agora você (5 min).</strong> Recite a ordem dos cinco mecanismos. Marque onde retry piora o incidente do 503.</div>
+      </div>
+
+      <div class="lesson">
+        <h3>Sessão 3 — Gateway não é BFF</h3>
+        <p><strong>O que você precisa entender.</strong> Gateway: porta do prédio (TLS, auth, rate limit, rota). BFF: cozinha de um cliente (web ou mobile), agrega e devolve o payload daquela tela. Evoluir API: campo opcional; depreciação com prazo; Pact no CI.</p>
+        <p><strong>Exemplo concreto.</strong> Um único “gateway” que monta o JSON gordo do app iOS e da SPA. O mobile pede menos campos e a web puxa o contrário — a API genérica vira campo de batalha. BFF mobile e BFF web atrás do mesmo gateway de auth resolvem. Remover <code>total</code> no payload v1 quebra o app da loja; adicionar <code>cupom</code> opcional não.</p>
+        <div class="warn"><strong>Pegadinha.</strong> Chamar de BFF um API Gateway Kong/NGINX que só faz TLS e rota. Falta a agregação por cliente.</div>
+        <div class="callout"><strong>Agora você (5 min).</strong> Duas frases: o que o gateway faz no seu desenho; o que o BFF faz. Um campo que você recusaria remover.</div>
+      </div>
+
+      <p>Quiz depois da aula. Abra, responda sem olhar.</p>
+
       <details>
         <summary>Síncrono ou assíncrono entre serviços?</summary>
         <p>Síncrono (REST/gRPC) é simples e dá resposta imediata, mas <strong>acopla disponibilidade</strong>: se A chama B e B cai, A cai junto. Assíncrono (Kafka) desacopla no tempo, absorve picos e permite múltiplos consumidores, mas custa consistência eventual e dificuldade de rastrear o fluxo. Regra prática: consulta que o usuário está esperando → síncrono; efeito colateral e propagação de fato consumado → assíncrono.</p>

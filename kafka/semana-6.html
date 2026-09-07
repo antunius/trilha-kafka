@@ -52,6 +52,32 @@
           <p>As 50 questões. Mapa de gaps. Estude só os temas abaixo de 80%. Refaça. Lead não é gabarito 50/50 na primeira — é saber onde voltar.</p>
         </article>
       </div>
+      <div class="lesson">
+        <h3>Sessão 2 — Pagamento guiado (não é checklist)</h3>
+        <p><strong>O que você precisa entender.</strong> A pergunta de síntese junta as seis semanas num fluxo só. Você narra o pedido 99 do clique até a fatura, nomeando o buraco de cada etapa e a peça que tapa.</p>
+        <p><strong>Exemplo concreto, já desenhado.</strong></p>
+        <ol>
+          <li>Usuário confirma o 99 (R$ 80). Checkout grava pedido + outbox na mesma transação. Kafka pode estar no chão: o pedido existe.</li>
+          <li>Carteiro publica <code>PedidoCriado</code>, key 99, eventId e-17, no tópico <code>pedidos</code> (3 partições). Cai numa coluna só.</li>
+          <li>Grupo faturamento lê. Analytics lê o mesmo caderno com outro clipe. Não brigam.</li>
+          <li>Faturamento chama o cartão com Idempotency-Key e-17. Grava inbox + pagamento na mesma transação. Só então ack.</li>
+          <li>O pod morre entre cartão e ack: at-least-once relê. Inbox (ou a key no emissor) impede a segunda fatura.</li>
+          <li>JSON podre no offset 40: DLT, clipe anda. Timeout do banco: retry, não DLT.</li>
+          <li><code>acks=all</code> no producer do checkout: o recado não some se o líder cair depois do ACK. Não substitui o passo 4.</li>
+        </ol>
+        <div class="flow">
+          <div class="box">Outbox<br><small>pedido 99</small></div>
+          <div class="arrow" aria-hidden="true">→</div>
+          <div class="box">Caderno<br><small>key 99</small></div>
+          <div class="arrow" aria-hidden="true">→</div>
+          <div class="box">Dois clipes</div>
+          <div class="arrow" aria-hidden="true">→</div>
+          <div class="box">Inbox + cartão<br><small>depois ack</small></div>
+        </div>
+        <div class="warn"><strong>Pegadinha.</strong> Pular para o simulador e gabaritar no chute. Se você não consegue narrar o 99 em voz alta, as 50 questões não medem fluência — medem sorte.</div>
+        <div class="callout"><strong>Agora você (5 min).</strong> Feche a página. Conte o fluxo do 99 para o espelho. Onde travar, volte só naquela semana — não releia a trilha inteira.</div>
+      </div>
+
       <article class="term">
         <h3>Como ensaiar (não é reler)</h3>
         <ul class="tight">

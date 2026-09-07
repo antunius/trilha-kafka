@@ -199,6 +199,7 @@
     }
     .arch-box strong { display: block; font-family: Fraunces, Georgia, serif; }
     .arch-box small { display: block; color: var(--muted); font-size: 13px; margin-top: 4px; }
+    .arch-box.idle { opacity: 0.7; border-style: dashed; }
     .arch-arrow {
       text-align: center;
       color: var(--accent);
@@ -245,6 +246,44 @@
       padding: 6px 8px;
       margin: 6px 0;
       font-size: 13px;
+    }
+    .notebook {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      padding: 18px;
+      margin: 18px 0;
+    }
+    .notebook-cols {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 14px;
+    }
+    @media (max-width: 800px) { .notebook-cols { grid-template-columns: 1fr; } }
+    .notebook-col {
+      border: 1px solid var(--line);
+      padding: 12px;
+      background: #fff;
+    }
+    .notebook-col h4 { margin: 0 0 10px; font-size: 0.95rem; }
+    .clip {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 5px 8px;
+      margin: 8px 0;
+      border-left: 3px solid;
+    }
+    .clip.fat { border-color: var(--accent); background: var(--accent-soft); color: var(--ink); }
+    .clip.ana { border-color: var(--green); background: var(--green-soft); color: var(--ink); }
+    .clip.idle { border-color: var(--line); background: var(--bg); color: var(--muted); }
+    .notebook-legend {
+      display: flex; flex-wrap: wrap; gap: 16px;
+      margin: 14px 0 0; font-size: 14px; color: var(--muted);
+    }
+    .lesson {
+      margin: 36px 0 8px;
+      padding-top: 8px;
+      border-top: 1px solid var(--line);
     }
     details {
       background: var(--paper);

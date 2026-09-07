@@ -68,48 +68,43 @@
         <strong>partição</strong>. Cada coluna tem ordem própria. O caderno inteiro
         <em>não</em> tem uma ordem única.
       </p>
-      <p>Isso não é metáfora enfeitada. É o modelo real do Kafka.</p>
+      <p>Isso não é metáfora enfeitada. É o modelo real do Kafka. O desenho abaixo é o caderno <code>pedidos</code> neste instante.</p>
 
-      <div class="cols" aria-label="Tópico pedidos com três partições">
-        <div class="col">
-          <h4>Partição 0</h4>
-          <div class="msg">offset 0 · PedidoCriado A</div>
-          <div class="msg">offset 1 · Pagamento A</div>
-          <div class="msg">offset 2 · PedidoCriado D</div>
+      <div class="notebook" aria-label="Caderno do tópico pedidos com dois clipes">
+        <div class="arch-row">
+          <div class="arch-box"><span class="kicker">Escreve</span><strong>Produtor</strong><small>só acrescenta no fim da coluna — nunca no meio</small></div>
         </div>
-        <div class="col">
-          <h4>Partição 1</h4>
-          <div class="msg">offset 0 · PedidoCriado B</div>
-          <div class="msg">offset 1 · Item no carrinho B</div>
+        <div class="arch-arrow" aria-hidden="true">↓ tópico pedidos · um caderno, três colunas</div>
+        <div class="notebook-cols">
+          <div class="notebook-col">
+            <h4>Partição 0</h4>
+            <div class="msg">offset 0 · PedidoCriado A</div>
+            <div class="clip fat">clipe faturamento · leu até 0</div>
+            <div class="msg">offset 1 · Pagamento A</div>
+            <div class="msg">offset 2 · PedidoCriado D</div>
+            <div class="clip ana">clipe analytics · leu até 2</div>
+          </div>
+          <div class="notebook-col">
+            <h4>Partição 1</h4>
+            <div class="msg">offset 0 · PedidoCriado B</div>
+            <div class="msg">offset 1 · Item no carrinho B</div>
+            <div class="clip fat">clipe faturamento · leu até 1</div>
+            <div class="clip ana">clipe analytics · leu até 1</div>
+          </div>
+          <div class="notebook-col">
+            <h4>Partição 2</h4>
+            <div class="msg">offset 0 · PedidoCriado C</div>
+            <div class="clip ana">clipe analytics · leu até 0</div>
+            <div class="clip fat">clipe faturamento · ainda não leu (próximo = 0)</div>
+          </div>
         </div>
-        <div class="col">
-          <h4>Partição 2</h4>
-          <div class="msg">offset 0 · PedidoCriado C</div>
+        <div class="notebook-legend">
+          <span>Laranja: grupo <strong>faturamento</strong> (um clipe por coluna).</span>
+          <span>Verde: grupo <strong>analytics</strong> (outro clipe, no mesmo caderno).</span>
         </div>
       </div>
-      <p>
-        Faturamento lê e avança o próprio marcador. Analytics lê o mesmo caderno
-        com outro marcador. Os dois não se atrapalham.
-      </p>
-            <div class="arch" aria-label="Produtor, tópico, partições e dois grupos">
-        <div class="arch-row">
-          <div class="arch-box"><span class="kicker">Escreve</span><strong>Produtor</strong><small>append no líder</small></div>
-        </div>
-        <div class="arch-arrow" aria-hidden="true">↓</div>
-        <div class="arch-row">
-          <div class="arch-box"><span class="kicker">Caderno</span><strong>Tópico pedidos</strong><small>log compartilhado, não fila</small></div>
-        </div>
-        <div class="arch-arrow" aria-hidden="true">↓</div>
-        <div class="arch-row">
-          <div class="arch-box"><span class="kicker">Coluna</span><strong>Partição 0</strong><small>offsets 0 · 1 · 2 · 3</small></div>
-          <div class="arch-box"><span class="kicker">Coluna</span><strong>Partição 1</strong><small>offsets 0 · 1 · 2</small></div>
-          <div class="arch-box"><span class="kicker">Coluna</span><strong>Partição 2</strong><small>offsets 0 · 1</small></div>
-        </div>
-        <div class="arch-arrow" aria-hidden="true">↓</div>
-        <div class="arch-row">
-          <div class="arch-box"><span class="kicker">Grupo faturamento</span><strong>Clipe próprio</strong><small>lê e avança o offset</small></div>
-          <div class="arch-box"><span class="kicker">Grupo analytics</span><strong>Outro clipe</strong><small>mesmo log, independente</small></div>
-        </div>
+      <div class="ok">
+        As linhas continuam no caderno depois de lidas. Na partição 0 o faturamento parou no 0 e o analytics já foi até o 2 — os dois estão certos. Ninguém “pegou e tirou” o PedidoCriado A. Offset 0 da coluna 0 e offset 0 da coluna 2 são recados diferentes.
       </div>
     </section>
 

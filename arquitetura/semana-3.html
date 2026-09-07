@@ -58,6 +58,41 @@
         recusar microsserviço com argumento; definir fronteira por capacidade; defender banco por serviço; explicar Strangler; duplicação controlada; bounded context numa frase.
       </div>
 
+      <div class="lesson">
+        <h3>Sessão 1 — Quando não é microsserviço</h3>
+        <p><strong>O que você precisa entender.</strong> Microsserviço resolve time deployar sozinho. Cobra rede, consistência, observabilidade, debug. Time pequeno, domínio que ainda muda de forma, produto sem escala: monolito modular é a escolha padrão — dá para extrair depois.</p>
+        <p><strong>Exemplo concreto.</strong> Startup, 6 engenheiros, checkout + catálogo + fiscal no mesmo deploy, módulos no código. Extrair “serviço de cupom” agora: dois pipelines, dois bancos, uma saga para R$ 5 de desconto. O custo organizacional não existe ainda (não há dois times). O preço técnico já chegou.</p>
+        <div class="warn"><strong>Pegadinha.</strong> “Vamos de microsserviços para escalar o time” com um time só. Você comprou o preço sem a justificativa.</div>
+        <div class="callout"><strong>Agora você (5 min).</strong> Ensaie em voz alta uma recusa: domínio, tamanho do time, o que o monolito modular preserva.</div>
+      </div>
+
+      <div class="lesson">
+        <h3>Sessão 2 — Pedido no checkout ≠ Pedido no fiscal</h3>
+        <p><strong>O que você precisa entender.</strong> Fronteira é bounded context: o que muda junto fica junto. A palavra “Pedido” no checkout é carrinho, pagamento, entrega. No fiscal é NF-e, CFOP, imposto. Se toda feature mexe em três repos, a fatia está errada. Banco por serviço: senão o schema vira contrato secreto (monolito distribuído).</p>
+        <p><strong>Exemplo concreto.</strong> Time A muda o status <code>PAGO</code> no checkout. Time B precisa do mesmo campo para gerar NF. Tabela compartilhada: migrate do A quebra o B de madrugada. Evento <code>PedidoPago</code> com o que o fiscal precisa, cópia local somente-leitura, atraso de segundos aceitável na NF.</p>
+        <div class="warn"><strong>Pegadinha.</strong> Serviço-de-Pedido, serviço-de-Banco, serviço-de-API — fatia técnica, não capacidade.</div>
+        <div class="callout"><strong>Agora você (5 min).</strong> Escreva duas definições de “Pedido” (checkout vs fiscal). O que cada um pode atrasar; o que não pode divergir.</div>
+      </div>
+
+      <div class="lesson">
+        <h3>Sessão 3 — Strangler, não rewrite</h3>
+        <p><strong>O que você precisa entender.</strong> Coloca roteamento na frente do monolito e extrai uma fatia por vez. Começa pelo que tem fronteira clara. Nunca big bang. Dado compartilhado via evento, nunca <code>SELECT</code> na tabela do outro.</p>
+        <p><strong>Exemplo concreto.</strong> Gateway aponta <code>/checkout</code> para o monolito. Você extrai catálogo: <code>/produtos</code> vai para o serviço novo, o resto continua. Dual-write ou evento para estoque enquanto o pedaço fiscal ainda lê o legado. Desligar o módulo velho só quando o tráfego e o dado já migraram.</p>
+        <div class="flow">
+          <div class="box">Cliente</div>
+          <div class="arrow" aria-hidden="true">→</div>
+          <div class="box">Roteador</div>
+          <div class="arrow" aria-hidden="true">→</div>
+          <div class="box">Catálogo novo<br><small>/produtos</small></div>
+          <div class="arrow" aria-hidden="true">+</div>
+          <div class="box">Monolito<br><small>o resto</small></div>
+        </div>
+        <div class="warn"><strong>Pegadinha.</strong> “Reescrevemos em seis meses no stack novo.” O negócio não para; o dual-run vira eterno e ninguém desliga o legado.</div>
+        <div class="callout"><strong>Agora você (5 min).</strong> Escolha uma fatia do seu sistema atual que o Strangler pegaria primeiro — e por que não o núcleo de pagamento.</div>
+      </div>
+
+      <p>Quiz depois da aula. Abra, responda sem olhar.</p>
+
       <details>
         <summary>Quando você não usaria microsserviços? ⭐</summary>
         <p>Time pequeno, domínio ainda instável, produto sem escala que justifique. Microsserviço é uma solução <strong>organizacional</strong> (times deployarem independentemente) que cobra um preço <strong>técnico</strong> alto: latência de rede, consistência distribuída, observabilidade, complexidade de deploy, debug muito mais difícil. <strong>Monolito modular</strong> é a escolha padrão correta na maioria dos casos, e permite extrair serviços depois, quando as fronteiras estiverem claras.</p>

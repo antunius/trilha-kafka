@@ -53,6 +53,15 @@
         </article>
       </div>
 
+      <div class="lesson">
+        <h3>Sessão 1 — As peças <em>antes</em> do lab</h3>
+        <p><strong>O que você precisa entender.</strong> Spring é fiação. <code>KafkaTemplate</code> escreve. <code>@KafkaListener</code> lê com um <code>groupId</code>. <code>concurrency</code> é quantas mãos no mesmo crachá — o teto é o número de partições. <code>AckMode</code> é quando o clipe anda. Serializer quebrado sem <code>ErrorHandlingDeserializer</code> vira poison pill.</p>
+        <p><strong>Exemplo concreto.</strong> Tópico <code>pedidos</code> com 3 partições. <code>concurrency = 6</code> (ou 6 pods): três threads trabalham, três olham o teto. Listener com auto-commit: o clipe pode andar antes da cobrança do 99. Manual depois do efeito: morte no meio relê o 99 — lab 7.</p>
+        <div class="warn"><strong>Pegadinha.</strong> Copiar YAML com concurrency 8 porque “o notebook tem 8 cores”. A conta é <code>min(concurrency × instâncias, partitions)</code>.</div>
+        <div class="callout"><strong>Agora você (5 min).</strong> Sem abrir o lab: escreva o que você espera ver no log quando publicar 9 mensagens com keys pedido-1/2/3. Só então rode os labs 1–3.</div>
+      </div>
+      <p>Labs 4–9 continuam nas sessões 2 e 3: mate processo, veja ocioso, veneno, duplicata, outbox com broker morto, lag e hot key. A aula acima é o mapa; os nove laboratórios abaixo são o chão.</p>
+
       <h3>As peças do Spring, em linguagem de leigo</h3>
       <p>
         O Spring não muda o Kafka. Ele só é a fiação: quem escreve, quem lê, quantas mãos no caderno, quando o clipe anda.

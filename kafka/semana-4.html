@@ -52,6 +52,39 @@
         </article>
       </div>
 
+      <div class="lesson">
+        <h3>Sessão 1 — O buraco do <code>save(); send();</code></h3>
+        <p><strong>O que você precisa entender.</strong> Postgres e Kafka não compartilham uma transação. Se você commita o pedido e o processo morre antes do send, o caderno nunca fica sabendo. Se você publica e o banco dá rollback, o caderno anuncia um pedido que não existe.</p>
+        <p><strong>Exemplo concreto.</strong> Checkout do 99: <code>INSERT pedido</code> + <code>kafka.send(PedidoCriado)</code>. Kafka cai no meio. O usuário vê o pedido no site; faturamento nunca cobra. A correção: na mesma transação, <code>INSERT pedido</code> + <code>INSERT outbox</code>. Um carteiro (poller ou Debezium) leva o recado depois. Se o carteiro falhar, a linha continua na caixinha.</p>
+        <div class="flow">
+          <div class="box">Tx banco<br><small>pedido 99 + linha outbox</small></div>
+          <div class="arrow" aria-hidden="true">→</div>
+          <div class="box">Commit</div>
+          <div class="arrow" aria-hidden="true">→</div>
+          <div class="box">Carteiro<br><small>poller / CDC</small></div>
+          <div class="arrow" aria-hidden="true">→</div>
+          <div class="box">Tópico pedidos</div>
+        </div>
+        <div class="warn"><strong>Pegadinha.</strong> Publicar no Kafka <em>dentro</em> da transação SQL com um driver “mágico”. O send não faz parte do commit do Postgres. Outra: pintar o recado de enviado antes do ACK do broker.</div>
+        <div class="callout"><strong>Agora você (5 min).</strong> Desenhe as duas falhas do save+send e o caminho outbox. Sem caixinha na mesma canetada, a sessão não fechou.</div>
+      </div>
+
+      <div class="lesson">
+        <h3>Sessão 2 — Inbox e schema</h3>
+        <p><strong>O que você precisa entender.</strong> Outbox empurra at-least-once. Inbox (ou equivalente) impede o segundo efeito. Schema: campo opcional novo costuma ser seguro; rename e remover obrigatório quebram alguém.</p>
+        <p><strong>Exemplo concreto.</strong> Faturamento grava <code>eventId e-17</code> na tabela inbox e o pagamento do 99 <em>na mesma transação</em>. Replay do e-17: unique viola ou o if exists ignora — não cobra de novo. Produtor adiciona <code>cupom</code> opcional: consumidor velho ignora. Produtor renomeia <code>total</code> para <code>amount</code>: consumidor velho quebra.</p>
+        <div class="warn"><strong>Pegadinha.</strong> Gravar o eventId e só depois aplicar o efeito (ou o inverso) em transações separadas. Queda no meio = “já vi” sem cobrar, ou cobrar sem “já vi”.</div>
+        <div class="callout"><strong>Agora você (5 min).</strong> Uma frase backward vs forward. Um exemplo de mudança que você recusaria no review.</div>
+      </div>
+
+      <div class="lesson">
+        <h3>Sessão 3 — Contrato e quando não é Kafka</h3>
+        <p><strong>O que você precisa entender.</strong> Notification (“99 mudou, busca lá”) acopla na volta. State transfer (“99 pago, total 80”) deixa o consumidor agir sozinho. Kafka não é request/response. Consumer Spring chama banco e cartão; Streams trabalha em cima do próprio log.</p>
+        <p><strong>Exemplo concreto.</strong> E-mail de confirmação: evento com o que o template precisa, ou o serviço de e-mail vai esbarrar no checkout a cada recado. Tela de “o frete é X agora?”: isso é GET síncrono, não tópico. Time de três pessoas com 20 pedidos/dia: uma fila simples pode bastar.</p>
+        <div class="warn"><strong>Pegadinha.</strong> Começar por Kafka Streams porque “é o Kafka de verdade”. Se o trabalho é chamar o cartão, você empilhou estado local sem necessidade.</div>
+        <div class="callout"><strong>Agora você (5 min).</strong> Liste três usos do seu trabalho: Kafka / HTTP / nem um nem outro. Justifique em uma linha cada.</div>
+      </div>
+
       <article class="term">
         <h3>Outbox — salvar no banco e publicar no Kafka “juntos”</h3>
         <p class="analogy">Analogia: na mesma canetada você anota o pedido e deixa um recado na caixinha “para publicar”. Um carteiro separado leva o recado ao caderno Kafka. Se o carteiro falhar, o recado continua na caixinha.</p>

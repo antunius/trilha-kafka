@@ -52,6 +52,39 @@
         </article>
       </div>
 
+      <div class="lesson">
+        <h3>Sessão 1 — A linha do tempo e as três promessas</h3>
+        <p><strong>O que você precisa entender.</strong> O Kafka entrega o recado. Cobrar o cartão é o seu código. O clipe (offset commitado) e o efeito no mundo real podem divergir se o processo morrer no meio. As três promessas só descrevem <em>quando</em> o clipe anda em relação ao processamento.</p>
+        <p><strong>Exemplo concreto.</strong> Pedido 99, R$ 80. Sequência: lê o recado → chama o cartão (R$ 80 sai da fatura) → commita o offset. Se a JVM morre depois do cartão e antes do commit, o restart relê o 99. At-most-once seria commit <em>antes</em> de cobrar: a fatura nunca sai. At-least-once é processar depois commit: pode cobrar duas vezes. Exactly-once do Kafka é bolha tópico-a-tópico; a API do cartão está fora.</p>
+        <div class="flow">
+          <div class="box">Lê offset 40<br><small>Pedido 99 · cobrar R$ 80</small></div>
+          <div class="arrow" aria-hidden="true">→</div>
+          <div class="box">Cartão cobra<br><small>mundo real já mudou</small></div>
+          <div class="arrow" aria-hidden="true">→</div>
+          <div class="box">Processo morre<br><small>offset ainda em 39</small></div>
+          <div class="arrow" aria-hidden="true">→</div>
+          <div class="box">Restart relê 40<br><small>99 volta · duplicata de negócio</small></div>
+        </div>
+        <div class="warn"><strong>Pegadinha.</strong> “O log duplicou.” O log está certo. Quem duplicou foi o efeito. Outra: chamar isso de exactly-once porque o tópico tem transação — o cartão não participa da transação Kafka.</div>
+        <div class="callout"><strong>Agora você (5 min).</strong> Marque no papel os três pontos de morte (antes de processar, no meio, depois do commit) e o que sobra no mundo real em cada um.</div>
+      </div>
+
+      <div class="lesson">
+        <h3>Sessão 2 — Dois cadeados chamados “idempotência”</h3>
+        <p><strong>O que você precisa entender.</strong> Inbox / upsert / versão / “estoque = 7” protegem o <em>consumo</em>. <code>enable.idempotence=true</code> protege o <em>retry do mesmo producer</em> no log. São cadeados diferentes. Um não substitui o outro.</p>
+        <p><strong>Exemplo concreto.</strong> O producer do checkout reenvia o batch do pedido 99 porque o ACK atrasou: o broker descarta o segundo envelope 17 — o log não ganha duas linhas iguais daquele producer. Independente disso, o consumidor de faturamento processa o 99, cobra, morre, processa de novo: sem tabela inbox com <code>eventId</code> na mesma transação do insert de pagamento, saem duas cobranças.</p>
+        <div class="warn"><strong>Pegadinha.</strong> Ligar idempotência do produtor e achar que o cartão está seguro. O cartão precisa de Idempotency-Key na API do emissor (ou inbox local).</div>
+        <div class="callout"><strong>Agora você (5 min).</strong> Escreva duas colunas: “protege a escrita no caderno” vs “protege o efeito no banco/cartão”. Coloque producer idempotente, transação Kafka, inbox, upsert, Idempotency-Key.</div>
+      </div>
+
+      <div class="lesson">
+        <h3>Sessão 3 — Commit, lag e a frase da sexta</h3>
+        <p><strong>O que você precisa entender.</strong> Auto-commit anda o clipe por relógio, não por “terminei o trabalho”. Lag = última linha escrita minus clipe do grupo. <code>acks=all</code> espera o ISR na <em>escrita</em>; não move o clipe do consumidor e não impede a segunda cobrança.</p>
+        <p><strong>Exemplo concreto.</strong> Caderno na linha 10_000. Clipe do faturamento na 8_400. Lag = 1_600. Isso não diz se alguém cobrou duas vezes. Diz só que o grupo está atrasado 1_600 linhas. Commit em lote: morte no meio reprocessa o lote — de novo, inbox.</p>
+        <div class="warn"><strong>Pegadinha.</strong> “acks=all + produtor idempotente = ninguém cobra duas vezes.” Durabilidade da escrita ≠ unicidade do efeito.</div>
+        <div class="callout"><strong>Agora você (5 min).</strong> Fale em um minuto, sem jargão, por que aquela frase é falsa. Se misturar ISR com inbox, a sessão não fechou.</div>
+      </div>
+
       <table class="compare">
         <thead>
           <tr><th>Promessa</th><th>Como nasce</th><th>O que o leigo precisa lembrar</th></tr>

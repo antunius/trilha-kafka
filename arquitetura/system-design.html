@@ -37,6 +37,43 @@
         Antes do primeiro desenho: recitar o glossário. Se travar, não desenhe ainda.
       </p>
 
+      <h3>Walkthrough guiado (45 min) — encurtador, depois o mesmo relógio no pagamento</h3>
+      <p>O quadro abaixo é o cronômetro. Aqui está a aula já falada, para você sentir o ritmo antes de gravar o áudio sozinho.</p>
+
+      <div class="lesson">
+        <h3>Minutos 0–10 — perguntas e números (encurtador)</h3>
+        <p><strong>O que você precisa entender.</strong> Quem sai desenhando caixa perde. Quantos redirects/s? Quantos creates/s? URL customizada? TTL? Latência do redirect (isso é o p99 que importa)? Consistência: dois usuários podem ganhar o mesmo código curto?</p>
+        <p><strong>Exemplo concreto.</strong> 100 M redirects/dia ≈ 1,2k QPS médio, pico 10× → ~12k QPS leitura. Creates 1% disso. Código de 7 chars na base62. Redirect p99 &lt; 20 ms. Código único é invariante: não pode duplicar.</p>
+        <div class="callout"><strong>Agora você (2 min).</strong> Escreva três perguntas que o entrevistador ainda não fez e que mudam o desenho (região única? analytics em tempo real?).</div>
+      </div>
+
+      <div class="lesson">
+        <h3>Minutos 10–25 — API, dado, caixas</h3>
+        <p><strong>Exemplo já desenhado.</strong> <code>POST /links</code> (idempotente por body hash ou chave do cliente) devolve <code>https://x/{code}</code>. <code>GET /{code}</code> 302. Tabela <code>code → url longa + created_at</code> no Postgres no começo; cache Redis no GET (cache-aside, TTL com jitter). Hash do código: geração em serviço (range de IDs ou hash + retry em colisão). Leitura pesada: cache + réplicas. Sharding pela chave <code>code</code> quando a escrita de create e o volume de linhas exigirem — não no dia 1 com 12k QPS só de GET se o cache segura.</p>
+        <div class="arch">
+          <div class="arch-row">
+            <div class="arch-box"><span class="kicker">Cliente</span><strong>browser</strong></div>
+          </div>
+          <div class="arch-arrow" aria-hidden="true">↓ GET /abc12xy</div>
+          <div class="arch-row">
+            <div class="arch-box"><span class="kicker">Porta</span><strong>Gateway</strong><small>TLS, rate limit</small></div>
+          </div>
+          <div class="arch-arrow" aria-hidden="true">↓</div>
+          <div class="arch-row">
+            <div class="arch-box"><span class="kicker">Cache</span><strong>Redis</strong><small>hit: 302 direto</small></div>
+            <div class="arch-box"><span class="kicker">Miss</span><strong>serviço + Postgres</strong><small>dono do code→url</small></div>
+          </div>
+        </div>
+        <div class="warn"><strong>Pegadinha.</strong> Kafka no caminho crítico do 302. Redirect não precisa de caderno. Analytics do clique: evento assíncrono depois do 302.</div>
+      </div>
+
+      <div class="lesson">
+        <h3>Minutos 25–45 — aprofundar e o que quebra</h3>
+        <p>Aprofunde cache stampede no código famoso, hot key (um link viral), colisão de código, TTL vs link eterno, multi-região (código gerado em duas regiões). Trade-off: Redis na frente do 302 vs consistência do create (Postgres único até o QPS de escrita pedir shard).</p>
+        <p><strong>O mesmo relógio no processador de pagamento</strong> (item 5 da tabela): 5 min de requisitos (idempotência, p99 do “pago”, consistência do saldo); 5 min QPS; API <code>POST /pagar</code> com Idempotency-Key; dado = ledger no serviço dono; alto nível = gateway → checkout → outbox → Kafka → faturamento com inbox; aprofunde saga e DLT; gargalo = hot key do <code>cliente-vip</code> e retry sem jitter.</p>
+        <div class="callout"><strong>Agora você.</strong> Cronometre 45 min no encurtador em voz alta. Depois no pagamento, sem olhar este walkthrough — só o quadro de minutos.</div>
+      </div>
+
       <h3>Framework de resposta (45 min)</h3>
       <table class="compare">
         <thead>

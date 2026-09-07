@@ -39,17 +39,17 @@
         <article>
           <div class="tag">Sessão 1 · 45 min</div>
           <h4>Fila vs caderno</h4>
-          <p>Leia a ideia central e o mapa mental. Desenhe o caderno com 3 colunas. Diga em voz alta: quem escreve, quem lê, o que é o clipe.</p>
+          <p>Aula abaixo: o mesmo caderno, dois clipes em offsets diferentes.</p>
         </article>
         <article>
           <div class="tag">Sessão 2 · 45 min</div>
-          <h4>Glossário em voz alta</h4>
-          <p>Evento, tópico, partição, offset, key. Sem olhar. Se travar, volte no cartão e explique de novo com a analogia, não com a definição decorada.</p>
+          <h4>Evento, tópico, partição, offset, key</h4>
+          <p>Pedido 99 entra no caderno. Você nomeia cada caixa com o recado real, não com definição.</p>
         </article>
         <article>
           <div class="tag">Sessão 3 · 45 min</div>
-          <h4>Réplica + exercício de papel</h4>
-          <p>Broker, líder, ISR, retenção. Depois o desenho: 3 partições, 2 grupos, 4 consumidores no A e 1 no B. Se o desenho falhar, a semana não fechou.</p>
+          <h4>Líder, ISR, acks, retenção e o desenho resolvido</h4>
+          <p>3 partições, grupo A com 4 consumidores, grupo B com 1. O desenho já está feito — você precisa saber por quê.</p>
         </article>
       </div>
       <div class="ok">
@@ -57,7 +57,89 @@
         explicar por que faturamento e analytics não brigam; por que 4 consumidores em 3 partições deixam um ocioso;
         por que ordem não é global; o que o offset guarda e o que o Kafka <em>não</em> executa.
       </div>
-      <p>As perguntas abaixo são o roteiro da sessão 2 e 3. Abra, responda sem olhar, só então leia a explicação.</p>
+
+      <div class="lesson" id="aula-s1">
+        <h3>Sessão 1 — Fila vs caderno</h3>
+        <p><strong>O que você precisa entender.</strong> Na fila clássica, pegar o recado o tira da fila. No Kafka o recado continua no caderno. Quem lê só move um clipe. Dois times podem ter clipes em linhas diferentes no mesmo caderno — e isso é o desenho certo, não um bug.</p>
+        <p><strong>Exemplo concreto.</strong> O tópico <code>pedidos</code> já tem linhas. No desenho compacto abaixo, na partição 0 o faturamento parou no offset 0 e o analytics já foi até o 2. Num caderno grande a mesma ideia vira números de plantão: faturamento no offset 80, analytics no 12 — ou o contrário. Os dois clipes estão certos. O caderno não apaga a linha; um grupo atrasado não impede o outro.</p>
+        <div class="notebook" aria-label="Dois clipes no mesmo caderno">
+          <div class="arch-row">
+            <div class="arch-box"><span class="kicker">Escreve</span><strong>Checkout</strong><small>append no tópico pedidos</small></div>
+          </div>
+          <div class="arch-arrow" aria-hidden="true">↓</div>
+          <div class="notebook-cols">
+            <div class="notebook-col">
+              <h4>Partição 0</h4>
+              <div class="msg">0 · PedidoCriado A</div>
+              <div class="clip fat">faturamento · até 0 (atrasado)</div>
+              <div class="msg">1 · Pagamento A</div>
+              <div class="msg">2 · PedidoCriado D</div>
+              <div class="clip ana">analytics · até 2 (na frente)</div>
+            </div>
+            <div class="notebook-col">
+              <h4>Partição 1</h4>
+              <div class="msg">0 · PedidoCriado B</div>
+              <div class="msg">1 · Item no carrinho B</div>
+              <div class="clip fat">faturamento · até 1</div>
+              <div class="clip ana">analytics · até 1</div>
+            </div>
+            <div class="notebook-col">
+              <h4>Partição 2</h4>
+              <div class="msg">0 · PedidoCriado C</div>
+              <div class="clip ana">analytics · até 0</div>
+              <div class="clip fat">faturamento · ainda não leu</div>
+            </div>
+          </div>
+        </div>
+        <div class="warn"><strong>Pegadinha.</strong> “Analytics já leu, então faturamento não vê mais o PedidoCriado A.” Falso. A linha 0 continua lá. Só o clipe laranja ainda não passou dela.</div>
+        <div class="callout"><strong>Agora você (5 min).</strong> Feche a página. No papel: quem escreve, três colunas, dois clipes em offsets diferentes na coluna 0. Se os clipes ficarem na mesma linha “porque é mais limpo”, a analogia da fila ainda está no comando.</div>
+      </div>
+
+      <div class="lesson" id="aula-s2">
+        <h3>Sessão 2 — As cinco palavras no pedido 99</h3>
+        <p><strong>O que você precisa entender.</strong> Evento é o fato. Tópico é o caderno. Partição é a coluna. Offset é o número da linha <em>naquela coluna</em>. Key escolhe a coluna e, com isso, a ordem daquela entidade.</p>
+        <p><strong>Exemplo concreto.</strong> O checkout publica <code>PedidoCriado</code> do pedido 99, key = <code>99</code>, <code>eventId</code> estável. O recado cai na partição 1, vira offset 4. Depois sai <code>PagamentoAprovado</code> do mesmo 99 — mesma key, mesma coluna, offset 5. Analytics e faturamento leem esses dois recados na ordem 4 → 5 nessa coluna. Pedido 40 pode estar na partição 0 no offset 4: é outro recado; o número 4 não é global.</p>
+        <div class="flow">
+          <div class="box">Evento<br><small>PedidoCriado · eventId e-17 · key 99</small></div>
+          <div class="arrow" aria-hidden="true">→</div>
+          <div class="box">Tópico pedidos<br><small>o caderno</small></div>
+          <div class="arrow" aria-hidden="true">→</div>
+          <div class="box">Partição 1<br><small>hash(99) escolheu esta coluna</small></div>
+          <div class="arrow" aria-hidden="true">→</div>
+          <div class="box">Offset 4<br><small>quarta linha desta coluna</small></div>
+        </div>
+        <div class="warn"><strong>Pegadinha.</strong> Publicar sem key “para espalhar carga” no fluxo do pedido 99. Os recados Criado / Pago / Enviado podem cair em colunas diferentes; o consumidor pode ver Pago antes de Criado.</div>
+        <div class="callout"><strong>Agora você (5 min).</strong> Escreva uma frase para cada palavra usando só o pedido 99. Se aparecer “offset é o ID da mensagem no cluster”, volte no <a href="fundamentos.html#caderno">caderno</a>.</div>
+      </div>
+
+      <div class="lesson" id="aula-s3">
+        <h3>Sessão 3 — Réplica e o desenho resolvido</h3>
+        <p><strong>O que você precisa entender.</strong> O broker guarda o caderno. Cada partição tem um líder (quem recebe o append) e seguidores. ISR = quem está em dia. <code>acks=all</code> espera o ISR; não cobra cartão por você. Retenção apaga página velha; compaction deixa só a última linha de cada key.</p>
+        <p><strong>Exemplo concreto.</strong> Tópico <code>pedidos</code>, 3 partições. Grupo A (faturamento) sobe 4 consumidores. Grupo B (analytics) sobe 1. Abaixo está o desenho <em>já resolvido</em> — não é exercício em branco.</p>
+        <div class="arch" aria-label="Três partições, grupo A com ocioso, grupo B lê as três">
+          <div class="arch-row">
+            <div class="arch-box"><span class="kicker">Coluna</span><strong>P0</strong><small>líder no broker 1 · ISR em dia</small></div>
+            <div class="arch-box"><span class="kicker">Coluna</span><strong>P1</strong></div>
+            <div class="arch-box"><span class="kicker">Coluna</span><strong>P2</strong></div>
+          </div>
+          <div class="arch-arrow" aria-hidden="true">↓ grupo A · um consumidor por coluna</div>
+          <div class="arch-row">
+            <div class="arch-box"><span class="kicker">A1</span><strong>lê P0</strong></div>
+            <div class="arch-box"><span class="kicker">A2</span><strong>lê P1</strong></div>
+            <div class="arch-box"><span class="kicker">A3</span><strong>lê P2</strong></div>
+            <div class="arch-box idle"><span class="kicker">A4</span><strong>ocioso</strong><small>não existe 4ª coluna</small></div>
+          </div>
+          <div class="arch-arrow" aria-hidden="true">↓ grupo B · um clipe próprio, as três colunas no mesmo processo</div>
+          <div class="arch-row">
+            <div class="arch-box"><span class="kicker">B1</span><strong>lê P0, P1 e P2</strong><small>sozinho, em loop · offsets independentes do grupo A</small></div>
+          </div>
+        </div>
+        <p>Na mesma coluna, A pode estar no offset 80 e B no 12. Os clipes não brigam. A key <code>pedido-X</code> permanece na mesma coluna enquanto o número de partições não muda.</p>
+        <div class="warn"><strong>Pegadinha.</strong> “Subo o 4º pod do faturamento e o lag cai.” Sem 4ª partição, o 4º consumidor fica olhando o teto. Outra: achar que <code>acks=all</code> impede cobrança duplicada — isso é semana 2.</div>
+        <div class="callout"><strong>Agora você (5 min).</strong> Redesenhe de memória: 3 colunas, A1–A4, B1. Marque o ocioso. Se A4 ganhar uma fatia, o modelo ainda não colou.</div>
+      </div>
+
+      <p>Quiz depois da aula. Abra, responda sem olhar, só então leia a explicação.</p>
 
       <details open>
         <summary>Kafka é uma fila de mensagens?</summary>

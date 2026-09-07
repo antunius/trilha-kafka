@@ -52,6 +52,39 @@
         </article>
       </div>
 
+      <div class="lesson">
+        <h3>Sessão 1 — O filme do rebalance</h3>
+        <p><strong>O que você precisa entender.</strong> O grupo pausa para redistribuir colunas quando alguém entra, sai, perde heartbeat ou estoura <code>max.poll.interval.ms</code>. Durante o rebalance clássico, <em>ninguém</em> lê. O loop: lote lento → broker acha que morreu → rebalance → recomeça o lote → de novo.</p>
+        <p><strong>Exemplo concreto.</strong> Três pods no grupo faturamento, três partições. O pod A1 está cobrando um lote de 500 recados e cada cartão leva 200 ms. Passa <code>max.poll.interval.ms</code> sem um poll novo. O coordenador tira A1, redistribui P0. A2 e A3 também param enquanto a dança acontece. A1 volta, o lote recomeça — e estoura de novo.</p>
+        <div class="flow">
+          <div class="box">Poll lote 500</div>
+          <div class="arrow" aria-hidden="true">→</div>
+          <div class="box">Processa lento<br><small>sem poll</small></div>
+          <div class="arrow" aria-hidden="true">→</div>
+          <div class="box">Broker: “morreu”</div>
+          <div class="arrow" aria-hidden="true">→</div>
+          <div class="box">Rebalance<br><small>consumo para</small></div>
+        </div>
+        <div class="warn"><strong>Pegadinha.</strong> Subir mais pods para “sair do rebalance”. Mais membros = mais dança se o lote continua lento. A correção é lote menor, trabalho mais rápido, intervalo maior, ou membership estático no restart planejado.</div>
+        <div class="callout"><strong>Agora você (5 min).</strong> Desenhe o ciclo em quatro caixas. Marque onde CooperativeSticky e <code>group.instance.id</code> doem menos — não onde “eliminam” o problema.</div>
+      </div>
+
+      <div class="lesson">
+        <h3>Sessão 2 — Lag e a coluna quente</h3>
+        <p><strong>O que você precisa entender.</strong> Lag alto em todas as colunas ≠ lag numa só. Doze consumidores em três partições não criam doze leitores paralelos: só três trabalham. Partição quente: uma key (um cliente enorme) empilha numa coluna; as outras zeradas.</p>
+        <p><strong>Exemplo concreto.</strong> Produção 2_000 recados/s, consumo 400/s em cada uma das 3 colunas saudáveis — lag sobe nas três. Ou: 90% das keys são <code>cliente-vip</code> → P1 no 50_000 de lag, P0 e P2 em zero. Escalar o Deployment para 12 réplicas não drena P1.</p>
+        <div class="warn"><strong>Pegadinha.</strong> Olhar lag total do grupo e “dar scale”. Se for uma coluna só, scale é teatro.</div>
+        <div class="callout"><strong>Agora você (5 min).</strong> Escreva a ordem: produção vs consumo; dependência lenta; hot key. Só então “mais partições”.</div>
+      </div>
+
+      <div class="lesson">
+        <h3>Sessão 3 — Veneno vs timeout, depois DLT</h3>
+        <p><strong>O que você precisa entender.</strong> JSON quebrado é permanente: tenta N vezes e vai para o tópico cemitério, senão aquela coluna trava para sempre. Timeout de banco é transitório: retry com espera; mandar para o DLT perde o pedido 99 de verdade.</p>
+        <p><strong>Exemplo concreto.</strong> Offset 40 da P0 é <code>{quebrado</code>. Sem DLT o listener grita o mesmo erro; P1 e P2 podem seguir. Com DLT o 40 vai para <code>pedidos.DLT</code> e o clipe da P0 anda para 41. Outro dia o Postgres oscila 2 segundos: isso não é veneno — é retry.</p>
+        <div class="warn"><strong>Pegadinha.</strong> Um ErrorHandler que manda <em>qualquer</em> exception para o DLT. Você enterrou cobrança recuperável.</div>
+        <div class="callout"><strong>Agora você (5 min).</strong> Duas linhas: “vai para DLT” vs “retry”. Coloque JSON inválido, schema incompatível, 500 do cartão, timeout do banco, 400 de regra de negócio.</div>
+      </div>
+
       <article class="term">
         <h3>Rebalance: o que dispara e por que dói</h3>
         <p>

@@ -58,7 +58,36 @@
         <strong>No fim da semana você consegue:</strong>
         uma frase de arquitetura; latência vs throughput com exemplo de lote; por que p99; o que CAP realmente diz; quando eventual é aceitável; riscos de cache; replicação vs sharding; índice não acelera tudo.
       </div>
-      <p>Abra, responda sem olhar, só então leia a explicação.</p>
+      <div class="lesson">
+        <h3>Sessão 1 — Latência, throughput e o que é arquitetura</h3>
+        <p><strong>O que você precisa entender.</strong> Arquitetura são as decisões caras de reverter: fronteira, dado, comunicação, falha. Latência é o tempo de <em>uma</em> operação. Throughput é quantas por segundo. Lote sobe throughput e piora latência — os dois não são o mesmo pedido.</p>
+        <p><strong>Exemplo concreto.</strong> Checkout: o usuário espera o “pago” em menos de 300 ms (latência). O pipeline que gera relatório fiscal pode esperar 2 s por lote e processar 5_000 eventos/s (throughput). Kafka com <code>linger.ms=20</code> junta envelopes: mais mensagens/s, cada uma espera um pouco mais.</p>
+        <div class="flow">
+          <div class="box">1 clique<br><small>300 ms — latência</small></div>
+          <div class="arrow" aria-hidden="true">vs</div>
+          <div class="box">lote de 500<br><small>5k/s — throughput</small></div>
+        </div>
+        <div class="warn"><strong>Pegadinha.</strong> “Otimizamos a arquitetura” quando só cacheou um endpoint. Se o retrabalho é barato, não era decisão de arquitetura.</div>
+        <div class="callout"><strong>Agora você (5 min).</strong> Uma frase: o que é arquitetura. Um exemplo do seu trabalho em que melhorar throughput pioraria latência.</div>
+      </div>
+
+      <div class="lesson">
+        <h3>Sessão 2 — Média vs p99, CAP vs PACELC</h3>
+        <p><strong>O que você precisa entender.</strong> Média esconde a cauda. SLO se escreve em percentil. CAP só obriga escolha durante <em>partição de rede</em>. No dia a dia o trade-off é latência vs consistência (PACELC).</p>
+        <p><strong>Exemplo concreto.</strong> 100 requests: 99 levam 20 ms, 1 leva 5 s. Média ≈ 70 ms (ainda “ok” se você não olhar). p99 = 5 s. O cliente com mais dados — em geral o mais valioso — está nessa 1%. CAP: o link entre a zona A e B cai; você ou recusa escrita (C) ou aceita dois saldos (A). Sem partição, você ainda escolhe se o read espera a réplica ou devolve dado de 80 ms atrás.</p>
+        <div class="warn"><strong>Pegadinha.</strong> “Somos AP.” Sem dizer “quando a rede parte”. Fora disso a frase é decoreba. Outra: dashboard só com média.</div>
+        <div class="callout"><strong>Agora você (5 min).</strong> Calcule de cabeça: 1% a 5 s e o resto a 20 ms — por que o p99 do SLO dói e a média não.</div>
+      </div>
+
+      <div class="lesson">
+        <h3>Sessão 3 — Cache stampede e onde o dado mora</h3>
+        <p><strong>O que você precisa entender.</strong> Cache-aside é o padrão: miss → banco → popula. Stampede: o item expira e mil requisições vão juntas ao banco. SQL vs NoSQL pela carga, não pela moda. Replicação ajuda leitura; sharding ajuda escrita.</p>
+        <p><strong>Exemplo concreto.</strong> Catálogo do produto 44, TTL 60 s. Às 12:00:00 o cache some. 800 requests simultâneas de listagem rebatem no Postgres. Mitigação: jitter no TTL (58–67 s), lock, ou refresh antes de expirar. Saldo da conta 99 no débito: cache eventual de 2 s é inaceitável. Contador de curtidas: 2 s atrasado ok.</p>
+        <div class="warn"><strong>Pegadinha.</strong> “Vamos de Mongo porque escala.” Sem padrão de acesso, você só trocou o problema. Índice em tudo: escrita ficou lenta e o disco encheu.</div>
+        <div class="callout"><strong>Agora você (5 min).</strong> Três colunas: pode atrasar 2 s / não pode atrasar / não pode duplicar. Coloque curtida, saldo, assento, feed, preço, cobrança.</div>
+      </div>
+
+      <p>Quiz depois da aula. Abra, responda sem olhar.</p>
 
       <details open>
         <summary>O que é arquitetura, numa frase?</summary>
