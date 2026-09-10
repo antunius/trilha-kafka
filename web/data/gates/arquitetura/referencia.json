@@ -1,0 +1,1264 @@
+{
+  "questions": [
+    {
+      "q": "Sobre ADR: qual afirmação está certa?",
+      "o": [
+        "ADR registra a decisão, o contexto e o que foi recusado.",
+        "CAP vale o tempo todo, mesmo sem partição de rede.",
+        "Microsserviço com banco compartilhado ainda é deploy independente de verdade.",
+        "Retry infinito sem breaker é resiliência madura."
+      ],
+      "a": 0,
+      "w": "Memória do time.",
+      "t": "ADR"
+    },
+    {
+      "q": "Qual frase sobre ADR está certa?",
+      "o": [
+        "ADR registra a decisão, o contexto e o que foi recusado.",
+        "Microsserviço com banco compartilhado ainda é deploy independente de verdade.",
+        "A média do Grafana é o SLO que o usuário sente.",
+        "Eventual consistency autoriza invariante quebrada para sempre."
+      ],
+      "a": 0,
+      "w": "Memória do time.",
+      "t": "ADR"
+    },
+    {
+      "q": "ADR — o que acontece de verdade?",
+      "o": [
+        "ADR registra a decisão, o contexto e o que foi recusado.",
+        "A média do Grafana é o SLO que o usuário sente.",
+        "Retry infinito sem breaker é resiliência madura.",
+        "Cache write-behind nunca perde escrita."
+      ],
+      "a": 0,
+      "w": "Memória do time.",
+      "t": "ADR"
+    },
+    {
+      "q": "Marque a leitura correta (ADR).",
+      "o": [
+        "ADR registra a decisão, o contexto e o que foi recusado.",
+        "Retry infinito sem breaker é resiliência madura.",
+        "Eventual consistency autoriza invariante quebrada para sempre.",
+        "Sharding resolve leitura; replicação resolve escrita."
+      ],
+      "a": 0,
+      "w": "Memória do time.",
+      "t": "ADR"
+    },
+    {
+      "q": "Corrija o mito sobre ADR.",
+      "o": [
+        "ADR registra a decisão, o contexto e o que foi recusado.",
+        "Eventual consistency autoriza invariante quebrada para sempre.",
+        "Cache write-behind nunca perde escrita.",
+        "Saga é rollback distribuído mágico."
+      ],
+      "a": 0,
+      "w": "Memória do time.",
+      "t": "ADR"
+    },
+    {
+      "q": "No caderno, a respeito de ADR: qual vale?",
+      "o": [
+        "ADR registra a decisão, o contexto e o que foi recusado.",
+        "Cache write-behind nunca perde escrita.",
+        "Sharding resolve leitura; replicação resolve escrita.",
+        "Monolito não pode ser modular."
+      ],
+      "a": 0,
+      "w": "Memória do time.",
+      "t": "ADR"
+    },
+    {
+      "q": "Se perguntarem ADR na mesa, qual frase é a verdadeira?",
+      "o": [
+        "ADR registra a decisão, o contexto e o que foi recusado.",
+        "Sharding resolve leitura; replicação resolve escrita.",
+        "Saga é rollback distribuído mágico.",
+        "p50 é o percentil que a mesa de arquiteto cobra primeiro."
+      ],
+      "a": 0,
+      "w": "Memória do time.",
+      "t": "ADR"
+    },
+    {
+      "q": "Sobre recusar micro: qual afirmação está certa?",
+      "o": [
+        "Recusar microsserviço cedo é arquitetura, não medo.",
+        "Saga é rollback distribuído mágico.",
+        "Monolito não pode ser modular.",
+        "CAP vale o tempo todo, mesmo sem partição de rede."
+      ],
+      "a": 0,
+      "w": "Cara de reverter.",
+      "t": "recusar micro"
+    },
+    {
+      "q": "Qual frase sobre recusar micro está certa?",
+      "o": [
+        "Recusar microsserviço cedo é arquitetura, não medo.",
+        "Monolito não pode ser modular.",
+        "p50 é o percentil que a mesa de arquiteto cobra primeiro.",
+        "Microsserviço com banco compartilhado ainda é deploy independente de verdade."
+      ],
+      "a": 0,
+      "w": "Cara de reverter.",
+      "t": "recusar micro"
+    },
+    {
+      "q": "Recusar micro — o que acontece de verdade?",
+      "o": [
+        "Recusar microsserviço cedo é arquitetura, não medo.",
+        "p50 é o percentil que a mesa de arquiteto cobra primeiro.",
+        "CAP vale o tempo todo, mesmo sem partição de rede.",
+        "A média do Grafana é o SLO que o usuário sente."
+      ],
+      "a": 0,
+      "w": "Cara de reverter.",
+      "t": "recusar micro"
+    },
+    {
+      "q": "Marque a leitura correta (recusar micro).",
+      "o": [
+        "Recusar microsserviço cedo é arquitetura, não medo.",
+        "CAP vale o tempo todo, mesmo sem partição de rede.",
+        "Microsserviço com banco compartilhado ainda é deploy independente de verdade.",
+        "Retry infinito sem breaker é resiliência madura."
+      ],
+      "a": 0,
+      "w": "Cara de reverter.",
+      "t": "recusar micro"
+    },
+    {
+      "q": "Corrija o mito sobre recusar micro.",
+      "o": [
+        "Recusar microsserviço cedo é arquitetura, não medo.",
+        "Microsserviço com banco compartilhado ainda é deploy independente de verdade.",
+        "A média do Grafana é o SLO que o usuário sente.",
+        "Eventual consistency autoriza invariante quebrada para sempre."
+      ],
+      "a": 0,
+      "w": "Cara de reverter.",
+      "t": "recusar micro"
+    },
+    {
+      "q": "No caderno, a respeito de recusar micro: qual vale?",
+      "o": [
+        "Recusar microsserviço cedo é arquitetura, não medo.",
+        "A média do Grafana é o SLO que o usuário sente.",
+        "Retry infinito sem breaker é resiliência madura.",
+        "Cache write-behind nunca perde escrita."
+      ],
+      "a": 0,
+      "w": "Cara de reverter.",
+      "t": "recusar micro"
+    },
+    {
+      "q": "Se perguntarem recusar micro na mesa, qual frase é a verdadeira?",
+      "o": [
+        "Recusar microsserviço cedo é arquitetura, não medo.",
+        "Retry infinito sem breaker é resiliência madura.",
+        "Eventual consistency autoriza invariante quebrada para sempre.",
+        "Sharding resolve leitura; replicação resolve escrita."
+      ],
+      "a": 0,
+      "w": "Cara de reverter.",
+      "t": "recusar micro"
+    },
+    {
+      "q": "Sobre RFC: qual afirmação está certa?",
+      "o": [
+        "Review de RFC: requisitos, falha, operação, custo. Não só boxes.",
+        "Eventual consistency autoriza invariante quebrada para sempre.",
+        "Cache write-behind nunca perde escrita.",
+        "Saga é rollback distribuído mágico."
+      ],
+      "a": 0,
+      "w": "Régua.",
+      "t": "RFC"
+    },
+    {
+      "q": "Qual frase sobre RFC está certa?",
+      "o": [
+        "Review de RFC: requisitos, falha, operação, custo. Não só boxes.",
+        "Cache write-behind nunca perde escrita.",
+        "Sharding resolve leitura; replicação resolve escrita.",
+        "Monolito não pode ser modular."
+      ],
+      "a": 0,
+      "w": "Régua.",
+      "t": "RFC"
+    },
+    {
+      "q": "RFC — o que acontece de verdade?",
+      "o": [
+        "Review de RFC: requisitos, falha, operação, custo. Não só boxes.",
+        "Sharding resolve leitura; replicação resolve escrita.",
+        "Saga é rollback distribuído mágico.",
+        "p50 é o percentil que a mesa de arquiteto cobra primeiro."
+      ],
+      "a": 0,
+      "w": "Régua.",
+      "t": "RFC"
+    },
+    {
+      "q": "Marque a leitura correta (RFC).",
+      "o": [
+        "Review de RFC: requisitos, falha, operação, custo. Não só boxes.",
+        "Saga é rollback distribuído mágico.",
+        "Monolito não pode ser modular.",
+        "CAP vale o tempo todo, mesmo sem partição de rede."
+      ],
+      "a": 0,
+      "w": "Régua.",
+      "t": "RFC"
+    },
+    {
+      "q": "Corrija o mito sobre RFC.",
+      "o": [
+        "Review de RFC: requisitos, falha, operação, custo. Não só boxes.",
+        "Monolito não pode ser modular.",
+        "p50 é o percentil que a mesa de arquiteto cobra primeiro.",
+        "Microsserviço com banco compartilhado ainda é deploy independente de verdade."
+      ],
+      "a": 0,
+      "w": "Régua.",
+      "t": "RFC"
+    },
+    {
+      "q": "No caderno, a respeito de RFC: qual vale?",
+      "o": [
+        "Review de RFC: requisitos, falha, operação, custo. Não só boxes.",
+        "p50 é o percentil que a mesa de arquiteto cobra primeiro.",
+        "CAP vale o tempo todo, mesmo sem partição de rede.",
+        "A média do Grafana é o SLO que o usuário sente."
+      ],
+      "a": 0,
+      "w": "Régua.",
+      "t": "RFC"
+    },
+    {
+      "q": "Se perguntarem RFC na mesa, qual frase é a verdadeira?",
+      "o": [
+        "Review de RFC: requisitos, falha, operação, custo. Não só boxes.",
+        "CAP vale o tempo todo, mesmo sem partição de rede.",
+        "Microsserviço com banco compartilhado ainda é deploy independente de verdade.",
+        "Retry infinito sem breaker é resiliência madura."
+      ],
+      "a": 0,
+      "w": "Régua.",
+      "t": "RFC"
+    },
+    {
+      "q": "Sobre não: qual afirmação está certa?",
+      "o": [
+        "Arquiteto diz não com alternativa e preço.",
+        "Microsserviço com banco compartilhado ainda é deploy independente de verdade.",
+        "A média do Grafana é o SLO que o usuário sente.",
+        "Eventual consistency autoriza invariante quebrada para sempre."
+      ],
+      "a": 0,
+      "w": "Não é muro.",
+      "t": "não"
+    },
+    {
+      "q": "Qual frase sobre não está certa?",
+      "o": [
+        "Arquiteto diz não com alternativa e preço.",
+        "A média do Grafana é o SLO que o usuário sente.",
+        "Retry infinito sem breaker é resiliência madura.",
+        "Cache write-behind nunca perde escrita."
+      ],
+      "a": 0,
+      "w": "Não é muro.",
+      "t": "não"
+    },
+    {
+      "q": "Não — o que acontece de verdade?",
+      "o": [
+        "Arquiteto diz não com alternativa e preço.",
+        "Retry infinito sem breaker é resiliência madura.",
+        "Eventual consistency autoriza invariante quebrada para sempre.",
+        "Sharding resolve leitura; replicação resolve escrita."
+      ],
+      "a": 0,
+      "w": "Não é muro.",
+      "t": "não"
+    },
+    {
+      "q": "Marque a leitura correta (não).",
+      "o": [
+        "Arquiteto diz não com alternativa e preço.",
+        "Eventual consistency autoriza invariante quebrada para sempre.",
+        "Cache write-behind nunca perde escrita.",
+        "Saga é rollback distribuído mágico."
+      ],
+      "a": 0,
+      "w": "Não é muro.",
+      "t": "não"
+    },
+    {
+      "q": "Corrija o mito sobre não.",
+      "o": [
+        "Arquiteto diz não com alternativa e preço.",
+        "Cache write-behind nunca perde escrita.",
+        "Sharding resolve leitura; replicação resolve escrita.",
+        "Monolito não pode ser modular."
+      ],
+      "a": 0,
+      "w": "Não é muro.",
+      "t": "não"
+    },
+    {
+      "q": "No caderno, a respeito de não: qual vale?",
+      "o": [
+        "Arquiteto diz não com alternativa e preço.",
+        "Sharding resolve leitura; replicação resolve escrita.",
+        "Saga é rollback distribuído mágico.",
+        "p50 é o percentil que a mesa de arquiteto cobra primeiro."
+      ],
+      "a": 0,
+      "w": "Não é muro.",
+      "t": "não"
+    },
+    {
+      "q": "Se perguntarem não na mesa, qual frase é a verdadeira?",
+      "o": [
+        "Arquiteto diz não com alternativa e preço.",
+        "Saga é rollback distribuído mágico.",
+        "Monolito não pode ser modular.",
+        "CAP vale o tempo todo, mesmo sem partição de rede."
+      ],
+      "a": 0,
+      "w": "Não é muro.",
+      "t": "não"
+    },
+    {
+      "q": "Sobre produto: qual afirmação está certa?",
+      "o": [
+        "Consistência é pergunta de produto, não só de paper.",
+        "Monolito não pode ser modular.",
+        "p50 é o percentil que a mesa de arquiteto cobra primeiro.",
+        "Microsserviço com banco compartilhado ainda é deploy independente de verdade."
+      ],
+      "a": 0,
+      "w": "Estoque errado ok?",
+      "t": "produto"
+    },
+    {
+      "q": "Qual frase sobre produto está certa?",
+      "o": [
+        "Consistência é pergunta de produto, não só de paper.",
+        "p50 é o percentil que a mesa de arquiteto cobra primeiro.",
+        "CAP vale o tempo todo, mesmo sem partição de rede.",
+        "A média do Grafana é o SLO que o usuário sente."
+      ],
+      "a": 0,
+      "w": "Estoque errado ok?",
+      "t": "produto"
+    },
+    {
+      "q": "Produto — o que acontece de verdade?",
+      "o": [
+        "Consistência é pergunta de produto, não só de paper.",
+        "CAP vale o tempo todo, mesmo sem partição de rede.",
+        "Microsserviço com banco compartilhado ainda é deploy independente de verdade.",
+        "Retry infinito sem breaker é resiliência madura."
+      ],
+      "a": 0,
+      "w": "Estoque errado ok?",
+      "t": "produto"
+    },
+    {
+      "q": "Marque a leitura correta (produto).",
+      "o": [
+        "Consistência é pergunta de produto, não só de paper.",
+        "Microsserviço com banco compartilhado ainda é deploy independente de verdade.",
+        "A média do Grafana é o SLO que o usuário sente.",
+        "Eventual consistency autoriza invariante quebrada para sempre."
+      ],
+      "a": 0,
+      "w": "Estoque errado ok?",
+      "t": "produto"
+    },
+    {
+      "q": "Corrija o mito sobre produto.",
+      "o": [
+        "Consistência é pergunta de produto, não só de paper.",
+        "A média do Grafana é o SLO que o usuário sente.",
+        "Retry infinito sem breaker é resiliência madura.",
+        "Cache write-behind nunca perde escrita."
+      ],
+      "a": 0,
+      "w": "Estoque errado ok?",
+      "t": "produto"
+    },
+    {
+      "q": "No caderno, a respeito de produto: qual vale?",
+      "o": [
+        "Consistência é pergunta de produto, não só de paper.",
+        "Retry infinito sem breaker é resiliência madura.",
+        "Eventual consistency autoriza invariante quebrada para sempre.",
+        "Sharding resolve leitura; replicação resolve escrita."
+      ],
+      "a": 0,
+      "w": "Estoque errado ok?",
+      "t": "produto"
+    },
+    {
+      "q": "Se perguntarem produto na mesa, qual frase é a verdadeira?",
+      "o": [
+        "Consistência é pergunta de produto, não só de paper.",
+        "Eventual consistency autoriza invariante quebrada para sempre.",
+        "Cache write-behind nunca perde escrita.",
+        "Saga é rollback distribuído mágico."
+      ],
+      "a": 0,
+      "w": "Estoque errado ok?",
+      "t": "produto"
+    },
+    {
+      "q": "Sobre operar: qual afirmação está certa?",
+      "o": [
+        "Quem desenha pergunta quem acorda. Sem pager, o desenho é teatro.",
+        "Cache write-behind nunca perde escrita.",
+        "Sharding resolve leitura; replicação resolve escrita.",
+        "Monolito não pode ser modular."
+      ],
+      "a": 0,
+      "w": "Staff/Lead.",
+      "t": "operar"
+    },
+    {
+      "q": "Qual frase sobre operar está certa?",
+      "o": [
+        "Quem desenha pergunta quem acorda. Sem pager, o desenho é teatro.",
+        "Sharding resolve leitura; replicação resolve escrita.",
+        "Saga é rollback distribuído mágico.",
+        "p50 é o percentil que a mesa de arquiteto cobra primeiro."
+      ],
+      "a": 0,
+      "w": "Staff/Lead.",
+      "t": "operar"
+    },
+    {
+      "q": "Operar — o que acontece de verdade?",
+      "o": [
+        "Quem desenha pergunta quem acorda. Sem pager, o desenho é teatro.",
+        "Saga é rollback distribuído mágico.",
+        "Monolito não pode ser modular.",
+        "CAP vale o tempo todo, mesmo sem partição de rede."
+      ],
+      "a": 0,
+      "w": "Staff/Lead.",
+      "t": "operar"
+    },
+    {
+      "q": "Marque a leitura correta (operar).",
+      "o": [
+        "Quem desenha pergunta quem acorda. Sem pager, o desenho é teatro.",
+        "Monolito não pode ser modular.",
+        "p50 é o percentil que a mesa de arquiteto cobra primeiro.",
+        "Microsserviço com banco compartilhado ainda é deploy independente de verdade."
+      ],
+      "a": 0,
+      "w": "Staff/Lead.",
+      "t": "operar"
+    },
+    {
+      "q": "Corrija o mito sobre operar.",
+      "o": [
+        "Quem desenha pergunta quem acorda. Sem pager, o desenho é teatro.",
+        "p50 é o percentil que a mesa de arquiteto cobra primeiro.",
+        "CAP vale o tempo todo, mesmo sem partição de rede.",
+        "A média do Grafana é o SLO que o usuário sente."
+      ],
+      "a": 0,
+      "w": "Staff/Lead.",
+      "t": "operar"
+    },
+    {
+      "q": "No caderno, a respeito de operar: qual vale?",
+      "o": [
+        "Quem desenha pergunta quem acorda. Sem pager, o desenho é teatro.",
+        "CAP vale o tempo todo, mesmo sem partição de rede.",
+        "Microsserviço com banco compartilhado ainda é deploy independente de verdade.",
+        "Retry infinito sem breaker é resiliência madura."
+      ],
+      "a": 0,
+      "w": "Staff/Lead.",
+      "t": "operar"
+    },
+    {
+      "q": "Se perguntarem operar na mesa, qual frase é a verdadeira?",
+      "o": [
+        "Quem desenha pergunta quem acorda. Sem pager, o desenho é teatro.",
+        "Microsserviço com banco compartilhado ainda é deploy independente de verdade.",
+        "A média do Grafana é o SLO que o usuário sente.",
+        "Eventual consistency autoriza invariante quebrada para sempre."
+      ],
+      "a": 0,
+      "w": "Staff/Lead.",
+      "t": "operar"
+    },
+    {
+      "q": "Sobre menos: qual afirmação está certa?",
+      "o": [
+        "O melhor desenho costuma ter menos peças, não mais logos.",
+        "A média do Grafana é o SLO que o usuário sente.",
+        "Retry infinito sem breaker é resiliência madura.",
+        "Cache write-behind nunca perde escrita."
+      ],
+      "a": 0,
+      "w": "Julgamento.",
+      "t": "menos"
+    },
+    {
+      "q": "Qual frase sobre menos está certa?",
+      "o": [
+        "O melhor desenho costuma ter menos peças, não mais logos.",
+        "Retry infinito sem breaker é resiliência madura.",
+        "Eventual consistency autoriza invariante quebrada para sempre.",
+        "Sharding resolve leitura; replicação resolve escrita."
+      ],
+      "a": 0,
+      "w": "Julgamento.",
+      "t": "menos"
+    },
+    {
+      "q": "Menos — o que acontece de verdade?",
+      "o": [
+        "O melhor desenho costuma ter menos peças, não mais logos.",
+        "Eventual consistency autoriza invariante quebrada para sempre.",
+        "Cache write-behind nunca perde escrita.",
+        "Saga é rollback distribuído mágico."
+      ],
+      "a": 0,
+      "w": "Julgamento.",
+      "t": "menos"
+    },
+    {
+      "q": "Marque a leitura correta (menos).",
+      "o": [
+        "O melhor desenho costuma ter menos peças, não mais logos.",
+        "Cache write-behind nunca perde escrita.",
+        "Sharding resolve leitura; replicação resolve escrita.",
+        "Monolito não pode ser modular."
+      ],
+      "a": 0,
+      "w": "Julgamento.",
+      "t": "menos"
+    },
+    {
+      "q": "Corrija o mito sobre menos.",
+      "o": [
+        "O melhor desenho costuma ter menos peças, não mais logos.",
+        "Sharding resolve leitura; replicação resolve escrita.",
+        "Saga é rollback distribuído mágico.",
+        "p50 é o percentil que a mesa de arquiteto cobra primeiro."
+      ],
+      "a": 0,
+      "w": "Julgamento.",
+      "t": "menos"
+    },
+    {
+      "q": "No caderno, a respeito de menos: qual vale?",
+      "o": [
+        "O melhor desenho costuma ter menos peças, não mais logos.",
+        "Saga é rollback distribuído mágico.",
+        "Monolito não pode ser modular.",
+        "CAP vale o tempo todo, mesmo sem partição de rede."
+      ],
+      "a": 0,
+      "w": "Julgamento.",
+      "t": "menos"
+    },
+    {
+      "q": "Se perguntarem menos na mesa, qual frase é a verdadeira?",
+      "o": [
+        "O melhor desenho costuma ter menos peças, não mais logos.",
+        "Monolito não pode ser modular.",
+        "p50 é o percentil que a mesa de arquiteto cobra primeiro.",
+        "Microsserviço com banco compartilhado ainda é deploy independente de verdade."
+      ],
+      "a": 0,
+      "w": "Julgamento.",
+      "t": "menos"
+    },
+    {
+      "q": "Sobre evoluir: qual afirmação está certa?",
+      "o": [
+        "O que faria diferente com mais tempo — em voz alta.",
+        "p50 é o percentil que a mesa de arquiteto cobra primeiro.",
+        "CAP vale o tempo todo, mesmo sem partição de rede.",
+        "A média do Grafana é o SLO que o usuário sente."
+      ],
+      "a": 0,
+      "w": "Régua da mesa.",
+      "t": "evoluir"
+    },
+    {
+      "q": "Qual frase sobre evoluir está certa?",
+      "o": [
+        "O que faria diferente com mais tempo — em voz alta.",
+        "CAP vale o tempo todo, mesmo sem partição de rede.",
+        "Microsserviço com banco compartilhado ainda é deploy independente de verdade.",
+        "Retry infinito sem breaker é resiliência madura."
+      ],
+      "a": 0,
+      "w": "Régua da mesa.",
+      "t": "evoluir"
+    },
+    {
+      "q": "Evoluir — o que acontece de verdade?",
+      "o": [
+        "O que faria diferente com mais tempo — em voz alta.",
+        "Microsserviço com banco compartilhado ainda é deploy independente de verdade.",
+        "A média do Grafana é o SLO que o usuário sente.",
+        "Eventual consistency autoriza invariante quebrada para sempre."
+      ],
+      "a": 0,
+      "w": "Régua da mesa.",
+      "t": "evoluir"
+    },
+    {
+      "q": "Marque a leitura correta (evoluir).",
+      "o": [
+        "O que faria diferente com mais tempo — em voz alta.",
+        "A média do Grafana é o SLO que o usuário sente.",
+        "Retry infinito sem breaker é resiliência madura.",
+        "Cache write-behind nunca perde escrita."
+      ],
+      "a": 0,
+      "w": "Régua da mesa.",
+      "t": "evoluir"
+    },
+    {
+      "q": "Corrija o mito sobre evoluir.",
+      "o": [
+        "O que faria diferente com mais tempo — em voz alta.",
+        "Retry infinito sem breaker é resiliência madura.",
+        "Eventual consistency autoriza invariante quebrada para sempre.",
+        "Sharding resolve leitura; replicação resolve escrita."
+      ],
+      "a": 0,
+      "w": "Régua da mesa.",
+      "t": "evoluir"
+    },
+    {
+      "q": "No caderno, a respeito de evoluir: qual vale?",
+      "o": [
+        "O que faria diferente com mais tempo — em voz alta.",
+        "Eventual consistency autoriza invariante quebrada para sempre.",
+        "Cache write-behind nunca perde escrita.",
+        "Saga é rollback distribuído mágico."
+      ],
+      "a": 0,
+      "w": "Régua da mesa.",
+      "t": "evoluir"
+    },
+    {
+      "q": "Se perguntarem evoluir na mesa, qual frase é a verdadeira?",
+      "o": [
+        "O que faria diferente com mais tempo — em voz alta.",
+        "Cache write-behind nunca perde escrita.",
+        "Sharding resolve leitura; replicação resolve escrita.",
+        "Monolito não pode ser modular."
+      ],
+      "a": 0,
+      "w": "Régua da mesa.",
+      "t": "evoluir"
+    },
+    {
+      "q": "Sobre medir: qual afirmação está certa?",
+      "o": [
+        "Toda aposta tem SLI. Sem medida é opinião.",
+        "Sharding resolve leitura; replicação resolve escrita.",
+        "Saga é rollback distribuído mágico.",
+        "p50 é o percentil que a mesa de arquiteto cobra primeiro."
+      ],
+      "a": 0,
+      "w": "Observabilidade.",
+      "t": "medir"
+    },
+    {
+      "q": "Qual frase sobre medir está certa?",
+      "o": [
+        "Toda aposta tem SLI. Sem medida é opinião.",
+        "Saga é rollback distribuído mágico.",
+        "Monolito não pode ser modular.",
+        "CAP vale o tempo todo, mesmo sem partição de rede."
+      ],
+      "a": 0,
+      "w": "Observabilidade.",
+      "t": "medir"
+    },
+    {
+      "q": "Medir — o que acontece de verdade?",
+      "o": [
+        "Toda aposta tem SLI. Sem medida é opinião.",
+        "Monolito não pode ser modular.",
+        "p50 é o percentil que a mesa de arquiteto cobra primeiro.",
+        "Microsserviço com banco compartilhado ainda é deploy independente de verdade."
+      ],
+      "a": 0,
+      "w": "Observabilidade.",
+      "t": "medir"
+    },
+    {
+      "q": "Marque a leitura correta (medir).",
+      "o": [
+        "Toda aposta tem SLI. Sem medida é opinião.",
+        "p50 é o percentil que a mesa de arquiteto cobra primeiro.",
+        "CAP vale o tempo todo, mesmo sem partição de rede.",
+        "A média do Grafana é o SLO que o usuário sente."
+      ],
+      "a": 0,
+      "w": "Observabilidade.",
+      "t": "medir"
+    },
+    {
+      "q": "Corrija o mito sobre medir.",
+      "o": [
+        "Toda aposta tem SLI. Sem medida é opinião.",
+        "CAP vale o tempo todo, mesmo sem partição de rede.",
+        "Microsserviço com banco compartilhado ainda é deploy independente de verdade.",
+        "Retry infinito sem breaker é resiliência madura."
+      ],
+      "a": 0,
+      "w": "Observabilidade.",
+      "t": "medir"
+    },
+    {
+      "q": "No caderno, a respeito de medir: qual vale?",
+      "o": [
+        "Toda aposta tem SLI. Sem medida é opinião.",
+        "Microsserviço com banco compartilhado ainda é deploy independente de verdade.",
+        "A média do Grafana é o SLO que o usuário sente.",
+        "Eventual consistency autoriza invariante quebrada para sempre."
+      ],
+      "a": 0,
+      "w": "Observabilidade.",
+      "t": "medir"
+    },
+    {
+      "q": "Se perguntarem medir na mesa, qual frase é a verdadeira?",
+      "o": [
+        "Toda aposta tem SLI. Sem medida é opinião.",
+        "A média do Grafana é o SLO que o usuário sente.",
+        "Retry infinito sem breaker é resiliência madura.",
+        "Cache write-behind nunca perde escrita."
+      ],
+      "a": 0,
+      "w": "Observabilidade.",
+      "t": "medir"
+    },
+    {
+      "q": "Sobre fronteira: qual afirmação está certa?",
+      "o": [
+        "Defenda a fronteira de dado. Shared db é regressão.",
+        "Retry infinito sem breaker é resiliência madura.",
+        "Eventual consistency autoriza invariante quebrada para sempre.",
+        "Sharding resolve leitura; replicação resolve escrita."
+      ],
+      "a": 0,
+      "w": "Decomposição.",
+      "t": "fronteira"
+    },
+    {
+      "q": "Qual frase sobre fronteira está certa?",
+      "o": [
+        "Defenda a fronteira de dado. Shared db é regressão.",
+        "Eventual consistency autoriza invariante quebrada para sempre.",
+        "Cache write-behind nunca perde escrita.",
+        "Saga é rollback distribuído mágico."
+      ],
+      "a": 0,
+      "w": "Decomposição.",
+      "t": "fronteira"
+    },
+    {
+      "q": "Fronteira — o que acontece de verdade?",
+      "o": [
+        "Defenda a fronteira de dado. Shared db é regressão.",
+        "Cache write-behind nunca perde escrita.",
+        "Sharding resolve leitura; replicação resolve escrita.",
+        "Monolito não pode ser modular."
+      ],
+      "a": 0,
+      "w": "Decomposição.",
+      "t": "fronteira"
+    },
+    {
+      "q": "Marque a leitura correta (fronteira).",
+      "o": [
+        "Defenda a fronteira de dado. Shared db é regressão.",
+        "Sharding resolve leitura; replicação resolve escrita.",
+        "Saga é rollback distribuído mágico.",
+        "p50 é o percentil que a mesa de arquiteto cobra primeiro."
+      ],
+      "a": 0,
+      "w": "Decomposição.",
+      "t": "fronteira"
+    },
+    {
+      "q": "Corrija o mito sobre fronteira.",
+      "o": [
+        "Defenda a fronteira de dado. Shared db é regressão.",
+        "Saga é rollback distribuído mágico.",
+        "Monolito não pode ser modular.",
+        "CAP vale o tempo todo, mesmo sem partição de rede."
+      ],
+      "a": 0,
+      "w": "Decomposição.",
+      "t": "fronteira"
+    },
+    {
+      "q": "No caderno, a respeito de fronteira: qual vale?",
+      "o": [
+        "Defenda a fronteira de dado. Shared db é regressão.",
+        "Monolito não pode ser modular.",
+        "p50 é o percentil que a mesa de arquiteto cobra primeiro.",
+        "Microsserviço com banco compartilhado ainda é deploy independente de verdade."
+      ],
+      "a": 0,
+      "w": "Decomposição.",
+      "t": "fronteira"
+    },
+    {
+      "q": "Se perguntarem fronteira na mesa, qual frase é a verdadeira?",
+      "o": [
+        "Defenda a fronteira de dado. Shared db é regressão.",
+        "p50 é o percentil que a mesa de arquiteto cobra primeiro.",
+        "CAP vale o tempo todo, mesmo sem partição de rede.",
+        "A média do Grafana é o SLO que o usuário sente."
+      ],
+      "a": 0,
+      "w": "Decomposição.",
+      "t": "fronteira"
+    },
+    {
+      "q": "Sobre saga honesta: qual afirmação está certa?",
+      "o": [
+        "Saga sem compensação desenhada é desejo.",
+        "CAP vale o tempo todo, mesmo sem partição de rede.",
+        "Microsserviço com banco compartilhado ainda é deploy independente de verdade.",
+        "Retry infinito sem breaker é resiliência madura."
+      ],
+      "a": 0,
+      "w": "Dados.",
+      "t": "saga honesta"
+    },
+    {
+      "q": "Qual frase sobre saga honesta está certa?",
+      "o": [
+        "Saga sem compensação desenhada é desejo.",
+        "Microsserviço com banco compartilhado ainda é deploy independente de verdade.",
+        "A média do Grafana é o SLO que o usuário sente.",
+        "Eventual consistency autoriza invariante quebrada para sempre."
+      ],
+      "a": 0,
+      "w": "Dados.",
+      "t": "saga honesta"
+    },
+    {
+      "q": "Saga honesta — o que acontece de verdade?",
+      "o": [
+        "Saga sem compensação desenhada é desejo.",
+        "A média do Grafana é o SLO que o usuário sente.",
+        "Retry infinito sem breaker é resiliência madura.",
+        "Cache write-behind nunca perde escrita."
+      ],
+      "a": 0,
+      "w": "Dados.",
+      "t": "saga honesta"
+    },
+    {
+      "q": "Marque a leitura correta (saga honesta).",
+      "o": [
+        "Saga sem compensação desenhada é desejo.",
+        "Retry infinito sem breaker é resiliência madura.",
+        "Eventual consistency autoriza invariante quebrada para sempre.",
+        "Sharding resolve leitura; replicação resolve escrita."
+      ],
+      "a": 0,
+      "w": "Dados.",
+      "t": "saga honesta"
+    },
+    {
+      "q": "Corrija o mito sobre saga honesta.",
+      "o": [
+        "Saga sem compensação desenhada é desejo.",
+        "Eventual consistency autoriza invariante quebrada para sempre.",
+        "Cache write-behind nunca perde escrita.",
+        "Saga é rollback distribuído mágico."
+      ],
+      "a": 0,
+      "w": "Dados.",
+      "t": "saga honesta"
+    },
+    {
+      "q": "No caderno, a respeito de saga honesta: qual vale?",
+      "o": [
+        "Saga sem compensação desenhada é desejo.",
+        "Cache write-behind nunca perde escrita.",
+        "Sharding resolve leitura; replicação resolve escrita.",
+        "Monolito não pode ser modular."
+      ],
+      "a": 0,
+      "w": "Dados.",
+      "t": "saga honesta"
+    },
+    {
+      "q": "Se perguntarem saga honesta na mesa, qual frase é a verdadeira?",
+      "o": [
+        "Saga sem compensação desenhada é desejo.",
+        "Sharding resolve leitura; replicação resolve escrita.",
+        "Saga é rollback distribuído mágico.",
+        "p50 é o percentil que a mesa de arquiteto cobra primeiro."
+      ],
+      "a": 0,
+      "w": "Dados.",
+      "t": "saga honesta"
+    },
+    {
+      "q": "Sobre cache verdade: qual afirmação está certa?",
+      "o": [
+        "Recuse cache como fonte da verdade de saldo.",
+        "Saga é rollback distribuído mágico.",
+        "Monolito não pode ser modular.",
+        "CAP vale o tempo todo, mesmo sem partição de rede."
+      ],
+      "a": 0,
+      "w": "Catálogo + mapa.",
+      "t": "cache verdade"
+    },
+    {
+      "q": "Qual frase sobre cache verdade está certa?",
+      "o": [
+        "Recuse cache como fonte da verdade de saldo.",
+        "Monolito não pode ser modular.",
+        "p50 é o percentil que a mesa de arquiteto cobra primeiro.",
+        "Microsserviço com banco compartilhado ainda é deploy independente de verdade."
+      ],
+      "a": 0,
+      "w": "Catálogo + mapa.",
+      "t": "cache verdade"
+    },
+    {
+      "q": "Cache verdade — o que acontece de verdade?",
+      "o": [
+        "Recuse cache como fonte da verdade de saldo.",
+        "p50 é o percentil que a mesa de arquiteto cobra primeiro.",
+        "CAP vale o tempo todo, mesmo sem partição de rede.",
+        "A média do Grafana é o SLO que o usuário sente."
+      ],
+      "a": 0,
+      "w": "Catálogo + mapa.",
+      "t": "cache verdade"
+    },
+    {
+      "q": "Marque a leitura correta (cache verdade).",
+      "o": [
+        "Recuse cache como fonte da verdade de saldo.",
+        "CAP vale o tempo todo, mesmo sem partição de rede.",
+        "Microsserviço com banco compartilhado ainda é deploy independente de verdade.",
+        "Retry infinito sem breaker é resiliência madura."
+      ],
+      "a": 0,
+      "w": "Catálogo + mapa.",
+      "t": "cache verdade"
+    },
+    {
+      "q": "Corrija o mito sobre cache verdade.",
+      "o": [
+        "Recuse cache como fonte da verdade de saldo.",
+        "Microsserviço com banco compartilhado ainda é deploy independente de verdade.",
+        "A média do Grafana é o SLO que o usuário sente.",
+        "Eventual consistency autoriza invariante quebrada para sempre."
+      ],
+      "a": 0,
+      "w": "Catálogo + mapa.",
+      "t": "cache verdade"
+    },
+    {
+      "q": "No caderno, a respeito de cache verdade: qual vale?",
+      "o": [
+        "Recuse cache como fonte da verdade de saldo.",
+        "A média do Grafana é o SLO que o usuário sente.",
+        "Retry infinito sem breaker é resiliência madura.",
+        "Cache write-behind nunca perde escrita."
+      ],
+      "a": 0,
+      "w": "Catálogo + mapa.",
+      "t": "cache verdade"
+    },
+    {
+      "q": "Se perguntarem cache verdade na mesa, qual frase é a verdadeira?",
+      "o": [
+        "Recuse cache como fonte da verdade de saldo.",
+        "Retry infinito sem breaker é resiliência madura.",
+        "Eventual consistency autoriza invariante quebrada para sempre.",
+        "Sharding resolve leitura; replicação resolve escrita."
+      ],
+      "a": 0,
+      "w": "Catálogo + mapa.",
+      "t": "cache verdade"
+    },
+    {
+      "q": "Sobre Kafka quando: qual afirmação está certa?",
+      "o": [
+        "Kafka quando há log/fan-out de fato. Não para GET de frete.",
+        "Eventual consistency autoriza invariante quebrada para sempre.",
+        "Cache write-behind nunca perde escrita.",
+        "Saga é rollback distribuído mágico."
+      ],
+      "a": 0,
+      "w": "Duas trilhas.",
+      "t": "Kafka quando"
+    },
+    {
+      "q": "Qual frase sobre Kafka quando está certa?",
+      "o": [
+        "Kafka quando há log/fan-out de fato. Não para GET de frete.",
+        "Cache write-behind nunca perde escrita.",
+        "Sharding resolve leitura; replicação resolve escrita.",
+        "Monolito não pode ser modular."
+      ],
+      "a": 0,
+      "w": "Duas trilhas.",
+      "t": "Kafka quando"
+    },
+    {
+      "q": "Kafka quando — o que acontece de verdade?",
+      "o": [
+        "Kafka quando há log/fan-out de fato. Não para GET de frete.",
+        "Sharding resolve leitura; replicação resolve escrita.",
+        "Saga é rollback distribuído mágico.",
+        "p50 é o percentil que a mesa de arquiteto cobra primeiro."
+      ],
+      "a": 0,
+      "w": "Duas trilhas.",
+      "t": "Kafka quando"
+    },
+    {
+      "q": "Marque a leitura correta (Kafka quando).",
+      "o": [
+        "Kafka quando há log/fan-out de fato. Não para GET de frete.",
+        "Saga é rollback distribuído mágico.",
+        "Monolito não pode ser modular.",
+        "CAP vale o tempo todo, mesmo sem partição de rede."
+      ],
+      "a": 0,
+      "w": "Duas trilhas.",
+      "t": "Kafka quando"
+    },
+    {
+      "q": "Corrija o mito sobre Kafka quando.",
+      "o": [
+        "Kafka quando há log/fan-out de fato. Não para GET de frete.",
+        "Monolito não pode ser modular.",
+        "p50 é o percentil que a mesa de arquiteto cobra primeiro.",
+        "Microsserviço com banco compartilhado ainda é deploy independente de verdade."
+      ],
+      "a": 0,
+      "w": "Duas trilhas.",
+      "t": "Kafka quando"
+    },
+    {
+      "q": "No caderno, a respeito de Kafka quando: qual vale?",
+      "o": [
+        "Kafka quando há log/fan-out de fato. Não para GET de frete.",
+        "p50 é o percentil que a mesa de arquiteto cobra primeiro.",
+        "CAP vale o tempo todo, mesmo sem partição de rede.",
+        "A média do Grafana é o SLO que o usuário sente."
+      ],
+      "a": 0,
+      "w": "Duas trilhas.",
+      "t": "Kafka quando"
+    },
+    {
+      "q": "Se perguntarem Kafka quando na mesa, qual frase é a verdadeira?",
+      "o": [
+        "Kafka quando há log/fan-out de fato. Não para GET de frete.",
+        "CAP vale o tempo todo, mesmo sem partição de rede.",
+        "Microsserviço com banco compartilhado ainda é deploy independente de verdade.",
+        "Retry infinito sem breaker é resiliência madura."
+      ],
+      "a": 0,
+      "w": "Duas trilhas.",
+      "t": "Kafka quando"
+    },
+    {
+      "q": "Sobre documentar: qual afirmação está certa?",
+      "o": [
+        "ADR curto > wiki eterno sem dono.",
+        "Microsserviço com banco compartilhado ainda é deploy independente de verdade.",
+        "A média do Grafana é o SLO que o usuário sente.",
+        "Eventual consistency autoriza invariante quebrada para sempre."
+      ],
+      "a": 0,
+      "w": "Prática.",
+      "t": "documentar"
+    },
+    {
+      "q": "Qual frase sobre documentar está certa?",
+      "o": [
+        "ADR curto > wiki eterno sem dono.",
+        "A média do Grafana é o SLO que o usuário sente.",
+        "Retry infinito sem breaker é resiliência madura.",
+        "Cache write-behind nunca perde escrita."
+      ],
+      "a": 0,
+      "w": "Prática.",
+      "t": "documentar"
+    },
+    {
+      "q": "Documentar — o que acontece de verdade?",
+      "o": [
+        "ADR curto > wiki eterno sem dono.",
+        "Retry infinito sem breaker é resiliência madura.",
+        "Eventual consistency autoriza invariante quebrada para sempre.",
+        "Sharding resolve leitura; replicação resolve escrita."
+      ],
+      "a": 0,
+      "w": "Prática.",
+      "t": "documentar"
+    },
+    {
+      "q": "Marque a leitura correta (documentar).",
+      "o": [
+        "ADR curto > wiki eterno sem dono.",
+        "Eventual consistency autoriza invariante quebrada para sempre.",
+        "Cache write-behind nunca perde escrita.",
+        "Saga é rollback distribuído mágico."
+      ],
+      "a": 0,
+      "w": "Prática.",
+      "t": "documentar"
+    },
+    {
+      "q": "Corrija o mito sobre documentar.",
+      "o": [
+        "ADR curto > wiki eterno sem dono.",
+        "Cache write-behind nunca perde escrita.",
+        "Sharding resolve leitura; replicação resolve escrita.",
+        "Monolito não pode ser modular."
+      ],
+      "a": 0,
+      "w": "Prática.",
+      "t": "documentar"
+    },
+    {
+      "q": "No caderno, a respeito de documentar: qual vale?",
+      "o": [
+        "ADR curto > wiki eterno sem dono.",
+        "Sharding resolve leitura; replicação resolve escrita.",
+        "Saga é rollback distribuído mágico.",
+        "p50 é o percentil que a mesa de arquiteto cobra primeiro."
+      ],
+      "a": 0,
+      "w": "Prática.",
+      "t": "documentar"
+    },
+    {
+      "q": "Se perguntarem documentar na mesa, qual frase é a verdadeira?",
+      "o": [
+        "ADR curto > wiki eterno sem dono.",
+        "Saga é rollback distribuído mágico.",
+        "Monolito não pode ser modular.",
+        "CAP vale o tempo todo, mesmo sem partição de rede."
+      ],
+      "a": 0,
+      "w": "Prática.",
+      "t": "documentar"
+    },
+    {
+      "q": "Sobre ensinar: qual afirmação está certa?",
+      "o": [
+        "Arquiteto ensina o mapa: usuário → SLO → falha.",
+        "Monolito não pode ser modular.",
+        "p50 é o percentil que a mesa de arquiteto cobra primeiro.",
+        "Microsserviço com banco compartilhado ainda é deploy independente de verdade."
+      ],
+      "a": 0,
+      "w": "Não o stack da moda.",
+      "t": "ensinar"
+    },
+    {
+      "q": "Qual frase sobre ensinar está certa?",
+      "o": [
+        "Arquiteto ensina o mapa: usuário → SLO → falha.",
+        "p50 é o percentil que a mesa de arquiteto cobra primeiro.",
+        "CAP vale o tempo todo, mesmo sem partição de rede.",
+        "A média do Grafana é o SLO que o usuário sente."
+      ],
+      "a": 0,
+      "w": "Não o stack da moda.",
+      "t": "ensinar"
+    },
+    {
+      "q": "Ensinar — o que acontece de verdade?",
+      "o": [
+        "Arquiteto ensina o mapa: usuário → SLO → falha.",
+        "CAP vale o tempo todo, mesmo sem partição de rede.",
+        "Microsserviço com banco compartilhado ainda é deploy independente de verdade.",
+        "Retry infinito sem breaker é resiliência madura."
+      ],
+      "a": 0,
+      "w": "Não o stack da moda.",
+      "t": "ensinar"
+    },
+    {
+      "q": "Marque a leitura correta (ensinar).",
+      "o": [
+        "Arquiteto ensina o mapa: usuário → SLO → falha.",
+        "Microsserviço com banco compartilhado ainda é deploy independente de verdade.",
+        "A média do Grafana é o SLO que o usuário sente.",
+        "Eventual consistency autoriza invariante quebrada para sempre."
+      ],
+      "a": 0,
+      "w": "Não o stack da moda.",
+      "t": "ensinar"
+    },
+    {
+      "q": "Corrija o mito sobre ensinar.",
+      "o": [
+        "Arquiteto ensina o mapa: usuário → SLO → falha.",
+        "A média do Grafana é o SLO que o usuário sente.",
+        "Retry infinito sem breaker é resiliência madura.",
+        "Cache write-behind nunca perde escrita."
+      ],
+      "a": 0,
+      "w": "Não o stack da moda.",
+      "t": "ensinar"
+    },
+    {
+      "q": "No caderno, a respeito de ensinar: qual vale?",
+      "o": [
+        "Arquiteto ensina o mapa: usuário → SLO → falha.",
+        "Retry infinito sem breaker é resiliência madura.",
+        "Eventual consistency autoriza invariante quebrada para sempre.",
+        "Sharding resolve leitura; replicação resolve escrita."
+      ],
+      "a": 0,
+      "w": "Não o stack da moda.",
+      "t": "ensinar"
+    },
+    {
+      "q": "Se perguntarem ensinar na mesa, qual frase é a verdadeira?",
+      "o": [
+        "Arquiteto ensina o mapa: usuário → SLO → falha.",
+        "Eventual consistency autoriza invariante quebrada para sempre.",
+        "Cache write-behind nunca perde escrita.",
+        "Saga é rollback distribuído mágico."
+      ],
+      "a": 0,
+      "w": "Não o stack da moda.",
+      "t": "ensinar"
+    }
+  ]
+}

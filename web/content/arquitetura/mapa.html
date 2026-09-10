@@ -1,0 +1,178 @@
+<section id="ideia">
+      <h2>A ideia central (leia isto primeiro)</h2>
+      <p>
+        Arquitetura é o conjunto de decisões <strong>caras de reverter</strong>:
+        onde está o dado, quem fala com quem, o que acontece se um pedaço cair.
+        Não é diagrama bonito nem “quantos microsserviços”. Sem o vocabulário do zero
+        (latência, consistência, serviço, contrato), CAP e Saga viram palavras de podcast.
+      </p>
+      <div class="grid2">
+        <article class="term">
+          <div class="tag">Resposta fraca</div>
+          <h3>Sai desenhando caixas</h3>
+          <p>Assume milhões de usuários, desenha dez serviços, põe Kafka e Redis “porque escala”, e não pergunta se o débito pode aparecer 2 segundos atrasado. Recita CAP como se fosse clima: “eu escolho AP”.</p>
+        </article>
+        <article class="term">
+          <div class="tag">Resposta madura</div>
+          <h3>Pergunta, justifica, nomeia o custo</h3>
+          <p>Quantos usuários? Leitura ou escrita? p99 aceitável? Consistência forte é obrigatória? Depois escolhe. Toda seta no desenho tem um preço: lote ↑ throughput ↓ latência; microsserviço ↑ autonomia ↓ debug; cache ↑ velocidade ↓ dado velho.</p>
+        </article>
+      </div>
+      <div class="callout">
+        <strong>Régua da mesa de arquiteto.</strong>
+        Júnior descreve o que o sistema faz. Pleno descreve como as peças se falam.
+        Arquiteto descreve o que <em>não</em> pode quebrar, o que custa reverter, e o que você faria diferente com mais tempo — em voz alta, com números de ordem de grandeza.
+      </div>
+    </section>
+
+<section id="curriculo">
+      <h2>Mapa do currículo de system design</h2>
+      <p>
+        Cursos tipo “The System Design Interview” são um <strong>catálogo de peças</strong>.
+        Esta trilha é o <strong>julgamento</strong>: o que perguntar, o que recusar, o custo de cada seta.
+        As peças profundas de Kafka, Kubernetes e paginação no Spring continuam nas trilhas irmãs — aqui entra a ponte e o que faltava no desenho.
+      </p>
+      <table class="compare">
+        <thead>
+          <tr><th>Bloco do curso</th><th>Onde está</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Basics: template, desafios web-scale, como escalar, study guide</td>
+            <td>Esta página: <a href="#ideia">ideia</a>, <a href="/arquitetura/system-design#s6">system design</a>, <a href="/arquitetura/catalogo#escala">como cresce</a>, simulador</td>
+          </tr>
+          <tr>
+            <td>API: intro, exemplo, paginação, authn/authz, gateway</td>
+            <td>Gateway/BFF na <a href="/arquitetura/resiliencia">aula de resiliência</a>. Paginação, authn/authz, gateway vs LB em <a href="/arquitetura/catalogo#api">API de contrato</a>. Keyset também na trilha Spring</td>
+          </tr>
+          <tr>
+            <td>NFR: HA, latência, throughput, componentes, stacks de HA</td>
+            <td><a href="/arquitetura/latencia">Latência</a>, <a href="/arquitetura/staff#sre">noves / error budget</a>, <a href="/arquitetura/staff#escala-falha">células e multi-região</a>, <a href="/arquitetura/catalogo#escala">LB e multi-AZ</a></td>
+          </tr>
+          <tr>
+            <td>Resource estimation: QPS, envelope, exemplos</td>
+            <td><a href="/arquitetura/system-design#s6">Framework 45 min</a> + <a href="/arquitetura/staff#sre">capacidade</a></td>
+          </tr>
+          <tr>
+            <td>Microservices vs monolito</td>
+            <td><a href="/arquitetura/decomposicao">Decomposição</a> (quando não usar)</td>
+          </tr>
+          <tr>
+            <td>Sync: timeout, retry, breaker, fallback, discovery</td>
+            <td><a href="/arquitetura/resiliencia">Resiliência</a>. Discovery / Service / Ingress: trilha Kubernetes</td>
+          </tr>
+          <tr>
+            <td>Async: filas, Redis queue, Kafka, labs</td>
+            <td>Quando usar: <a href="/arquitetura/sincrono">síncrono vs assíncrono</a> + <a href="/arquitetura/catalogo#dataflow">fluxo</a>. Profundidade e lab: <a href="/kafka">trilha Kafka</a>. Redis como fila: não tutorial — ver <a href="/arquitetura/catalogo#dataflow">two-stage</a></td>
+          </tr>
+          <tr>
+            <td>Horizontal scaling: stateless, LB, auto-scale</td>
+            <td><a href="/arquitetura/catalogo#escala">Como um sistema cresce</a>. HPA: trilha Kubernetes</td>
+          </tr>
+          <tr>
+            <td>Read-write split e CQRS</td>
+            <td>Réplica: <a href="/arquitetura/replicacao">replicação</a> + <a href="/arquitetura/catalogo#escala">escala</a>. CQRS: <a href="/arquitetura/dados">dados distribuídos</a></td>
+          </tr>
+          <tr>
+            <td>Caching (camadas, CDN, chave, eviction, HA, cold start)</td>
+            <td>Básico na aula de escala. Completo em <a href="/arquitetura/catalogo#cache-camadas">cache em camadas</a></td>
+          </tr>
+          <tr>
+            <td>Dataflow push vs pull / timeline</td>
+            <td><a href="/arquitetura/catalogo#dataflow">Fluxo de dados</a> + walkthrough de <a href="/arquitetura/staff#reservas">feed</a></td>
+          </tr>
+          <tr>
+            <td>Storage: SQL/NoSQL, KV, doc, search, blob, OLTP/OLAP, B-tree, LSM</td>
+            <td>SQL vs NoSQL na aula de escala. Miolo em <a href="/arquitetura/catalogo#storage">por dentro do storage</a></td>
+          </tr>
+          <tr>
+            <td>Replicação, CDC, failover</td>
+            <td><a href="/arquitetura/staff#consistencia-real">Quorum</a>, Outbox/CDC na <a href="/arquitetura/dados">aula de dados</a> e <a href="/arquitetura/catalogo#dataflow">fluxo</a>. Kafka Connect: trilha Kafka</td>
+          </tr>
+          <tr>
+            <td>Particionamento, consistent hashing, IDs</td>
+            <td>Sharding na aula de escala. Hashing + Snowflake em <a href="/arquitetura/catalogo#particionar">particionar de verdade</a></td>
+          </tr>
+          <tr>
+            <td>Batch/stream: Spark, Flink, watermarks, Lambda/Kappa, ETL, backfill</td>
+            <td>Nível arquiteto em <a href="/arquitetura/catalogo#pipeline">batch e stream</a>. Replay/DLT: trilha Kafka. Labs Spark/Flink: fora desta página</td>
+          </tr>
+          <tr>
+            <td>Padrões: rate limit, fan-out, saga, ID, two-stage, cache-first</td>
+            <td>Saga/outbox/feed já existiam. Rate limit + comentários em <a href="/arquitetura/catalogo#rate-limit">abaixo</a></td>
+          </tr>
+          <tr>
+            <td>Template: comentários em rede social</td>
+            <td><a href="/arquitetura/catalogo#comentarios">Walkthrough comentários</a></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="ok">
+        Labs (Redis queue tutorial, load-balancing codelab, cache drills, Kafka exercise) não são copiados aqui.
+        Exercício de Kafka: <a href="/kafka">/kafka</a>. Service, Ingress, HPA: trilha Kubernetes.
+      </div>
+    </section>
+
+<section id="mapa">
+      <h2>O mapa mental: o caminho que o usuário sente</h2>
+      <p>
+        Comece pelo que a pessoa sente (latência, erro, dado errado) e desça.
+        Cada camada é uma decisão de fronteira, não um carimbo de tecnologia.
+      </p>
+      <ol class="flow" aria-label="Caminho que o usuário sente">
+        <li>
+          <span class="kicker">1 · Quem sente</span>
+          <strong>Usuário</strong>
+          <span class="hint">A entrevista começa aqui, não no desenho do Kafka.</span>
+        </li>
+        <li>
+          <span class="kicker">2 · O que ele sente</span>
+          <strong>Latência / SLO</strong>
+          <span class="hint">p99, erro, dado errado — não a média do Grafana.</span>
+        </li>
+        <li>
+          <span class="kicker">3 · Entrada</span>
+          <strong>API / gateway</strong>
+          <span class="hint">Contrato, auth, rate limit. Não é a regra de checkout.</span>
+        </li>
+        <li>
+          <span class="kicker">4 · Fronteira</span>
+          <strong>Serviços</strong>
+          <span class="hint">Capacidade de negócio, não pasta no Git.</span>
+        </li>
+        <li>
+          <span class="kicker">5 · Dono do dado</span>
+          <strong>Dados + cache + filas</strong>
+          <span class="hint">Onde mora a verdade, o atalho e o recado.</span>
+        </li>
+        <li>
+          <span class="kicker">6 · Quando cai</span>
+          <strong>Falha</strong>
+          <span class="hint">Timeout, retry, breaker, degradação — nesta ordem.</span>
+        </li>
+      </ol>
+      <div class="cols" aria-label="Três custos típicos">
+        <div class="col">
+          <h4>Lote / batch</h4>
+          <div class="msg">↑ throughput</div>
+          <div class="msg">↓ latência da primeira mensagem</div>
+          <p>Kafka <code>linger.ms</code>, flush de disco, agregação. Peça o requisito: “é p99 de 50ms ou 50k writes/s?”</p>
+        </div>
+        <div class="col">
+          <h4>Microsserviço</h4>
+          <div class="msg">↑ autonomia de time</div>
+          <div class="msg">↓ simplicidade de debug</div>
+          <p>Preço técnico alto. Escolha organizacional. Monolito modular é o default até o domínio e o time pedirem outra coisa.</p>
+        </div>
+        <div class="col">
+          <h4>Cache</h4>
+          <div class="msg">↑ velocidade</div>
+          <div class="msg">↓ risco de dado velho</div>
+          <p>Stampede, hot key, invalidação. A pergunta madura: “qual o custo de mostrar 2 segundos atrasado?”</p>
+        </div>
+      </div>
+      <div class="ok">
+        <strong>Memorize o caminho, não o stack.</strong>
+        Na entrevista você desenha esse esqueleto em 30 segundos. Tecnologia entra só depois dos requisitos.
+      </div>
+    </section>

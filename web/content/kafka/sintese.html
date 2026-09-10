@@ -1,0 +1,136 @@
+<section id="s6" class="week">
+      <h2>Síntese (antes do simulador)</h2>
+      <p>
+        aula de fechar a boca e falar. Releia o glossário em voz alta, sem olhar.
+        Se travar numa palavra, volte nela. Não avance para as perguntas-síntese no chute
+        e não abra o <a href="/kafka/simulador#simulador">simulador</a> como prova surpresa sem ter ensaiado.
+        Se o glossário ainda é analogia sem comando, volte a <code>labs/kafka</code> e rode o lab 1.
+      </p>
+      <div class="sessions">
+        <article>
+          <div class="tag">Sessão 1 · 45 min</div>
+          <h4>Glossário cego</h4>
+          <p>Evento, tópico, partição, offset, key, ISR, group, retenção. 60 segundos cada. Grave áudio. Ouça onde você enrolou.</p>
+        </article>
+        <article>
+          <div class="tag">Sessão 2 · 45 min</div>
+          <h4>Perguntas-síntese</h4>
+          <p>As oito abaixo, no quadro, como se o entrevistador estivesse na sala. Depois abra a resposta e corrija o desenho, não a frase decorada.</p>
+        </article>
+        <article>
+          <div class="tag">Sessão 3 · 45 min</div>
+          <h4>Simulador + gaps</h4>
+          <p>As 50 questões. Mapa de gaps. Estude só os temas abaixo de 80%. Refaça. Lead não é gabarito 50/50 na primeira — é saber onde voltar.</p>
+        </article>
+      </div>
+      <div class="lesson">
+        <h3>Sessão 2 — Pagamento guiado (não é checklist)</h3>
+        <p><strong>O que você precisa entender.</strong> A pergunta de síntese junta os temas num fluxo só. Você narra o pedido 99 do clique até a fatura, nomeando o buraco de cada etapa e a peça que tapa.</p>
+        <p><strong>Exemplo concreto, já desenhado.</strong></p>
+        <ol>
+          <li>Usuário confirma o 99 (R$ 80). Checkout grava pedido + outbox na mesma transação. Kafka pode estar no chão: o pedido existe.</li>
+          <li>Carteiro publica <code>PedidoCriado</code>, key 99, eventId e-17, no tópico <code>pedidos</code> (3 partições). Cai numa coluna só.</li>
+          <li>Grupo faturamento lê. Analytics lê o mesmo caderno com outra marca. Não brigam.</li>
+          <li>Faturamento chama o cartão com Idempotency-Key e-17. Grava inbox + pagamento na mesma transação. Só então ack.</li>
+          <li>O pod morre entre cartão e ack: at-least-once relê. Inbox (ou a key no emissor) impede a segunda fatura.</li>
+          <li>JSON podre no offset 40: DLT, a marca anda. Timeout do banco: retry, não DLT.</li>
+          <li><code>acks=all</code> no producer do checkout: o recado não some se o líder cair depois do ACK. Não substitui o passo 4.</li>
+        </ol>
+        <div class="pipe">
+          <div class="box">Outbox<br><small>pedido 99</small></div>
+          <div class="arrow" aria-hidden="true">→</div>
+          <div class="box">Caderno<br><small>key 99</small></div>
+          <div class="arrow" aria-hidden="true">→</div>
+          <div class="box">Duas marcas</div>
+          <div class="arrow" aria-hidden="true">→</div>
+          <div class="box">Inbox + cartão<br><small>depois ack</small></div>
+        </div>
+        <div class="warn"><strong>Pegadinha.</strong> Pular para o simulador e gabaritar no chute. Se você não consegue narrar o 99 em voz alta, as 50 questões não medem fluência — medem sorte.</div>
+        <div class="callout"><strong>Agora você (5 min).</strong> Feche a página. Conte o fluxo do 99 para o espelho. Onde travar, volte só naquele tema — não releia a trilha inteira.</div>
+      </div>
+
+      <article class="term">
+        <h3>Como ensaiar (não é reler)</h3>
+        <ul class="tight">
+          <li>Desenhe o caderno no papel. Se precisar do HTML para lembrar o que é partição, a aula de partição não está pronta.</li>
+          <li>Pegue um serviço real do trabalho e critique: tem outbox? key certa? DLT? lag no dashboard?</li>
+          <li>Explique Kafka para alguém de produto em três minutos. Se aparecer “fila mais rápida”, recomece.</li>
+        </ul>
+      </article>
+
+      <h3>Perguntas-síntese (com o jeito de pensar, não a cola pronta)</h3>
+      <details>
+        <summary>Explique Kafka para quem só conhece fila</summary>
+        <p>
+          Fila: pega e some. Kafka: caderno em colunas. A coluna tem ordem. A marca de leitura é por grupo.
+          Vários times leem o mesmo caderno. A página não rasga quando alguém lê.
+        </p>
+      </details>
+      <details>
+        <summary>Fluxo de pagamento em que ninguém cobra duas vezes</summary>
+        <p>
+          At-least-once na entrega + inbox (eventId único) na mesma transação do efeito de cobrar,
+          ou operação de cobrança com idempotency key na API do cartão. Outbox na origem para não perder o evento.
+          Produtor idempotente evita duplicata de retry na escrita, mas não substitui o inbox.
+        </p>
+      </details>
+      <details>
+        <summary>API externa lenta no pico, sem travar a partição</summary>
+        <p>
+          Não faça a chamada lenta no poll do consumidor da partição crítica.
+          Reduza o lote, isole o trabalho lento (outro tópico, fila interna, workers assíncronos),
+          timeout e retry com DLT para erro permanente. Senão estoura max.poll e começa o loop de rebalance.
+        </p>
+      </details>
+      <details>
+        <summary>Reprocessar 3 dias sem duplicar efeitos</summary>
+        <p>
+          Confirme que a retenção ainda guarda esses 3 dias. Volte o offset do grupo (ou use um grupo novo).
+          Inbox / upsert / versão maior: o efeito já aplicado é ignorado. Sem isso, você reprocessa e duplica o mundo real.
+        </p>
+      </details>
+      <details>
+        <summary>Migrar de 6 para 12 partições sem quebrar ordem por cliente</summary>
+        <p>
+          Aumentar partições redistribui hash(key). A ordem histórica daquela key pode quebrar no tópico antigo.
+          Caminho típico: novo tópico com 12 partições, dual-write ou replay ordenado, consumidores migrando,
+          e só então desligar o tópico velho. Não existe “só clicar em 12” sem custo de ordenação.
+        </p>
+      </details>
+      <details>
+        <summary>Eventualmente consistente vs inconsistente</summary>
+        <p>
+          Eventual: as cópias vão convergir se ninguém escrever mais; o atraso é esperado e observável (lag).
+          Inconsistente: regras de negócio quebradas para sempre (cobrou duas vezes, estoque negativo sem compensação).
+          Lag não é bug. Duplicata sem idempotência é.
+        </p>
+      </details>
+      <details>
+        <summary>acks=all impede duplicata no consumidor?</summary>
+        <p>
+          Não. Acks fala de durabilidade da escrita no cluster. Duplicata no consumidor nasce de reprocessar
+          porque o offset ainda não commitou. São eixos diferentes.
+        </p>
+      </details>
+      <details>
+        <summary>Por que enable.idempotence=true não substitui a tabela inbox?</summary>
+        <p>
+          Idempotência do produtor evita o mesmo producer reenviar o mesmo batch. Inbox evita o mesmo evento
+          causar o mesmo efeito duas vezes no seu banco ou na API. Quedas do consumidor, dois producers,
+          e efeitos fora do Kafka continuam existindo.
+        </p>
+      </details>
+
+      <h3>Checklist de fluência (60 segundos cada)</h3>
+      <ul class="tight">
+        <li>Evento vs comando</li>
+        <li>Tópico vs partição vs offset</li>
+        <li>Key e ordem</li>
+        <li>Consumer group e ociosos</li>
+        <li>ISR / acks / retenção / compaction</li>
+        <li>At-least-once + idempotência</li>
+        <li>Outbox / Inbox</li>
+        <li>Rebalance e lag</li>
+        <li>Quando não usar Kafka</li>
+      </ul>
+    </section>

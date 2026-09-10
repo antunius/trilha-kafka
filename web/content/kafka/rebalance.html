@@ -1,0 +1,22 @@
+<section class="week">
+<article class="term" id="rebalance">
+        <div class="tag">Vocabulário</div>
+        <h3>Rebalance</h3>
+        <p>
+          <strong>O que é.</strong> O coordenador redistribui partições entre membros do grupo.
+          Disparos: join, leave, heartbeat perdido, ou <code>max.poll.interval.ms</code> estourado (processou demais sem um poll novo).
+          No assignor clássico (eager), <em>todas</em> as partições são revogadas e o Fetch para até o novo assignment.
+          Cooperative sticky reduz a parada, não elimina. <code>group.instance.id</code> (static membership) evita rebalance em restart planejado do mesmo pod.
+        </p>
+        <p class="analogy">Analogia: o time para a leitura, redistribui as colunas e só então volta a trabalhar.</p>
+        <p><strong>Na prática.</strong> No lab, mate o processo Spring (Ctrl+C) com o consumer no ar e suba de novo: nos logs, <code>revoked</code> / <code>assigned</code>. Configs que disparam o loop:</p>
+<pre class="code">spring.kafka.consumer.max-poll-records: 50
+spring.kafka.consumer.properties.max.poll.interval.ms: 300000
+spring.kafka.consumer.properties.session.timeout.ms: 45000</pre>
+        <p class="lab-ref"><strong>No lab.</strong> <code>application.yml</code>. O filme completo e o diagnóstico: <a href="/kafka/operacao">Operação</a>, lab 4 em <a href="/kafka/spring">Spring Kafka</a>.</p>
+        <div class="warn">
+          Lote enorme + cartão lento → sem poll → o cluster acha que você morreu → rebalance → o lote recomeça → loop.
+          Subir mais pods não quebra esse ciclo se o lote continua lento.
+        </div>
+      </article>
+</section>

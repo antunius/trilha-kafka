@@ -1,0 +1,8 @@
+<section class="week">
+<article class="term" id="cache">
+        <div class="tag">Vocabulário</div>
+        <h3>Cache</h3>
+        <p class="analogy">Analogia: um post-it na mesa com o preço do café. Mais rápido que ir ao estoque. Se o preço mudou e ninguém rasgou o post-it, você mente para o cliente.</p>
+        <p><strong>Cache-aside</strong>: app pergunta no cache; miss → banco → preenche. <strong>Write-through</strong>: escreve nos dois — consistente, mais lento. <strong>Write-behind</strong>: escreve no cache e persiste depois — rápido, arriscado. Riscos: stampede (TTL estoura, mil vão ao banco), hot key, invalidação (o problema difícil).</p>
+      </article>
+</section>

@@ -1,0 +1,29 @@
+<section class="week">
+<article class="term" id="consumidor">
+        <div class="tag">Vocabulário</div>
+        <h3>Consumidor e consumer group</h3>
+        <p>
+          <strong>O que é.</strong> O consumidor faz Fetch no líder das partições que o grupo lhe atribuiu,
+          processa, e (em geral) commita offset.
+          <code>group.id</code> é o crachá: o coordenador do grupo trata todos os membros com o mesmo id como um só time.
+          Protocolo: join group → assign partições → heartbeat.
+          Outro <code>group.id</code> = outra marca no mesmo tópico (fan-out). Duas instâncias com o <em>mesmo</em> group.id
+          dividem as partições, não duplicam o recado.
+        </p>
+        <p class="analogy">Analogia: um time com o mesmo crachá. Outro time, outro crachá, lê o caderno de novo com a própria marca.</p>
+        <p><strong>Na prática.</strong> Dois listeners no mesmo processo, dois grupos:</p>
+<pre class="code">@KafkaListener(topics = "pedidos.criados", groupId = "faturamento")
+public void faturamento(ConsumerRecord&lt;String, PedidoCriado&gt; rec, Acknowledgment ack) {
+    log.info("partition={} offset={} key={}", rec.partition(), rec.offset(), rec.key());
+    ack.acknowledge();
+}
+
+@KafkaListener(topics = "pedidos.criados", groupId = "analytics")
+public void analytics(...) { ... }</pre>
+        <p><code>concurrency: 3</code> no YAML = até 3 membros no mesmo grupo — teto = 3 partições.</p>
+        <p class="lab-ref"><strong>No lab.</strong> <code>PedidoConsumer.java</code>, <code>spring.kafka.consumer.group-id: faturamento</code> e <code>lab.analytics-group: analytics</code>.</p>
+        <div class="ok">
+          Mais consumidores no grupo do que partições = threads sem assignment. Escalar de verdade = mais partições <em>e</em> mais consumidores.
+        </div>
+      </article>
+</section>

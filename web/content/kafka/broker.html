@@ -1,0 +1,18 @@
+<section class="week">
+<article class="term" id="broker">
+        <div class="tag">Vocabulário</div>
+        <h3>Broker, cluster, controller</h3>
+        <p>
+          <strong>O que é.</strong> Broker = um processo JVM (no lab: o container <code>kafka</code>) que guarda partições,
+          aceita Produce/Fetch e replica. Você não fala com “o Kafka”: o cliente resolve o líder de cada partição via metadata
+          e manda bytes para <code>bootstrap.servers</code> (depois para o líder certo).
+          Cluster = N brokers com o mesmo <code>cluster.id</code>.
+          Controller = o broker eleito que cria tópico, elege líder, trata falha. Em cluster novo isso é <strong>KRaft</strong>
+          (quorum dentro do Kafka). ZooKeeper é o desenho antigo.
+        </p>
+        <p class="analogy">Analogia: broker = funcionário com um arquivo; cluster = a equipe; controller = quem decide quem guarda o quê se alguém falta.</p>
+        <p><strong>Na prática.</strong> O Compose sobe um broker KRaft e anuncia dois listeners: um para os containers (<code>kafka:29092</code>), outro para a sua máquina (<code>localhost:9092</code>).</p>
+<pre class="code">spring.kafka.bootstrap-servers: localhost:9092</pre>
+        <p class="lab-ref"><strong>No lab.</strong> <code>labs/kafka/docker-compose.yml</code> — serviço <code>kafka</code>, <code>KAFKA_PROCESS_ROLES: broker,controller</code>.</p>
+      </article>
+</section>

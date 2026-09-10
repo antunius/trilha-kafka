@@ -1,0 +1,1264 @@
+{
+  "questions": [
+    {
+      "q": "Alguém lê uma mensagem no Kafka. O que acontece com a linha no caderno?",
+      "o": [
+        "Continua lá. Quem lê só move a própria marca “já li até aqui”.",
+        "Some na hora, como numa fila do banco.",
+        "Some quando todos os grupos tiverem lido.",
+        "Some só se o produtor pedir delete."
+      ],
+      "a": 0,
+      "w": "Leitura não é destrutiva. A linha some depois, por retenção ou compaction.",
+      "t": "leitura"
+    },
+    {
+      "q": "O que a leitura faz com o recado dos outros grupos?",
+      "o": [
+        "Continua lá. Quem lê só move a própria marca “já li até aqui”.",
+        "Some na hora, como numa fila do banco.",
+        "Some quando todos os grupos tiverem lido.",
+        "Some só se o produtor pedir delete."
+      ],
+      "a": 0,
+      "w": "Leitura não é destrutiva. A linha some depois, por retenção ou compaction.",
+      "t": "leitura"
+    },
+    {
+      "q": "O que quem lê faz com a página do caderno?",
+      "o": [
+        "Continua lá. Quem lê só move a própria marca “já li até aqui”.",
+        "Some na hora, como numa fila do banco.",
+        "Some quando todos os grupos tiverem lido.",
+        "Some só se o produtor pedir delete."
+      ],
+      "a": 0,
+      "w": "Leitura não é destrutiva. A linha some depois, por retenção ou compaction.",
+      "t": "leitura"
+    },
+    {
+      "q": "Se o analytics leu o PedidoCriado A, o que resta no caderno?",
+      "o": [
+        "Continua lá. Quem lê só move a própria marca “já li até aqui”.",
+        "Some na hora, como numa fila do banco.",
+        "Some quando todos os grupos tiverem lido.",
+        "Some só se o produtor pedir delete."
+      ],
+      "a": 0,
+      "w": "Leitura não é destrutiva. A linha some depois, por retenção ou compaction.",
+      "t": "leitura"
+    },
+    {
+      "q": "Qual é o efeito da leitura no Kafka, comparado à fila?",
+      "o": [
+        "Continua lá. Quem lê só move a própria marca “já li até aqui”.",
+        "Some na hora, como numa fila do banco.",
+        "Some quando todos os grupos tiverem lido.",
+        "Some só se o produtor pedir delete."
+      ],
+      "a": 0,
+      "w": "Leitura não é destrutiva. A linha some depois, por retenção ou compaction.",
+      "t": "leitura"
+    },
+    {
+      "q": "O que a leitura move: a linha ou a marca do grupo?",
+      "o": [
+        "Continua lá. Quem lê só move a própria marca “já li até aqui”.",
+        "Some na hora, como numa fila do banco.",
+        "Some quando todos os grupos tiverem lido.",
+        "Some só se o produtor pedir delete."
+      ],
+      "a": 0,
+      "w": "Leitura não é destrutiva. A linha some depois, por retenção ou compaction.",
+      "t": "leitura"
+    },
+    {
+      "q": "Depois do Fetch, o que resta da linha no log?",
+      "o": [
+        "Continua lá. Quem lê só move a própria marca “já li até aqui”.",
+        "Some na hora, como numa fila do banco.",
+        "Some quando todos os grupos tiverem lido.",
+        "Some só se o produtor pedir delete."
+      ],
+      "a": 0,
+      "w": "Leitura não é destrutiva. A linha some depois, por retenção ou compaction.",
+      "t": "leitura"
+    },
+    {
+      "q": "Kafka é uma fila clássica, tipo Rabbit ou SQS?",
+      "o": [
+        "Kafka é log append-only compartilhado. Fila clássica em geral entrega e retira.",
+        "Kafka é fila: um recado, um trabalhador, a mensagem sai.",
+        "RabbitMQ e Kafka são a mesma analogia com outro nome.",
+        "Tratar Kafka como fila do banco está certo; o resto é detalhe de API."
+      ],
+      "a": 0,
+      "w": "Fila: um trabalho, um trabalhador. Kafka: o caderno fica; cada grupo tem sua marca.",
+      "t": "fila vs log"
+    },
+    {
+      "q": "Na fila do banco a pessoa some. No Kafka, o que some ao ler?",
+      "o": [
+        "Kafka é log append-only compartilhado. Fila clássica em geral entrega e retira.",
+        "Kafka é fila: um recado, um trabalhador, a mensagem sai.",
+        "RabbitMQ e Kafka são a mesma analogia com outro nome.",
+        "Tratar Kafka como fila do banco está certo; o resto é detalhe de API."
+      ],
+      "a": 0,
+      "w": "Fila: um trabalho, um trabalhador. Kafka: o caderno fica; cada grupo tem sua marca.",
+      "t": "fila vs log"
+    },
+    {
+      "q": "Qual frase descreve o Kafka de verdade?",
+      "o": [
+        "Kafka é log append-only compartilhado. Fila clássica em geral entrega e retira.",
+        "Kafka é fila: um recado, um trabalhador, a mensagem sai.",
+        "RabbitMQ e Kafka são a mesma analogia com outro nome.",
+        "Tratar Kafka como fila do banco está certo; o resto é detalhe de API."
+      ],
+      "a": 0,
+      "w": "Fila: um trabalho, um trabalhador. Kafka: o caderno fica; cada grupo tem sua marca.",
+      "t": "fila vs log"
+    },
+    {
+      "q": "Um recado, um trabalhador, a mensagem sai — isso é Kafka?",
+      "o": [
+        "Kafka é log append-only compartilhado. Fila clássica em geral entrega e retira.",
+        "Kafka é fila: um recado, um trabalhador, a mensagem sai.",
+        "RabbitMQ e Kafka são a mesma analogia com outro nome.",
+        "Tratar Kafka como fila do banco está certo; o resto é detalhe de API."
+      ],
+      "a": 0,
+      "w": "Fila: um trabalho, um trabalhador. Kafka: o caderno fica; cada grupo tem sua marca.",
+      "t": "fila vs log"
+    },
+    {
+      "q": "Fila clássica vs caderno: qual é a diferença que importa?",
+      "o": [
+        "Kafka é log append-only compartilhado. Fila clássica em geral entrega e retira.",
+        "Kafka é fila: um recado, um trabalhador, a mensagem sai.",
+        "RabbitMQ e Kafka são a mesma analogia com outro nome.",
+        "Tratar Kafka como fila do banco está certo; o resto é detalhe de API."
+      ],
+      "a": 0,
+      "w": "Fila: um trabalho, um trabalhador. Kafka: o caderno fica; cada grupo tem sua marca.",
+      "t": "fila vs log"
+    },
+    {
+      "q": "Se a analogia da fila colar, o que você perde?",
+      "o": [
+        "Kafka é log append-only compartilhado. Fila clássica em geral entrega e retira.",
+        "Kafka é fila: um recado, um trabalhador, a mensagem sai.",
+        "RabbitMQ e Kafka são a mesma analogia com outro nome.",
+        "Tratar Kafka como fila do banco está certo; o resto é detalhe de API."
+      ],
+      "a": 0,
+      "w": "Fila: um trabalho, um trabalhador. Kafka: o caderno fica; cada grupo tem sua marca.",
+      "t": "fila vs log"
+    },
+    {
+      "q": "O log do Kafka é compartilhado ou uma fila que entrega e retira?",
+      "o": [
+        "Kafka é log append-only compartilhado. Fila clássica em geral entrega e retira.",
+        "Kafka é fila: um recado, um trabalhador, a mensagem sai.",
+        "RabbitMQ e Kafka são a mesma analogia com outro nome.",
+        "Tratar Kafka como fila do banco está certo; o resto é detalhe de API."
+      ],
+      "a": 0,
+      "w": "Fila: um trabalho, um trabalhador. Kafka: o caderno fica; cada grupo tem sua marca.",
+      "t": "fila vs log"
+    },
+    {
+      "q": "Faturamento e analytics leem o mesmo tópico. O que acontece com o recado?",
+      "o": [
+        "Cada group.id tem a própria marca. Os dois veem o mesmo caderno — os dois estão certos.",
+        "Sim: o primeiro que ler apaga o recado.",
+        "Só se usarem a mesma key.",
+        "Só se tiverem a mesma marca no tópico inteiro."
+      ],
+      "a": 0,
+      "w": "Fan-out nasce do log compartilhado, não de copiar fila para cada time.",
+      "t": "dois grupos"
+    },
+    {
+      "q": "Dois group.id no mesmo caderno: o que acontece?",
+      "o": [
+        "Cada group.id tem a própria marca. Os dois veem o mesmo caderno — os dois estão certos.",
+        "Sim: o primeiro que ler apaga o recado.",
+        "Só se usarem a mesma key.",
+        "Só se tiverem a mesma marca no tópico inteiro."
+      ],
+      "a": 0,
+      "w": "Fan-out nasce do log compartilhado, não de copiar fila para cada time.",
+      "t": "dois grupos"
+    },
+    {
+      "q": "Analytics já foi até o offset 2 e faturamento parou no 0. O que isso significa?",
+      "o": [
+        "Cada group.id tem a própria marca. Os dois veem o mesmo caderno — os dois estão certos.",
+        "Sim: o primeiro que ler apaga o recado.",
+        "Só se usarem a mesma key.",
+        "Só se tiverem a mesma marca no tópico inteiro."
+      ],
+      "a": 0,
+      "w": "Fan-out nasce do log compartilhado, não de copiar fila para cada time.",
+      "t": "dois grupos"
+    },
+    {
+      "q": "O primeiro grupo que lê tira a linha do caderno para o segundo?",
+      "o": [
+        "Cada group.id tem a própria marca. Os dois veem o mesmo caderno — os dois estão certos.",
+        "Sim: o primeiro que ler apaga o recado.",
+        "Só se usarem a mesma key.",
+        "Só se tiverem a mesma marca no tópico inteiro."
+      ],
+      "a": 0,
+      "w": "Fan-out nasce do log compartilhado, não de copiar fila para cada time.",
+      "t": "dois grupos"
+    },
+    {
+      "q": "Dois times, duas marcas, mesmo caderno: quem está certo?",
+      "o": [
+        "Cada group.id tem a própria marca. Os dois veem o mesmo caderno — os dois estão certos.",
+        "Sim: o primeiro que ler apaga o recado.",
+        "Só se usarem a mesma key.",
+        "Só se tiverem a mesma marca no tópico inteiro."
+      ],
+      "a": 0,
+      "w": "Fan-out nasce do log compartilhado, não de copiar fila para cada time.",
+      "t": "dois grupos"
+    },
+    {
+      "q": "Fan-out no Kafka nasce de copiar a fila ou do log compartilhado?",
+      "o": [
+        "Cada group.id tem a própria marca. Os dois veem o mesmo caderno — os dois estão certos.",
+        "Sim: o primeiro que ler apaga o recado.",
+        "Só se usarem a mesma key.",
+        "Só se tiverem a mesma marca no tópico inteiro."
+      ],
+      "a": 0,
+      "w": "Fan-out nasce do log compartilhado, não de copiar fila para cada time.",
+      "t": "dois grupos"
+    },
+    {
+      "q": "Como cada grupo lembra até onde leu?",
+      "o": [
+        "Cada group.id tem a própria marca. Os dois veem o mesmo caderno — os dois estão certos.",
+        "Sim: o primeiro que ler apaga o recado.",
+        "Só se usarem a mesma key.",
+        "Só se tiverem a mesma marca no tópico inteiro."
+      ],
+      "a": 0,
+      "w": "Fan-out nasce do log compartilhado, não de copiar fila para cada time.",
+      "t": "dois grupos"
+    },
+    {
+      "q": "Existe ordem global no tópico?",
+      "o": [
+        "Não existe ordem global no tópico; cada partição tem a sua.",
+        "O caderno inteiro tem uma ordem única, da primeira à última linha.",
+        "Offset 4 na P0 e offset 4 na P1 são o mesmo recado.",
+        "PedidoCriado na P0 e Pagamento na P1 nascem ordenados entre si."
+      ],
+      "a": 0,
+      "w": "Ordem vale só dentro da coluna. O caderno inteiro não é uma fila única.",
+      "t": "ordem"
+    },
+    {
+      "q": "A ordem vale no caderno inteiro ou só na coluna?",
+      "o": [
+        "Não existe ordem global no tópico; cada partição tem a sua.",
+        "O caderno inteiro tem uma ordem única, da primeira à última linha.",
+        "Offset 4 na P0 e offset 4 na P1 são o mesmo recado.",
+        "PedidoCriado na P0 e Pagamento na P1 nascem ordenados entre si."
+      ],
+      "a": 0,
+      "w": "Ordem vale só dentro da coluna. O caderno inteiro não é uma fila única.",
+      "t": "ordem"
+    },
+    {
+      "q": "Offset 4 na P0 e offset 4 na P1 são o mesmo recado?",
+      "o": [
+        "Não existe ordem global no tópico; cada partição tem a sua.",
+        "O caderno inteiro tem uma ordem única, da primeira à última linha.",
+        "Offset 4 na P0 e offset 4 na P1 são o mesmo recado.",
+        "PedidoCriado na P0 e Pagamento na P1 nascem ordenados entre si."
+      ],
+      "a": 0,
+      "w": "Ordem vale só dentro da coluna. O caderno inteiro não é uma fila única.",
+      "t": "ordem"
+    },
+    {
+      "q": "O tópico é uma fila única da primeira à última linha?",
+      "o": [
+        "Não existe ordem global no tópico; cada partição tem a sua.",
+        "O caderno inteiro tem uma ordem única, da primeira à última linha.",
+        "Offset 4 na P0 e offset 4 na P1 são o mesmo recado.",
+        "PedidoCriado na P0 e Pagamento na P1 nascem ordenados entre si."
+      ],
+      "a": 0,
+      "w": "Ordem vale só dentro da coluna. O caderno inteiro não é uma fila única.",
+      "t": "ordem"
+    },
+    {
+      "q": "O que tem ordem no Kafka?",
+      "o": [
+        "Não existe ordem global no tópico; cada partição tem a sua.",
+        "O caderno inteiro tem uma ordem única, da primeira à última linha.",
+        "Offset 4 na P0 e offset 4 na P1 são o mesmo recado.",
+        "PedidoCriado na P0 e Pagamento na P1 nascem ordenados entre si."
+      ],
+      "a": 0,
+      "w": "Ordem vale só dentro da coluna. O caderno inteiro não é uma fila única.",
+      "t": "ordem"
+    },
+    {
+      "q": "Por que o caderno inteiro não tem uma ordem única?",
+      "o": [
+        "Não existe ordem global no tópico; cada partição tem a sua.",
+        "O caderno inteiro tem uma ordem única, da primeira à última linha.",
+        "Offset 4 na P0 e offset 4 na P1 são o mesmo recado.",
+        "PedidoCriado na P0 e Pagamento na P1 nascem ordenados entre si."
+      ],
+      "a": 0,
+      "w": "Ordem vale só dentro da coluna. O caderno inteiro não é uma fila única.",
+      "t": "ordem"
+    },
+    {
+      "q": "Posso ordenar um recado da P0 com um recado da P1 pelo número da linha?",
+      "o": [
+        "Não existe ordem global no tópico; cada partição tem a sua.",
+        "O caderno inteiro tem uma ordem única, da primeira à última linha.",
+        "Offset 4 na P0 e offset 4 na P1 são o mesmo recado.",
+        "PedidoCriado na P0 e Pagamento na P1 nascem ordenados entre si."
+      ],
+      "a": 0,
+      "w": "Ordem vale só dentro da coluna. O caderno inteiro não é uma fila única.",
+      "t": "ordem"
+    },
+    {
+      "q": "A linha some porque alguém leu ou por política de retenção?",
+      "o": [
+        "A linha some por política de retenção ou compaction, não porque alguém leu.",
+        "A linha some no instante da leitura.",
+        "A página rasga quando todos os grupos tiverem lido.",
+        "Retenção é só outro nome para “já li”."
+      ],
+      "a": 0,
+      "w": "Quem lê não rasga a página. Quem apaga é o cleaner, depois.",
+      "t": "retenção"
+    },
+    {
+      "q": "Quem apaga a página: o consumidor ou o cleaner?",
+      "o": [
+        "A linha some por política de retenção ou compaction, não porque alguém leu.",
+        "A linha some no instante da leitura.",
+        "A página rasga quando todos os grupos tiverem lido.",
+        "Retenção é só outro nome para “já li”."
+      ],
+      "a": 0,
+      "w": "Quem lê não rasga a página. Quem apaga é o cleaner, depois.",
+      "t": "retenção"
+    },
+    {
+      "q": "Ler dispara retenção?",
+      "o": [
+        "A linha some por política de retenção ou compaction, não porque alguém leu.",
+        "A linha some no instante da leitura.",
+        "A página rasga quando todos os grupos tiverem lido.",
+        "Retenção é só outro nome para “já li”."
+      ],
+      "a": 0,
+      "w": "Quem lê não rasga a página. Quem apaga é o cleaner, depois.",
+      "t": "retenção"
+    },
+    {
+      "q": "A mensagem some no instante da leitura?",
+      "o": [
+        "A linha some por política de retenção ou compaction, não porque alguém leu.",
+        "A linha some no instante da leitura.",
+        "A página rasga quando todos os grupos tiverem lido.",
+        "Retenção é só outro nome para “já li”."
+      ],
+      "a": 0,
+      "w": "Quem lê não rasga a página. Quem apaga é o cleaner, depois.",
+      "t": "retenção"
+    },
+    {
+      "q": "O que faz a linha desaparecer depois?",
+      "o": [
+        "A linha some por política de retenção ou compaction, não porque alguém leu.",
+        "A linha some no instante da leitura.",
+        "A página rasga quando todos os grupos tiverem lido.",
+        "Retenção é só outro nome para “já li”."
+      ],
+      "a": 0,
+      "w": "Quem lê não rasga a página. Quem apaga é o cleaner, depois.",
+      "t": "retenção"
+    },
+    {
+      "q": "Compaction e retenção são o mesmo que “já li”?",
+      "o": [
+        "A linha some por política de retenção ou compaction, não porque alguém leu.",
+        "A linha some no instante da leitura.",
+        "A página rasga quando todos os grupos tiverem lido.",
+        "Retenção é só outro nome para “já li”."
+      ],
+      "a": 0,
+      "w": "Quem lê não rasga a página. Quem apaga é o cleaner, depois.",
+      "t": "retenção"
+    },
+    {
+      "q": "A página rasga quando todos os grupos leram?",
+      "o": [
+        "A linha some por política de retenção ou compaction, não porque alguém leu.",
+        "A linha some no instante da leitura.",
+        "A página rasga quando todos os grupos tiverem lido.",
+        "Retenção é só outro nome para “já li”."
+      ],
+      "a": 0,
+      "w": "Quem lê não rasga a página. Quem apaga é o cleaner, depois.",
+      "t": "retenção"
+    },
+    {
+      "q": "Dá para reler o passado ainda retido?",
+      "o": [
+        "Dá para reler o passado ainda retido resetando a marca do grupo.",
+        "Não dá: a primeira leitura apaga o passado.",
+        "Só dá se o produtor republicar o tópico.",
+        "Resetar a marca apaga as linhas já lidas."
+      ],
+      "a": 0,
+      "w": "O log ainda está lá. Outro grupo ou um reset lê de novo.",
+      "t": "reprocessar"
+    },
+    {
+      "q": "Resetar a marca do grupo relê o caderno?",
+      "o": [
+        "Dá para reler o passado ainda retido resetando a marca do grupo.",
+        "Não dá: a primeira leitura apaga o passado.",
+        "Só dá se o produtor republicar o tópico.",
+        "Resetar a marca apaga as linhas já lidas."
+      ],
+      "a": 0,
+      "w": "O log ainda está lá. Outro grupo ou um reset lê de novo.",
+      "t": "reprocessar"
+    },
+    {
+      "q": "O log some depois da primeira leitura?",
+      "o": [
+        "Dá para reler o passado ainda retido resetando a marca do grupo.",
+        "Não dá: a primeira leitura apaga o passado.",
+        "Só dá se o produtor republicar o tópico.",
+        "Resetar a marca apaga as linhas já lidas."
+      ],
+      "a": 0,
+      "w": "O log ainda está lá. Outro grupo ou um reset lê de novo.",
+      "t": "reprocessar"
+    },
+    {
+      "q": "Outro grupo pode ler o mesmo trecho de novo?",
+      "o": [
+        "Dá para reler o passado ainda retido resetando a marca do grupo.",
+        "Não dá: a primeira leitura apaga o passado.",
+        "Só dá se o produtor republicar o tópico.",
+        "Resetar a marca apaga as linhas já lidas."
+      ],
+      "a": 0,
+      "w": "O log ainda está lá. Outro grupo ou um reset lê de novo.",
+      "t": "reprocessar"
+    },
+    {
+      "q": "Por que dá para reprocessar o passado?",
+      "o": [
+        "Dá para reler o passado ainda retido resetando a marca do grupo.",
+        "Não dá: a primeira leitura apaga o passado.",
+        "Só dá se o produtor republicar o tópico.",
+        "Resetar a marca apaga as linhas já lidas."
+      ],
+      "a": 0,
+      "w": "O log ainda está lá. Outro grupo ou um reset lê de novo.",
+      "t": "reprocessar"
+    },
+    {
+      "q": "Se a retenção ainda não comeu a linha, um reset vê o quê?",
+      "o": [
+        "Dá para reler o passado ainda retido resetando a marca do grupo.",
+        "Não dá: a primeira leitura apaga o passado.",
+        "Só dá se o produtor republicar o tópico.",
+        "Resetar a marca apaga as linhas já lidas."
+      ],
+      "a": 0,
+      "w": "O log ainda está lá. Outro grupo ou um reset lê de novo.",
+      "t": "reprocessar"
+    },
+    {
+      "q": "Relê o passado = outro group.id ou um reset da marca?",
+      "o": [
+        "Dá para reler o passado ainda retido resetando a marca do grupo.",
+        "Não dá: a primeira leitura apaga o passado.",
+        "Só dá se o produtor republicar o tópico.",
+        "Resetar a marca apaga as linhas já lidas."
+      ],
+      "a": 0,
+      "w": "O log ainda está lá. Outro grupo ou um reset lê de novo.",
+      "t": "reprocessar"
+    },
+    {
+      "q": "Página, coluna, linha, marca: o que cada uma é no Kafka?",
+      "o": [
+        "Página = tópico, coluna = partição, número da linha = offset, marca “já li até aqui” = committed offset.",
+        "Página = partição, coluna = tópico, marca = UUID global.",
+        "Offset é um ID único no cluster inteiro.",
+        "A marca é um número só para o tópico, não por coluna."
+      ],
+      "a": 0,
+      "w": "Essa analogia é o modelo real, não enfeite.",
+      "t": "analogia"
+    },
+    {
+      "q": "Tópico é a página. Partição é o quê?",
+      "o": [
+        "Página = tópico, coluna = partição, número da linha = offset, marca “já li até aqui” = committed offset.",
+        "Página = partição, coluna = tópico, marca = UUID global.",
+        "Offset é um ID único no cluster inteiro.",
+        "A marca é um número só para o tópico, não por coluna."
+      ],
+      "a": 0,
+      "w": "Essa analogia é o modelo real, não enfeite.",
+      "t": "analogia"
+    },
+    {
+      "q": "Offset é o número da linha ou um ID global?",
+      "o": [
+        "Página = tópico, coluna = partição, número da linha = offset, marca “já li até aqui” = committed offset.",
+        "Página = partição, coluna = tópico, marca = UUID global.",
+        "Offset é um ID único no cluster inteiro.",
+        "A marca é um número só para o tópico, não por coluna."
+      ],
+      "a": 0,
+      "w": "Essa analogia é o modelo real, não enfeite.",
+      "t": "analogia"
+    },
+    {
+      "q": "A marca “já li até aqui” é o quê?",
+      "o": [
+        "Página = tópico, coluna = partição, número da linha = offset, marca “já li até aqui” = committed offset.",
+        "Página = partição, coluna = tópico, marca = UUID global.",
+        "Offset é um ID único no cluster inteiro.",
+        "A marca é um número só para o tópico, não por coluna."
+      ],
+      "a": 0,
+      "w": "Essa analogia é o modelo real, não enfeite.",
+      "t": "analogia"
+    },
+    {
+      "q": "Caderno infinito: qual mapeamento está certo?",
+      "o": [
+        "Página = tópico, coluna = partição, número da linha = offset, marca “já li até aqui” = committed offset.",
+        "Página = partição, coluna = tópico, marca = UUID global.",
+        "Offset é um ID único no cluster inteiro.",
+        "A marca é um número só para o tópico, não por coluna."
+      ],
+      "a": 0,
+      "w": "Essa analogia é o modelo real, não enfeite.",
+      "t": "analogia"
+    },
+    {
+      "q": "Coluna = partição. Isso é metáfora ou o modelo real?",
+      "o": [
+        "Página = tópico, coluna = partição, número da linha = offset, marca “já li até aqui” = committed offset.",
+        "Página = partição, coluna = tópico, marca = UUID global.",
+        "Offset é um ID único no cluster inteiro.",
+        "A marca é um número só para o tópico, não por coluna."
+      ],
+      "a": 0,
+      "w": "Essa analogia é o modelo real, não enfeite.",
+      "t": "analogia"
+    },
+    {
+      "q": "O committed offset do grupo é a marca por coluna?",
+      "o": [
+        "Página = tópico, coluna = partição, número da linha = offset, marca “já li até aqui” = committed offset.",
+        "Página = partição, coluna = tópico, marca = UUID global.",
+        "Offset é um ID único no cluster inteiro.",
+        "A marca é um número só para o tópico, não por coluna."
+      ],
+      "a": 0,
+      "w": "Essa analogia é o modelo real, não enfeite.",
+      "t": "analogia"
+    },
+    {
+      "q": "Onde o produtor escreve: no meio da página ou só no final?",
+      "o": [
+        "Várias pessoas escrevem no final da coluna; ninguém reescreve a linha 40.",
+        "O produtor edita a linha 40 se o pedido mudar.",
+        "Cancelar o pedido apaga o PedidoCriado A no meio da página.",
+        "O checkout faz UPDATE no log como numa tabela."
+      ],
+      "a": 0,
+      "w": "Append-only. Correção é evento novo, não UPDATE no meio do log.",
+      "t": "produtor"
+    },
+    {
+      "q": "Dá para editar a linha 40?",
+      "o": [
+        "Várias pessoas escrevem no final da coluna; ninguém reescreve a linha 40.",
+        "O produtor edita a linha 40 se o pedido mudar.",
+        "Cancelar o pedido apaga o PedidoCriado A no meio da página.",
+        "O checkout faz UPDATE no log como numa tabela."
+      ],
+      "a": 0,
+      "w": "Append-only. Correção é evento novo, não UPDATE no meio do log.",
+      "t": "produtor"
+    },
+    {
+      "q": "Correção de um fato é UPDATE no log ou evento novo?",
+      "o": [
+        "Várias pessoas escrevem no final da coluna; ninguém reescreve a linha 40.",
+        "O produtor edita a linha 40 se o pedido mudar.",
+        "Cancelar o pedido apaga o PedidoCriado A no meio da página.",
+        "O checkout faz UPDATE no log como numa tabela."
+      ],
+      "a": 0,
+      "w": "Append-only. Correção é evento novo, não UPDATE no meio do log.",
+      "t": "produtor"
+    },
+    {
+      "q": "Várias pessoas escrevem. Elas reescrevem o passado?",
+      "o": [
+        "Várias pessoas escrevem no final da coluna; ninguém reescreve a linha 40.",
+        "O produtor edita a linha 40 se o pedido mudar.",
+        "Cancelar o pedido apaga o PedidoCriado A no meio da página.",
+        "O checkout faz UPDATE no log como numa tabela."
+      ],
+      "a": 0,
+      "w": "Append-only. Correção é evento novo, não UPDATE no meio do log.",
+      "t": "produtor"
+    },
+    {
+      "q": "Append-only quer dizer o quê?",
+      "o": [
+        "Várias pessoas escrevem no final da coluna; ninguém reescreve a linha 40.",
+        "O produtor edita a linha 40 se o pedido mudar.",
+        "Cancelar o pedido apaga o PedidoCriado A no meio da página.",
+        "O checkout faz UPDATE no log como numa tabela."
+      ],
+      "a": 0,
+      "w": "Append-only. Correção é evento novo, não UPDATE no meio do log.",
+      "t": "produtor"
+    },
+    {
+      "q": "O checkout apaga o PedidoCriado A se o usuário cancelar?",
+      "o": [
+        "Várias pessoas escrevem no final da coluna; ninguém reescreve a linha 40.",
+        "O produtor edita a linha 40 se o pedido mudar.",
+        "Cancelar o pedido apaga o PedidoCriado A no meio da página.",
+        "O checkout faz UPDATE no log como numa tabela."
+      ],
+      "a": 0,
+      "w": "Append-only. Correção é evento novo, não UPDATE no meio do log.",
+      "t": "produtor"
+    },
+    {
+      "q": "Ninguém reescreve a linha 40. O que se faz então?",
+      "o": [
+        "Várias pessoas escrevem no final da coluna; ninguém reescreve a linha 40.",
+        "O produtor edita a linha 40 se o pedido mudar.",
+        "Cancelar o pedido apaga o PedidoCriado A no meio da página.",
+        "O checkout faz UPDATE no log como numa tabela."
+      ],
+      "a": 0,
+      "w": "Append-only. Correção é evento novo, não UPDATE no meio do log.",
+      "t": "produtor"
+    },
+    {
+      "q": "Dois crachás no mesmo tópico: o que isso é?",
+      "o": [
+        "Dois crachás no mesmo tópico = dois filmes independentes do mesmo caderno.",
+        "Fan-out é criar outra partição para o segundo time.",
+        "Analytics precisa de um tópico cópia para não brigar com faturamento.",
+        "Dois grupos compartilham a mesma marca."
+      ],
+      "a": 0,
+      "w": "Fan-out é outro group.id, não outra partição.",
+      "t": "fan-out"
+    },
+    {
+      "q": "Fan-out é outra partição ou outro group.id?",
+      "o": [
+        "Dois crachás no mesmo tópico = dois filmes independentes do mesmo caderno.",
+        "Fan-out é criar outra partição para o segundo time.",
+        "Analytics precisa de um tópico cópia para não brigar com faturamento.",
+        "Dois grupos compartilham a mesma marca."
+      ],
+      "a": 0,
+      "w": "Fan-out é outro group.id, não outra partição.",
+      "t": "fan-out"
+    },
+    {
+      "q": "Analytics precisa de um tópico cópia para não brigar com faturamento?",
+      "o": [
+        "Dois crachás no mesmo tópico = dois filmes independentes do mesmo caderno.",
+        "Fan-out é criar outra partição para o segundo time.",
+        "Analytics precisa de um tópico cópia para não brigar com faturamento.",
+        "Dois grupos compartilham a mesma marca."
+      ],
+      "a": 0,
+      "w": "Fan-out é outro group.id, não outra partição.",
+      "t": "fan-out"
+    },
+    {
+      "q": "Mesmo caderno, dois filmes independentes: como?",
+      "o": [
+        "Dois crachás no mesmo tópico = dois filmes independentes do mesmo caderno.",
+        "Fan-out é criar outra partição para o segundo time.",
+        "Analytics precisa de um tópico cópia para não brigar com faturamento.",
+        "Dois grupos compartilham a mesma marca."
+      ],
+      "a": 0,
+      "w": "Fan-out é outro group.id, não outra partição.",
+      "t": "fan-out"
+    },
+    {
+      "q": "Outro group.id relê o caderno com a própria marca?",
+      "o": [
+        "Dois crachás no mesmo tópico = dois filmes independentes do mesmo caderno.",
+        "Fan-out é criar outra partição para o segundo time.",
+        "Analytics precisa de um tópico cópia para não brigar com faturamento.",
+        "Dois grupos compartilham a mesma marca."
+      ],
+      "a": 0,
+      "w": "Fan-out é outro group.id, não outra partição.",
+      "t": "fan-out"
+    },
+    {
+      "q": "Partição extra é o jeito de ter faturamento e analytics?",
+      "o": [
+        "Dois crachás no mesmo tópico = dois filmes independentes do mesmo caderno.",
+        "Fan-out é criar outra partição para o segundo time.",
+        "Analytics precisa de um tópico cópia para não brigar com faturamento.",
+        "Dois grupos compartilham a mesma marca."
+      ],
+      "a": 0,
+      "w": "Fan-out é outro group.id, não outra partição.",
+      "t": "fan-out"
+    },
+    {
+      "q": "Dois grupos podem imprimir as mesmas linhas?",
+      "o": [
+        "Dois crachás no mesmo tópico = dois filmes independentes do mesmo caderno.",
+        "Fan-out é criar outra partição para o segundo time.",
+        "Analytics precisa de um tópico cópia para não brigar com faturamento.",
+        "Dois grupos compartilham a mesma marca."
+      ],
+      "a": 0,
+      "w": "Fan-out é outro group.id, não outra partição.",
+      "t": "fan-out"
+    },
+    {
+      "q": "O broker cobra o cartão?",
+      "o": [
+        "O broker guarda bytes. Cobrar cartão é código seu no consumidor.",
+        "O broker cobra o cartão quando a linha entra no caderno.",
+        "Publicar PedidoCriado já fatura o 99.",
+        "O cluster executa a regra de negócio no log."
+      ],
+      "a": 0,
+      "w": "Kafka não é um worker de regra de negócio.",
+      "t": "execução"
+    },
+    {
+      "q": "Kafka executa a regra de negócio?",
+      "o": [
+        "O broker guarda bytes. Cobrar cartão é código seu no consumidor.",
+        "O broker cobra o cartão quando a linha entra no caderno.",
+        "Publicar PedidoCriado já fatura o 99.",
+        "O cluster executa a regra de negócio no log."
+      ],
+      "a": 0,
+      "w": "Kafka não é um worker de regra de negócio.",
+      "t": "execução"
+    },
+    {
+      "q": "Quem cobra o cartão: o log ou o seu consumidor?",
+      "o": [
+        "O broker guarda bytes. Cobrar cartão é código seu no consumidor.",
+        "O broker cobra o cartão quando a linha entra no caderno.",
+        "Publicar PedidoCriado já fatura o 99.",
+        "O cluster executa a regra de negócio no log."
+      ],
+      "a": 0,
+      "w": "Kafka não é um worker de regra de negócio.",
+      "t": "execução"
+    },
+    {
+      "q": "O caderno guarda bytes. O efeito no mundo real nasce onde?",
+      "o": [
+        "O broker guarda bytes. Cobrar cartão é código seu no consumidor.",
+        "O broker cobra o cartão quando a linha entra no caderno.",
+        "Publicar PedidoCriado já fatura o 99.",
+        "O cluster executa a regra de negócio no log."
+      ],
+      "a": 0,
+      "w": "Kafka não é um worker de regra de negócio.",
+      "t": "execução"
+    },
+    {
+      "q": "Publicar PedidoCriado já fatura o 99?",
+      "o": [
+        "O broker guarda bytes. Cobrar cartão é código seu no consumidor.",
+        "O broker cobra o cartão quando a linha entra no caderno.",
+        "Publicar PedidoCriado já fatura o 99.",
+        "O cluster executa a regra de negócio no log."
+      ],
+      "a": 0,
+      "w": "Kafka não é um worker de regra de negócio.",
+      "t": "execução"
+    },
+    {
+      "q": "O cluster é um worker de regra de negócio?",
+      "o": [
+        "O broker guarda bytes. Cobrar cartão é código seu no consumidor.",
+        "O broker cobra o cartão quando a linha entra no caderno.",
+        "Publicar PedidoCriado já fatura o 99.",
+        "O cluster executa a regra de negócio no log."
+      ],
+      "a": 0,
+      "w": "Kafka não é um worker de regra de negócio.",
+      "t": "execução"
+    },
+    {
+      "q": "Guardar a linha e cobrar o cartão são a mesma coisa?",
+      "o": [
+        "O broker guarda bytes. Cobrar cartão é código seu no consumidor.",
+        "O broker cobra o cartão quando a linha entra no caderno.",
+        "Publicar PedidoCriado já fatura o 99.",
+        "O cluster executa a regra de negócio no log."
+      ],
+      "a": 0,
+      "w": "Kafka não é um worker de regra de negócio.",
+      "t": "execução"
+    },
+    {
+      "q": "As linhas se escrevem onde?",
+      "o": [
+        "As linhas só são escritas no final. Não se edita o meio da página.",
+        "O meio da página muda quando chega um cancelamento.",
+        "Kafka é uma tabela com UPDATE.",
+        "Dá para inserir um recado entre o offset 0 e o 1."
+      ],
+      "a": 0,
+      "w": "Log imutável até o cleaner atuar em segmentos velhos.",
+      "t": "caderno"
+    },
+    {
+      "q": "Dá para editar o meio da página?",
+      "o": [
+        "As linhas só são escritas no final. Não se edita o meio da página.",
+        "O meio da página muda quando chega um cancelamento.",
+        "Kafka é uma tabela com UPDATE.",
+        "Dá para inserir um recado entre o offset 0 e o 1."
+      ],
+      "a": 0,
+      "w": "Log imutável até o cleaner atuar em segmentos velhos.",
+      "t": "caderno"
+    },
+    {
+      "q": "O caderno é um log imutável até o cleaner atuar?",
+      "o": [
+        "As linhas só são escritas no final. Não se edita o meio da página.",
+        "O meio da página muda quando chega um cancelamento.",
+        "Kafka é uma tabela com UPDATE.",
+        "Dá para inserir um recado entre o offset 0 e o 1."
+      ],
+      "a": 0,
+      "w": "Log imutável até o cleaner atuar em segmentos velhos.",
+      "t": "caderno"
+    },
+    {
+      "q": "Append só no final: o que isso impede?",
+      "o": [
+        "As linhas só são escritas no final. Não se edita o meio da página.",
+        "O meio da página muda quando chega um cancelamento.",
+        "Kafka é uma tabela com UPDATE.",
+        "Dá para inserir um recado entre o offset 0 e o 1."
+      ],
+      "a": 0,
+      "w": "Log imutável até o cleaner atuar em segmentos velhos.",
+      "t": "caderno"
+    },
+    {
+      "q": "Kafka é uma tabela com UPDATE?",
+      "o": [
+        "As linhas só são escritas no final. Não se edita o meio da página.",
+        "O meio da página muda quando chega um cancelamento.",
+        "Kafka é uma tabela com UPDATE.",
+        "Dá para inserir um recado entre o offset 0 e o 1."
+      ],
+      "a": 0,
+      "w": "Log imutável até o cleaner atuar em segmentos velhos.",
+      "t": "caderno"
+    },
+    {
+      "q": "O meio da página muda quando chega um cancelamento?",
+      "o": [
+        "As linhas só são escritas no final. Não se edita o meio da página.",
+        "O meio da página muda quando chega um cancelamento.",
+        "Kafka é uma tabela com UPDATE.",
+        "Dá para inserir um recado entre o offset 0 e o 1."
+      ],
+      "a": 0,
+      "w": "Log imutável até o cleaner atuar em segmentos velhos.",
+      "t": "caderno"
+    },
+    {
+      "q": "Dá para enfiar um recado entre duas linhas já escritas?",
+      "o": [
+        "As linhas só são escritas no final. Não se edita o meio da página.",
+        "O meio da página muda quando chega um cancelamento.",
+        "Kafka é uma tabela com UPDATE.",
+        "Dá para inserir um recado entre o offset 0 e o 1."
+      ],
+      "a": 0,
+      "w": "Log imutável até o cleaner atuar em segmentos velhos.",
+      "t": "caderno"
+    },
+    {
+      "q": "Offset 0 da P0 e offset 0 da P2 são o mesmo recado?",
+      "o": [
+        "Offset 0 da coluna 0 e offset 0 da coluna 2 são recados diferentes.",
+        "Offset é um UUID global único no cluster inteiro.",
+        "A marca é um número só para o tópico inteiro.",
+        "Duas colunas com offset 0 guardam o mesmo recado."
+      ],
+      "a": 0,
+      "w": "Offset não é ID global. A marca do grupo é um número por coluna.",
+      "t": "marcas"
+    },
+    {
+      "q": "Offset é um UUID global no cluster?",
+      "o": [
+        "Offset 0 da coluna 0 e offset 0 da coluna 2 são recados diferentes.",
+        "Offset é um UUID global único no cluster inteiro.",
+        "A marca é um número só para o tópico inteiro.",
+        "Duas colunas com offset 0 guardam o mesmo recado."
+      ],
+      "a": 0,
+      "w": "Offset não é ID global. A marca do grupo é um número por coluna.",
+      "t": "marcas"
+    },
+    {
+      "q": "A marca é uma só para o tópico ou uma por coluna?",
+      "o": [
+        "Offset 0 da coluna 0 e offset 0 da coluna 2 são recados diferentes.",
+        "Offset é um UUID global único no cluster inteiro.",
+        "A marca é um número só para o tópico inteiro.",
+        "Duas colunas com offset 0 guardam o mesmo recado."
+      ],
+      "a": 0,
+      "w": "Offset não é ID global. A marca do grupo é um número por coluna.",
+      "t": "marcas"
+    },
+    {
+      "q": "Por que a marca do faturamento aparece em cada coluna?",
+      "o": [
+        "Offset 0 da coluna 0 e offset 0 da coluna 2 são recados diferentes.",
+        "Offset é um UUID global único no cluster inteiro.",
+        "A marca é um número só para o tópico inteiro.",
+        "Duas colunas com offset 0 guardam o mesmo recado."
+      ],
+      "a": 0,
+      "w": "Offset não é ID global. A marca do grupo é um número por coluna.",
+      "t": "marcas"
+    },
+    {
+      "q": "O número da linha 0 vale no caderno inteiro?",
+      "o": [
+        "Offset 0 da coluna 0 e offset 0 da coluna 2 são recados diferentes.",
+        "Offset é um UUID global único no cluster inteiro.",
+        "A marca é um número só para o tópico inteiro.",
+        "Duas colunas com offset 0 guardam o mesmo recado."
+      ],
+      "a": 0,
+      "w": "Offset não é ID global. A marca do grupo é um número por coluna.",
+      "t": "marcas"
+    },
+    {
+      "q": "Dois offsets 0 em colunas diferentes: recados iguais ou diferentes?",
+      "o": [
+        "Offset 0 da coluna 0 e offset 0 da coluna 2 são recados diferentes.",
+        "Offset é um UUID global único no cluster inteiro.",
+        "A marca é um número só para o tópico inteiro.",
+        "Duas colunas com offset 0 guardam o mesmo recado."
+      ],
+      "a": 0,
+      "w": "Offset não é ID global. A marca do grupo é um número por coluna.",
+      "t": "marcas"
+    },
+    {
+      "q": "O committed offset é por grupo e por partição?",
+      "o": [
+        "Offset 0 da coluna 0 e offset 0 da coluna 2 são recados diferentes.",
+        "Offset é um UUID global único no cluster inteiro.",
+        "A marca é um número só para o tópico inteiro.",
+        "Duas colunas com offset 0 guardam o mesmo recado."
+      ],
+      "a": 0,
+      "w": "Offset não é ID global. A marca do grupo é um número por coluna.",
+      "t": "marcas"
+    },
+    {
+      "q": "Qual é o desenho do caderno nesta aula?",
+      "o": [
+        "O desenho do lab é o tópico pedidos com três colunas e duas marcas.",
+        "O desenho é uma fila única com um trabalhador.",
+        "Há uma marca só, compartilhada pelos dois grupos.",
+        "Cada grupo tem o próprio tópico pedidos."
+      ],
+      "a": 0,
+      "w": "Laranja = faturamento. Verde = analytics. Mesmo caderno, ritmos diferentes.",
+      "t": "lab"
+    },
+    {
+      "q": "O tópico pedidos no desenho tem quantas colunas e quantas marcas?",
+      "o": [
+        "O desenho do lab é o tópico pedidos com três colunas e duas marcas.",
+        "O desenho é uma fila única com um trabalhador.",
+        "Há uma marca só, compartilhada pelos dois grupos.",
+        "Cada grupo tem o próprio tópico pedidos."
+      ],
+      "a": 0,
+      "w": "Laranja = faturamento. Verde = analytics. Mesmo caderno, ritmos diferentes.",
+      "t": "lab"
+    },
+    {
+      "q": "Laranja e verde no desenho são o quê?",
+      "o": [
+        "O desenho do lab é o tópico pedidos com três colunas e duas marcas.",
+        "O desenho é uma fila única com um trabalhador.",
+        "Há uma marca só, compartilhada pelos dois grupos.",
+        "Cada grupo tem o próprio tópico pedidos."
+      ],
+      "a": 0,
+      "w": "Laranja = faturamento. Verde = analytics. Mesmo caderno, ritmos diferentes.",
+      "t": "lab"
+    },
+    {
+      "q": "Três colunas, duas marcas: o que isso ilustra?",
+      "o": [
+        "O desenho do lab é o tópico pedidos com três colunas e duas marcas.",
+        "O desenho é uma fila única com um trabalhador.",
+        "Há uma marca só, compartilhada pelos dois grupos.",
+        "Cada grupo tem o próprio tópico pedidos."
+      ],
+      "a": 0,
+      "w": "Laranja = faturamento. Verde = analytics. Mesmo caderno, ritmos diferentes.",
+      "t": "lab"
+    },
+    {
+      "q": "O modelo desta aula é um tópico com 1 partição e 1 grupo?",
+      "o": [
+        "O desenho do lab é o tópico pedidos com três colunas e duas marcas.",
+        "O desenho é uma fila única com um trabalhador.",
+        "Há uma marca só, compartilhada pelos dois grupos.",
+        "Cada grupo tem o próprio tópico pedidos."
+      ],
+      "a": 0,
+      "w": "Laranja = faturamento. Verde = analytics. Mesmo caderno, ritmos diferentes.",
+      "t": "lab"
+    },
+    {
+      "q": "Faturamento e analytics no desenho leem o mesmo caderno?",
+      "o": [
+        "O desenho do lab é o tópico pedidos com três colunas e duas marcas.",
+        "O desenho é uma fila única com um trabalhador.",
+        "Há uma marca só, compartilhada pelos dois grupos.",
+        "Cada grupo tem o próprio tópico pedidos."
+      ],
+      "a": 0,
+      "w": "Laranja = faturamento. Verde = analytics. Mesmo caderno, ritmos diferentes.",
+      "t": "lab"
+    },
+    {
+      "q": "Compose + pedido-service, nesta ideia, mostram o quê?",
+      "o": [
+        "O desenho do lab é o tópico pedidos com três colunas e duas marcas.",
+        "O desenho é uma fila única com um trabalhador.",
+        "Há uma marca só, compartilhada pelos dois grupos.",
+        "Cada grupo tem o próprio tópico pedidos."
+      ],
+      "a": 0,
+      "w": "Laranja = faturamento. Verde = analytics. Mesmo caderno, ritmos diferentes.",
+      "t": "lab"
+    },
+    {
+      "q": "Qual é o erro que destrói o resto da trilha?",
+      "o": [
+        "Tratar Kafka como fila do banco é o erro que destrói o resto da trilha.",
+        "A analogia da fila está certa; o resto é vocabulário.",
+        "Kafka é só uma fila mais rápida.",
+        "Fila e log são a mesma coisa com outro desenho."
+      ],
+      "a": 0,
+      "w": "Se a mensagem some ao ler, você ainda está no modelo SQS.",
+      "t": "metáfora"
+    },
+    {
+      "q": "Se a mensagem some ao ler, você ainda está em qual modelo?",
+      "o": [
+        "Tratar Kafka como fila do banco é o erro que destrói o resto da trilha.",
+        "A analogia da fila está certa; o resto é vocabulário.",
+        "Kafka é só uma fila mais rápida.",
+        "Fila e log são a mesma coisa com outro desenho."
+      ],
+      "a": 0,
+      "w": "Se a mensagem some ao ler, você ainda está no modelo SQS.",
+      "t": "metáfora"
+    },
+    {
+      "q": "Tratar Kafka como fila do banco: detalhe ou erro de raiz?",
+      "o": [
+        "Tratar Kafka como fila do banco é o erro que destrói o resto da trilha.",
+        "A analogia da fila está certa; o resto é vocabulário.",
+        "Kafka é só uma fila mais rápida.",
+        "Fila e log são a mesma coisa com outro desenho."
+      ],
+      "a": 0,
+      "w": "Se a mensagem some ao ler, você ainda está no modelo SQS.",
+      "t": "metáfora"
+    },
+    {
+      "q": "SQS e Kafka são a mesma analogia?",
+      "o": [
+        "Tratar Kafka como fila do banco é o erro que destrói o resto da trilha.",
+        "A analogia da fila está certa; o resto é vocabulário.",
+        "Kafka é só uma fila mais rápida.",
+        "Fila e log são a mesma coisa com outro desenho."
+      ],
+      "a": 0,
+      "w": "Se a mensagem some ao ler, você ainda está no modelo SQS.",
+      "t": "metáfora"
+    },
+    {
+      "q": "Por que a analogia da fila quebra o resto das aulas?",
+      "o": [
+        "Tratar Kafka como fila do banco é o erro que destrói o resto da trilha.",
+        "A analogia da fila está certa; o resto é vocabulário.",
+        "Kafka é só uma fila mais rápida.",
+        "Fila e log são a mesma coisa com outro desenho."
+      ],
+      "a": 0,
+      "w": "Se a mensagem some ao ler, você ainda está no modelo SQS.",
+      "t": "metáfora"
+    },
+    {
+      "q": "O primeiro erro a matar é qual?",
+      "o": [
+        "Tratar Kafka como fila do banco é o erro que destrói o resto da trilha.",
+        "A analogia da fila está certa; o resto é vocabulário.",
+        "Kafka é só uma fila mais rápida.",
+        "Fila e log são a mesma coisa com outro desenho."
+      ],
+      "a": 0,
+      "w": "Se a mensagem some ao ler, você ainda está no modelo SQS.",
+      "t": "metáfora"
+    },
+    {
+      "q": "“Fila mais rápida” descreve Kafka?",
+      "o": [
+        "Tratar Kafka como fila do banco é o erro que destrói o resto da trilha.",
+        "A analogia da fila está certa; o resto é vocabulário.",
+        "Kafka é só uma fila mais rápida.",
+        "Fila e log são a mesma coisa com outro desenho."
+      ],
+      "a": 0,
+      "w": "Se a mensagem some ao ler, você ainda está no modelo SQS.",
+      "t": "metáfora"
+    },
+    {
+      "q": "Analytics atrasado trava o faturamento?",
+      "o": [
+        "Um grupo atrasado não impede o outro de avançar no mesmo tópico.",
+        "Analytics atrasado trava o faturamento na mesma coluna.",
+        "As duas marcas brigam: só uma pode avançar.",
+        "Lag de um grupo bloqueia o commit do outro."
+      ],
+      "a": 0,
+      "w": "Marcas independentes. Lag de analytics não trava faturamento.",
+      "t": "independência"
+    },
+    {
+      "q": "Um grupo com lag impede o outro de avançar?",
+      "o": [
+        "Um grupo atrasado não impede o outro de avançar no mesmo tópico.",
+        "Analytics atrasado trava o faturamento na mesma coluna.",
+        "As duas marcas brigam: só uma pode avançar.",
+        "Lag de um grupo bloqueia o commit do outro."
+      ],
+      "a": 0,
+      "w": "Marcas independentes. Lag de analytics não trava faturamento.",
+      "t": "independência"
+    },
+    {
+      "q": "As marcas brigam na mesma coluna?",
+      "o": [
+        "Um grupo atrasado não impede o outro de avançar no mesmo tópico.",
+        "Analytics atrasado trava o faturamento na mesma coluna.",
+        "As duas marcas brigam: só uma pode avançar.",
+        "Lag de um grupo bloqueia o commit do outro."
+      ],
+      "a": 0,
+      "w": "Marcas independentes. Lag de analytics não trava faturamento.",
+      "t": "independência"
+    },
+    {
+      "q": "Lag de analytics bloqueia o commit do faturamento?",
+      "o": [
+        "Um grupo atrasado não impede o outro de avançar no mesmo tópico.",
+        "Analytics atrasado trava o faturamento na mesma coluna.",
+        "As duas marcas brigam: só uma pode avançar.",
+        "Lag de um grupo bloqueia o commit do outro."
+      ],
+      "a": 0,
+      "w": "Marcas independentes. Lag de analytics não trava faturamento.",
+      "t": "independência"
+    },
+    {
+      "q": "Dois grupos no mesmo tópico compartilham a marca?",
+      "o": [
+        "Um grupo atrasado não impede o outro de avançar no mesmo tópico.",
+        "Analytics atrasado trava o faturamento na mesma coluna.",
+        "As duas marcas brigam: só uma pode avançar.",
+        "Lag de um grupo bloqueia o commit do outro."
+      ],
+      "a": 0,
+      "w": "Marcas independentes. Lag de analytics não trava faturamento.",
+      "t": "independência"
+    },
+    {
+      "q": "Faturamento no 80 e analytics no 12 na P0: quem está errado?",
+      "o": [
+        "Um grupo atrasado não impede o outro de avançar no mesmo tópico.",
+        "Analytics atrasado trava o faturamento na mesma coluna.",
+        "As duas marcas brigam: só uma pode avançar.",
+        "Lag de um grupo bloqueia o commit do outro."
+      ],
+      "a": 0,
+      "w": "Marcas independentes. Lag de analytics não trava faturamento.",
+      "t": "independência"
+    },
+    {
+      "q": "Independência das marcas: o que isso permite?",
+      "o": [
+        "Um grupo atrasado não impede o outro de avançar no mesmo tópico.",
+        "Analytics atrasado trava o faturamento na mesma coluna.",
+        "As duas marcas brigam: só uma pode avançar.",
+        "Lag de um grupo bloqueia o commit do outro."
+      ],
+      "a": 0,
+      "w": "Marcas independentes. Lag de analytics não trava faturamento.",
+      "t": "independência"
+    }
+  ]
+}

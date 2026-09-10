@@ -1,0 +1,169 @@
+<section id="s4" class="week">
+      <h2>Padrões de integração</h2>
+      <p>
+        Esta aula separa quem “já usou Kafka” de quem entendeu o problema de verdade:
+        banco e broker não compartilham uma transação mágica. Sem outbox/inbox, o restante é teatro.
+      </p>
+      <div class="sessions">
+        <article>
+          <div class="tag">Sessão 1 · 45 min</div>
+          <h4>Outbox</h4>
+          <p>Desenhe save+send falhando no meio. Depois a caixinha na mesma transação e o carteiro (poller ou Debezium). Anti-padrão de cor.</p>
+        </article>
+        <article>
+          <div class="tag">Sessão 2 · 45 min</div>
+          <h4>Inbox + schema</h4>
+          <p>Tabela de eventId na mesma transação do efeito. Schema Registry: backward vs forward. Campo opcional vs rename.</p>
+        </article>
+        <article>
+          <div class="tag">Sessão 3 · 45 min</div>
+          <h4>Contrato e fronteira</h4>
+          <p>Notification vs state. Quando não usar Kafka. Consumer Spring vs Streams. Isso é julgamento de Lead, não de tutorial.</p>
+        </article>
+      </div>
+
+      <div class="lesson">
+        <h3>Sessão 1 — O buraco do <code>save(); send();</code></h3>
+        <p><strong>O que você precisa entender.</strong> Postgres e Kafka não compartilham uma transação. Se você commita o pedido e o processo morre antes do send, o caderno nunca fica sabendo. Se você publica e o banco dá rollback, o caderno anuncia um pedido que não existe.</p>
+        <p><strong>Exemplo concreto.</strong> Checkout do 99: <code>INSERT pedido</code> + <code>kafka.send(PedidoCriado)</code>. Kafka cai no meio. O usuário vê o pedido no site; faturamento nunca cobra. A correção: na mesma transação, <code>INSERT pedido</code> + <code>INSERT outbox</code>. Um carteiro (poller ou Debezium) leva o recado depois. Se o carteiro falhar, a linha continua na caixinha.</p>
+        <div class="pipe">
+          <div class="box">Tx banco<br><small>pedido 99 + linha outbox</small></div>
+          <div class="arrow" aria-hidden="true">→</div>
+          <div class="box">Commit</div>
+          <div class="arrow" aria-hidden="true">→</div>
+          <div class="box">Carteiro<br><small>poller / CDC</small></div>
+          <div class="arrow" aria-hidden="true">→</div>
+          <div class="box">Tópico pedidos</div>
+        </div>
+        <div class="warn"><strong>Pegadinha.</strong> Publicar no Kafka <em>dentro</em> da transação SQL com um driver “mágico”. O send não faz parte do commit do Postgres. Outra: pintar o recado de enviado antes do ACK do broker.</div>
+        <div class="callout"><strong>Agora você (5 min).</strong> Desenhe as duas falhas do save+send e o caminho outbox. Sem caixinha na mesma canetada, a sessão não fechou.</div>
+      </div>
+
+      <div class="lesson">
+        <h3>Sessão 2 — Inbox e schema</h3>
+        <p><strong>O que você precisa entender.</strong> Outbox empurra at-least-once. Inbox (ou equivalente) impede o segundo efeito. Schema: campo opcional novo costuma ser seguro; rename e remover obrigatório quebram alguém.</p>
+        <p><strong>Exemplo concreto.</strong> Faturamento grava <code>eventId e-17</code> na tabela inbox e o pagamento do 99 <em>na mesma transação</em>. Replay do e-17: unique viola ou o if exists ignora — não cobra de novo. Produtor adiciona <code>cupom</code> opcional: consumidor velho ignora. Produtor renomeia <code>total</code> para <code>amount</code>: consumidor velho quebra.</p>
+        <div class="warn"><strong>Pegadinha.</strong> Gravar o eventId e só depois aplicar o efeito (ou o inverso) em transações separadas. Queda no meio = “já vi” sem cobrar, ou cobrar sem “já vi”.</div>
+        <div class="callout"><strong>Agora você (5 min).</strong> Uma frase backward vs forward. Um exemplo de mudança que você recusaria no review.</div>
+      </div>
+
+      <div class="lesson">
+        <h3>Sessão 3 — Contrato e quando não é Kafka</h3>
+        <p><strong>O que você precisa entender.</strong> Notification (“99 mudou, busca lá”) acopla na volta. State transfer (“99 pago, total 80”) deixa o consumidor agir sozinho. Kafka não é request/response. Consumer Spring chama banco e cartão; Streams trabalha em cima do próprio log.</p>
+        <p><strong>Exemplo concreto.</strong> E-mail de confirmação: evento com o que o template precisa, ou o serviço de e-mail vai esbarrar no checkout a cada recado. Tela de “o frete é X agora?”: isso é GET síncrono, não tópico. Time de três pessoas com 20 pedidos/dia: uma fila simples pode bastar.</p>
+        <div class="warn"><strong>Pegadinha.</strong> Começar por Kafka Streams porque “é o Kafka de verdade”. Se o trabalho é chamar o cartão, você empilhou estado local sem necessidade.</div>
+        <div class="callout"><strong>Agora você (5 min).</strong> Liste três usos do seu trabalho: Kafka / HTTP / nem um nem outro. Justifique em uma linha cada.</div>
+      </div>
+
+      <article class="term">
+        <h3>Outbox — salvar no banco e publicar no Kafka “juntos”</h3>
+        <p class="analogy">Analogia: na mesma canetada você anota o pedido e deixa um recado na caixinha “para publicar”. Um carteiro separado leva o recado ao caderno Kafka. Se o carteiro falhar, o recado continua na caixinha.</p>
+        <p>
+          Não existe transação distribuída entre o seu Postgres e o Kafka.
+          A solução é gravar o evento numa tabela <code>outbox</code> <strong>dentro da mesma transação</strong> do dado de negócio.
+          Um processo separado lê a tabela e publica, marcando como enviado:
+        </p>
+        <ul class="tight">
+          <li><strong>Poller:</strong> um job da aplicação (“tem recado novo?”). Simples de operar. Pode atrasar uns segundos.</li>
+          <li><strong>CDC (Debezium):</strong> lê o log de transação do banco e publica. Menos código seu, mais peça para operar.</li>
+        </ul>
+        <p>
+          Se a publicação falhar, tenta de novo — at-least-once, tratado com idempotência no consumidor.
+          A tabela típica tem: id, payload, criado_em, publicado_em (nulo até o carteiro conseguir).
+        </p>
+        <div class="warn">
+          Anti-padrão: <code>salvar(); kafka.send();</code>
+          O processo pode morrer no meio e ficar só um dos dois. Ou o inverso: publicar antes de commitar o banco
+          (o caderno anuncia um pedido que o banco desfez no rollback).
+        </div>
+      </article>
+
+      <article class="term">
+        <h3>Inbox — o inverso, no consumidor</h3>
+        <p class="analogy">Analogia: na portaria tem uma lista “já entrei este envelope”. Envelope 17 de novo? Não cobra de novo. A lista e o efeito (baixa no estoque) são a mesma canetada.</p>
+        <p>
+          Guardar os IDs já processados numa tabela e ignorar repetidos, <strong>na mesma transação do efeito</strong>.
+          Se você grava o ID e o efeito falha depois, o ID não pode ter sido commitado — senão você “esquece” de aplicar.
+          Se aplica o efeito e não grava o ID, o replay duplica.
+        </p>
+        <p>É a implementação concreta da idempotência. Sem inbox (ou equivalente), outbox só empurra duplicata para o outro lado.</p>
+      </article>
+
+      <article class="term">
+        <h3>Schema Registry — configurar de ponta a ponta</h3>
+        <p>
+          <strong>O que é.</strong> Processo HTTP ao lado do broker. Subject padrão do value: <code>pedidos.criados-value</code>.
+          Serializer Confluent prefixa o payload com magic byte + schema id. Compatibilidade do lab: <code>BACKWARD</code>
+          (variável <code>SCHEMA_REGISTRY_SCHEMA_COMPATIBILITY_LEVEL</code> no Compose).
+        </p>
+        <p><strong>1. Sobe o serviço</strong> (já está no Compose, porta 8081):</p>
+<pre class="code">cd labs/kafka
+docker compose up -d
+curl -s http://localhost:8081/subjects</pre>
+        <p><strong>2. Aponta o Spring</strong> — serializers + URL. Sem isso o app manda JSON cru e o cartório não entra na jogada:</p>
+<pre class="code">spring.kafka.producer.value-serializer: io.confluent.kafka.serializers.json.KafkaJsonSchemaSerializer
+spring.kafka.consumer.value-deserializer: io.confluent.kafka.serializers.json.KafkaJsonSchemaDeserializer
+spring.kafka.producer.properties.schema.registry.url: http://localhost:8081
+spring.kafka.consumer.properties.schema.registry.url: http://localhost:8081
+spring.kafka.consumer.properties.json.value.type: com.trilhas.kafka.lab.PedidoCriado</pre>
+        <p>Repositório Maven Confluent no <code>pom.xml</code> (<code>kafka-json-schema-serializer</code>).</p>
+        <p><strong>3. Primeiro produce registra o schema.</strong> Depois:</p>
+<pre class="code">curl -s http://localhost:8081/subjects/pedidos.criados-value/versions
+curl -s http://localhost:8081/subjects/pedidos.criados-value/versions/1</pre>
+        <p><strong>4. Mudança segura vs recusa.</strong> Adicionar campo opcional (<code>cupom</code> no record) é o caminho BACKWARD. Remover campo obrigatório o Registry responde 409. Comando da recusa: README, seção Schema Registry.</p>
+        <p>
+          <strong>Backward:</strong> consumidor novo lê dado antigo.<br>
+          <strong>Forward:</strong> consumidor antigo lê dado novo.<br>
+          Rename e reaproveitar nome de campo com outro significado: recuse no review. Incompatível de verdade: novo tópico ou novo tipo de evento, migre consumidores.
+        </p>
+        <p class="lab-ref"><strong>No lab.</strong> <code>docker-compose.yml</code> (serviço <code>schema-registry</code>), <code>application.yml</code>, <code>PedidoCriado.java</code>, <code>labs/kafka/README.md</code>.</p>
+      </article>
+
+      <article class="term">
+        <h3>Notificação vs estado no evento</h3>
+        <table class="compare">
+          <thead>
+            <tr><th></th><th>Notification</th><th>State transfer</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>O que viaja</td>
+              <td>Só o ID (“Pedido 123 mudou”)</td>
+              <td>O estado necessário para agir</td>
+            </tr>
+            <tr>
+              <td>Vantagem</td>
+              <td>Payload pequeno</td>
+              <td>Desacopla: não precisa ligar de volta</td>
+            </tr>
+            <tr>
+              <td>Custo</td>
+              <td>Acoplamento síncrono na volta (buscar o pedido)</td>
+              <td>Payload maior, pode ficar obsoleto</td>
+            </tr>
+          </tbody>
+        </table>
+        <p>A escolha é um trade-off legítimo, não uma religião.</p>
+      </article>
+
+      <article class="term">
+        <h3>Quando você não usaria Kafka</h3>
+        <ul class="tight">
+          <li>precisa de resposta síncrona (isso é request/response, não evento);</li>
+          <li>volume baixo e uma fila simples resolve com muito menos operação;</li>
+          <li>precisa de prioridade ou roteamento complexo por mensagem — Kafka não tem prioridade nativa;</li>
+          <li>o time não tem capacidade de operar o cluster.</li>
+        </ul>
+      </article>
+
+      <article class="term">
+        <h3>Kafka Streams / ksqlDB vs um consumer Spring</h3>
+        <p class="analogy">Analogia: o consumer Spring é o funcionário que lê o recado e liga para o banco e o cartão. Streams é uma máquina que só trabalha em cima do próprio caderno — junta páginas, conta janelas, guarda um rascunho local.</p>
+        <p>
+          A maior parte dos microsserviços: consumer “burro” + sua aplicação (chamar banco, chamar API de pagamento).
+          Kafka Streams: quando o processamento é <em>sobre o log</em> — janelas de tempo, join entre tópicos, agregação, estado local com changelog.
+          ksqlDB é a mesma ideia com cara de SQL.
+          Não comece por Streams se o problema é “chamar o banco e a API”. Você vai empilhar estado, rebalance e changelog sem necessidade.
+        </p>
+      </article>
+    </section>

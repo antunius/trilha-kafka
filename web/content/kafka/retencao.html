@@ -1,0 +1,24 @@
+<section class="week">
+<article class="term" id="retencao">
+        <div class="tag">Vocabulário</div>
+        <h3>Segmento, retenção e compaction</h3>
+        <p>
+          <strong>O que é.</strong> O log da partição não é um arquivo eterno: é uma fila de segmentos
+          (<code>00000000000000000000.log</code>, depois outro quando atinge <code>segment.bytes</code>).
+          <strong>Retenção</strong> (<code>retention.ms</code> / <code>retention.bytes</code>) apaga segmentos fechados que passaram do prazo.
+          Quem não commitou a tempo perdeu a linha (a menos que tenha copiado para outro lugar).
+          <strong>Compaction</strong> (<code>cleanup.policy=compact</code>): para cada key, o cleaner mantém o value mais recente;
+          tombstone (value nulo) pede para apagar a key. Serve changelog/CDC, não filme completo.
+        </p>
+        <p class="analogy">Analogia: o caderno é cortado em cadernos menores. Os velhos vão para o lixo — ou, na compaction, fica a última versão de cada pessoa.</p>
+        <p><strong>Na prática.</strong> Ver configs do tópico (incluindo retenção padrão do broker):</p>
+<pre class="code">docker compose exec kafka /opt/kafka/bin/kafka-configs.sh \
+  --bootstrap-server localhost:9092 \
+  --entity-type topics --entity-name pedidos.criados --describe</pre>
+        <p class="lab-ref"><strong>No lab.</strong> O tópico didático usa retenção padrão do Apache Kafka na imagem. Não trate o lab como backup.</p>
+        <div class="warn">
+          Kafka não é S3. Sem retenção infinita (cara e rara), o log esquece.
+          Compaction não te devolve os estados intermediários. Tombstone não é DELETE no Postgres.
+        </div>
+      </article>
+</section>

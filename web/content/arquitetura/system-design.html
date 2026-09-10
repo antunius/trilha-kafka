@@ -1,0 +1,136 @@
+<section id="s6" class="week">
+      <h2>System design</h2>
+      <p>
+        Um sistema por vez, 45 min cronometrados, falando em voz alta.
+        Antes do primeiro desenho: recitar o glossário. Se travar, não desenhe ainda.
+      </p>
+
+      <h3>Walkthrough guiado (45 min) — encurtador, depois o mesmo relógio no pagamento</h3>
+      <p>O quadro abaixo é o cronômetro. Aqui está a aula já falada, para você sentir o ritmo antes de gravar o áudio sozinho.</p>
+
+      <div class="lesson">
+        <h3>Minutos 0–10 — perguntas e números (encurtador)</h3>
+        <p><strong>O que você precisa entender.</strong> Quem sai desenhando caixa perde. Quantos redirects/s? Quantos creates/s? URL customizada? TTL? Latência do redirect (isso é o p99 que importa)? Consistência: dois usuários podem ganhar o mesmo código curto?</p>
+        <p><strong>Exemplo concreto.</strong> 100 M redirects/dia ≈ 1,2k QPS médio, pico 10× → ~12k QPS leitura. Creates 1% disso. Código de 7 chars na base62. Redirect p99 &lt; 20 ms. Código único é invariante: não pode duplicar.</p>
+        <div class="callout"><strong>Agora você (2 min).</strong> Escreva três perguntas que o entrevistador ainda não fez e que mudam o desenho (região única? analytics em tempo real?).</div>
+      </div>
+
+      <div class="lesson">
+        <h3>Minutos 10–25 — API, dado, caixas</h3>
+        <p><strong>Exemplo já desenhado.</strong> <code>POST /links</code> (idempotente por body hash ou chave do cliente) devolve <code>https://x/{code}</code>. <code>GET /{code}</code> 302. Tabela <code>code → url longa + created_at</code> no Postgres no começo; cache Redis no GET (cache-aside, TTL com jitter). Hash do código: geração em serviço (range de IDs ou hash + retry em colisão). Leitura pesada: cache + réplicas. Sharding pela chave <code>code</code> quando a escrita de create e o volume de linhas exigirem — não no dia 1 com 12k QPS só de GET se o cache segura.</p>
+        <div class="arch">
+          <div class="arch-row">
+            <div class="arch-box"><span class="kicker">Cliente</span><strong>browser</strong></div>
+          </div>
+          <div class="arch-arrow" aria-hidden="true">↓ GET /abc12xy</div>
+          <div class="arch-row">
+            <div class="arch-box"><span class="kicker">Porta</span><strong>Gateway</strong><small>TLS, rate limit</small></div>
+          </div>
+          <div class="arch-arrow" aria-hidden="true">↓</div>
+          <div class="arch-row">
+            <div class="arch-box"><span class="kicker">Cache</span><strong>Redis</strong><small>hit: 302 direto</small></div>
+            <div class="arch-box"><span class="kicker">Miss</span><strong>serviço + Postgres</strong><small>dono do code→url</small></div>
+          </div>
+        </div>
+        <div class="warn"><strong>Pegadinha.</strong> Kafka no caminho crítico do 302. Redirect não precisa de caderno. Analytics do clique: evento assíncrono depois do 302.</div>
+      </div>
+
+      <div class="lesson">
+        <h3>Minutos 25–45 — aprofundar e o que quebra</h3>
+        <p>Aprofunde cache stampede no código famoso, hot key (um link viral), colisão de código, TTL vs link eterno, multi-região (código gerado em duas regiões). Trade-off: Redis na frente do 302 vs consistência do create (Postgres único até o QPS de escrita pedir shard).</p>
+        <p><strong>O mesmo relógio no processador de pagamento</strong> (item 5 da tabela): 5 min de requisitos (idempotência, p99 do “pago”, consistência do saldo); 5 min QPS; API <code>POST /pagar</code> com Idempotency-Key; dado = ledger no serviço dono; alto nível = gateway → checkout → outbox → Kafka → faturamento com inbox; aprofunde saga e DLT; gargalo = hot key do <code>cliente-vip</code> e retry sem jitter.</p>
+        <div class="callout"><strong>Agora você.</strong> Cronometre 45 min no encurtador em voz alta. Depois no pagamento, sem olhar este walkthrough — só o quadro de minutos.</div>
+      </div>
+
+      <h3>Framework de resposta (45 min)</h3>
+      <table class="compare">
+        <thead>
+          <tr><th>Min</th><th>Bloco</th><th>O que o arquiteto faz</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>5</td>
+            <td>Requisitos</td>
+            <td>Funcionais e não-funcionais. <strong>Fazer perguntas</strong> — o entrevistador espera isso e desconta de quem sai desenhando. Quantos usuários? Leitura ou escrita pesada? Latência aceitável? Consistência forte é obrigatória? Várias regiões?</td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td>Estimativas</td>
+            <td>QPS, volume por dia/ano, banda. Ordem de grandeza basta — para justificar depois (“são 50k escritas/s, um único Postgres não aguenta, então…”).</td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td>API</td>
+            <td>Poucos endpoints, contratos claros, idempotência onde o efeito não pode duplicar.</td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td>Modelo de dados</td>
+            <td>Escolha do armazenamento <strong>com justificativa</strong>. Chave de shard se precisar.</td>
+          </tr>
+          <tr>
+            <td>10</td>
+            <td>Alto nível</td>
+            <td>Cliente → gateway → serviços → cache/banco/fila. Dono do dado marcado.</td>
+          </tr>
+          <tr>
+            <td>10</td>
+            <td>Aprofundar 1–2 pontos</td>
+            <td>Deixar o entrevistador escolher, ou apontar o gargalo mais interessante.</td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td>Gargalos e trade-offs</td>
+            <td>Ponto único de falha, hot partition, o que quebra se o tráfego dobrar, o que você faria diferente com mais tempo.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Sistemas para praticar</h3>
+      <table>
+        <thead>
+          <tr><th>#</th><th>Sistema</th><th>O que ele exercita</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td>Encurtador de URL</td><td>Geração de ID, cache, leitura pesada, sharding</td></tr>
+          <tr><td>2</td><td>Rate limiter</td><td>Token bucket, estado distribuído, Redis</td></tr>
+          <tr><td>3</td><td>Feed de rede social</td><td>Fan-out on write vs on read, hot user</td></tr>
+          <tr><td>4</td><td>Sistema de notificações</td><td>Filas, retry, DLT, idempotência</td></tr>
+          <tr><td>5</td><td><strong>Processador de pagamento</strong></td><td>Saga, Outbox, idempotência, consistência — casa com o stack da trilha</td></tr>
+          <tr><td>6</td><td>Chat em tempo real</td><td>WebSocket, presença, ordenação de mensagens</td></tr>
+          <tr><td>7</td><td>Upload e processamento de arquivo</td><td>Storage, processamento assíncrono, status</td></tr>
+          <tr><td>8</td><td>Sistema de reservas (assentos)</td><td>Concorrência, lock, consistência forte</td></tr>
+        </tbody>
+      </table>
+      <p>Para cada um: desenhar no papel, gravar a explicação em áudio, ouvir depois. Desconfortável e altamente eficaz.</p>
+      <div class="warn">
+        Sem o glossário na ponta da língua (latência, p99, CAP, quando <em>não</em> microsserviço), o desenho vira teatro. Recite antes.
+      </div>
+      <article class="term">
+        <h3>Perguntas-síntese (as que mais aparecem)</h3>
+        <ul class="tight">
+          <li>Descreva a arquitetura do sistema em que você trabalha hoje, com os trade-offs, em 3 minutos. <em>A abertura mais comum em entrevista sênior. Precisa estar ensaiada.</em></li>
+          <li>Qual foi a decisão de arquitetura mais difícil que você tomou e por quê?</li>
+          <li>Conte um incidente de produção que você resolveu — da detecção ao post-mortem.</li>
+          <li>O que você faria diferente se recomeçasse o projeto atual?</li>
+          <li>Como você convence o time a adotar (ou a não adotar) uma tecnologia nova?</li>
+          <li>Um serviço está com p99 de 3 segundos. Descreva sua investigação passo a passo.</li>
+          <li>Como você garante que um sistema distribuído não perca dado?</li>
+          <li>Eventual vs inconsistente — dê um exemplo de cada no seu domínio.</li>
+        </ul>
+      </article>
+      <article class="term">
+        <h3>Checklist de fluência (60 segundos)</h3>
+        <ul class="tight">
+          <li>Arquitetura = decisão cara de reverter</li>
+          <li>Latência vs throughput vs p99</li>
+          <li>CAP só durante partição; PACELC no dia a dia</li>
+          <li>Eventual ≠ invariante quebrada</li>
+          <li>Timeout primeiro na resiliência</li>
+          <li>Quando <strong>não</strong> microsserviço</li>
+          <li>Banco por serviço; Outbox; Saga</li>
+          <li>Log / métrica / trace</li>
+          <li>System design: perguntar requisitos antes de desenhar</li>
+        </ul>
+      </article>
+    </section>

@@ -1,0 +1,98 @@
+<article class="term" id="padroes">
+        <div class="tag">Vocabulário</div>
+        <h3>Saga, Outbox, CQRS, Event Sourcing</h3>
+        <p class="analogy">Analogia: nomes de ferramentas, não religião. Martelo não prova que o problema era prego.</p>
+        <p><strong>Saga</strong>: passos locais + compensação (não há rollback distribuído). Coreografia (eventos) vs orquestração (maestro). <strong>Outbox</strong>: evento na mesma transação do dado; publicador depois. <strong>CQRS</strong>: modelo de escrita ≠ modelo de leitura — caro; só quando os requisitos divergem de verdade. <strong>Event Sourcing</strong>: estado = replay de eventos. Auditoria incrível; custo operacional alto. Raro.</p>
+      </article>
+<section id="s4" class="week">
+      <h2>Dados distribuídos ⭐</h2>
+      <p>
+        Sem transação mágica entre dois bancos. Saga, Outbox, idempotência.
+        CQRS e Event Sourcing: saber explicar <em>e</em> saber dizer que raramente são necessários.
+      </p>
+      <div class="sessions">
+        <article>
+          <div class="tag">Sessão 1</div>
+          <h4>Saga</h4>
+          <p>Pedido → pagamento → estoque. Coreografia vs orquestração. Compensação não é rollback.</p>
+        </article>
+        <article>
+          <div class="tag">Sessão 2</div>
+          <h4>Outbox</h4>
+          <p>Dado e evento na mesma transação. Publicador depois. At-least-once + inbox. (Trilha Kafka.)</p>
+        </article>
+        <article>
+          <div class="tag">Sessão 3</div>
+          <h4>CQRS, ES, idempotência</h4>
+          <p>Quando vale. Quando o review de arquiteto recusa. Idempotency-Key em API pública.</p>
+        </article>
+      </div>
+      <div class="ok">
+        <strong>No fim desta aula você consegue:</strong>
+        desenhar uma saga de pagamento; defender outbox contra <code>save(); send();</code>; recusar CQRS em CRUD; explicar Event Sourcing sem vendê-lo; desenhar idempotência de API.
+      </div>
+
+      <div class="lesson">
+        <h3>Sessão 1 — Saga de pagamento desenhada</h3>
+        <p><strong>O que você precisa entender.</strong> Não há rollback distribuído. Há passos locais e compensação (operação inversa). Coreografia (2–3 passos, cada um reage a evento) vs orquestração (um condutor quando o fluxo cresce).</p>
+        <p><strong>Exemplo concreto.</strong> Pedido 99: (1) reserva estoque, (2) cobra R$ 80, (3) confirma pedido. Se 2 falha depois de 1: compensação libera o estoque — não “desfaz o INSERT no outro banco”. Se 3 falha depois de cobrar: estorno, não delete mágico da fatura do emissor.</p>
+        <div class="pipe">
+          <div class="box">Reserva estoque<br><small>99 · 1 unidade</small></div>
+          <div class="arrow" aria-hidden="true">→</div>
+          <div class="box">Cobra R$ 80</div>
+          <div class="arrow" aria-hidden="true">→</div>
+          <div class="box">Confirma pedido</div>
+        </div>
+        <p>Se o cartão recusa depois da reserva:</p>
+        <div class="pipe">
+          <div class="box">Compensa<br><small>libera estoque</small></div>
+          <div class="arrow" aria-hidden="true">→</div>
+          <div class="box">Pedido cancelado<br><small>não é rollback 2PC</small></div>
+        </div>
+        <div class="warn"><strong>Pegadinha.</strong> Chamar a compensação de “transação distribuída”. 2PC entre estoque e cartão não é o que você tem em microsserviço típico.</div>
+        <div class="callout"><strong>Agora você (5 min).</strong> Redesenhe os três passos e a compensação do cartão recusado. Marque coreografia vs orquestrador — e por que com três passos ainda dá para discutir os dois.</div>
+      </div>
+
+      <div class="lesson">
+        <h3>Sessão 2 — Outbox de novo, agora como decisão de arquitetura</h3>
+        <p><strong>O que você precisa entender.</strong> Dado e evento na mesma transação local. Publicador depois. At-least-once + inbox no outro lado. É a mesma aula da trilha Kafka, vista como fronteira entre serviços.</p>
+        <p><strong>Exemplo concreto.</strong> Serviço Pedido commita 99 + outbox. Serviço Faturamento inbox e-17. Sem outbox, o 99 existe e o fiscal nunca soube. Sem inbox, o fiscal gera duas NF.</p>
+        <div class="warn"><strong>Pegadinha.</strong> “O Kafka é transacional com o Postgres.” Não é. A transação é só no banco da outbox.</div>
+        <div class="callout"><strong>Agora você (5 min).</strong> Desenhe save+send falhando nos dois sentidos (banco sim / Kafka não, e o inverso).</div>
+      </div>
+
+      <div class="lesson">
+        <h3>Sessão 3 — Recusar CQRS no CRUD</h3>
+        <p><strong>O que você precisa entender.</strong> CQRS vale quando leitura e escrita têm requisitos muito diferentes. CRUD de cadastro de cliente com um Postgres não precisa de bus separado. Event Sourcing: auditoria e replay; custo de versionar evento e de consultar. Idempotency-Key na API pública: o cliente manda a chave; você devolve o primeiro resultado.</p>
+        <p><strong>Exemplo concreto.</strong> Review pede CQRS para a tela admin de cupons (20 req/min, um formulário). Recuse: modelo único resolve; você pagaria sincronização e consistência eventual de graça. Já o feed que lê 10k/s e escreve pouco pode justificar projeção. Cobrança: header <code>Idempotency-Key: e-17</code> — segundo POST devolve o mesmo 201 sem novo débito.</p>
+        <div class="warn"><strong>Pegadinha.</strong> Event Sourcing “porque Kafka”. Log de eventos de integração ≠ store de origem do estado.</div>
+        <div class="callout"><strong>Agora você (5 min).</strong> Uma frase para recusar CQRS. Uma para aceitar. Onde a Idempotency-Key entra no POST /pagamentos.</div>
+      </div>
+
+      <p>Quiz depois da aula. Abra, responda sem olhar.</p>
+
+      <details>
+        <summary>Como manter consistência entre dois serviços sem transação distribuída?</summary>
+        <p><strong>Saga:</strong> a transação de negócio é dividida em passos locais, cada um com uma <strong>compensação</strong> (não existe rollback distribuído — existe operação inversa). <em>Coreografia:</em> cada serviço reage a eventos. Desacoplado, mas o fluxo global fica invisível. <em>Orquestração:</em> um orquestrador conduz os passos e as compensações. Fluxo explícito, ao custo de um componente central. Escolher coreografia para 2–3 passos, orquestração a partir daí.</p>
+      </details>
+      <details>
+        <summary>Como garantir que o dado e o evento sejam publicados juntos?</summary>
+        <p><strong>Outbox:</strong> gravar o evento numa tabela na mesma transação do dado; um publicador (poller ou CDC com Debezium) envia ao Kafka depois. Resulta em at-least-once, tratado com idempotência no consumidor.</p>
+      </details>
+      <details>
+        <summary>O que é CQRS e quando vale a pena?</summary>
+        <p>Separar o modelo de escrita do modelo de leitura, possivelmente em armazenamentos diferentes. Vale quando leitura e escrita têm requisitos muito distintos: consultas complexas e pesadas sobre um modelo de escrita normalizado, ou proporção de leitura ordens de magnitude maior. Custa sincronização, consistência eventual, mais infraestrutura. Não vale em CRUD.</p>
+      </details>
+      <details>
+        <summary>E Event Sourcing?</summary>
+        <p>Armazenar a sequência de eventos em vez do estado atual; o estado é derivado por replay. Ganhos: auditoria completa, viagem no tempo, recalcular projeções. Custos altos: versionamento de eventos, snapshots, consultas difíceis, curva de aprendizado do time. Saber explicar <strong>e</strong> saber dizer que raramente é necessário.</p>
+      </details>
+      <details>
+        <summary>Como você faz idempotência numa API pública?</summary>
+        <p>Chave de idempotência enviada pelo cliente (header <code>Idempotency-Key</code>), armazenada com o resultado da primeira execução. Requisição repetida com a mesma chave devolve o resultado guardado sem executar de novo. É como as APIs de pagamento sérias funcionam.</p>
+      </details>
+      <div class="callout">
+        <strong>Exercício.</strong>
+        Cliente dispara “pagar” duas vezes (double-tap). Sem chave: duas autorizações. Com chave: a segunda devolve o mesmo 201. Sem outbox: o banco commitou e o Kafka não. Desenhe as três falhas no papel. Isso é a mesa de pagamento em big tech.
+      </div>
+    </section>

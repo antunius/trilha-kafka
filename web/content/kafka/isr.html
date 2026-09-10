@@ -1,0 +1,22 @@
+<section class="week">
+<article class="term" id="isr">
+        <div class="tag">Vocabulário</div>
+        <h3>Líder, réplica e ISR</h3>
+        <p>
+          <strong>O que é.</strong> Cada partição tem um líder (Produce e Fetch clássicos passam nele) e followers que copiam o log.
+          <strong>ISR</strong> = réplicas cujo LEO (log end offset) está em dia com o líder, dentro de <code>replica.lag.time.max.ms</code>.
+          Se o líder morre, o controller promove alguém do ISR — não um follower atrasado.
+          <code>acks=all</code> no producer = “só ACK quando o ISR (no mínimo <code>min.insync.replicas</code>) gravou”.
+          No lab há 1 broker: réplica 1, ISR de 1. Serve para aprender Produce/Fetch; não imita durabilidade de produção.
+        </p>
+        <p class="analogy">Analogia: o original da ata e as cópias. ISR é quem está em dia com a ata.</p>
+        <p><strong>Na prática.</strong> O producer do lab pede ACK do ISR (mesmo com um broker, isso exercita o caminho <code>acks=all</code>):</p>
+<pre class="code">spring.kafka.producer.acks: all
+spring.kafka.producer.properties.enable.idempotence: true</pre>
+        <p class="lab-ref"><strong>No lab.</strong> <code>pedido-service/src/main/resources/application.yml</code>.</p>
+        <div class="warn">
+          <code>replication.factor=1</code> em produção: o disco do líder some, a partição some.
+          <code>acks=all</code> não impede cobrança duplicada — isso é o consumidor, aula de garantias.
+        </div>
+      </article>
+</section>

@@ -1,0 +1,26 @@
+<section class="week">
+<article class="term" id="produtor">
+        <div class="tag">Vocabulário</div>
+        <h3>Produtor (producer)</h3>
+        <p>
+          <strong>O que é.</strong> Biblioteca no seu processo (aqui: <code>KafkaTemplate</code> / cliente Java).
+          Serializa key e value → escolhe partição → junta records num batch → ProduceRequest para o líder
+          → espera ACK conforme <code>acks</code> → retry se falhou.
+          Sem <code>enable.idempotence</code>, o retry do mesmo producer cria duas linhas no log.
+          O Kafka não cobra cartão: só grava bytes.
+        </p>
+        <p class="analogy">Analogia: quem escreve no final da coluna. Pode ser a API, um conector, um script.</p>
+        <p><strong>Na prática.</strong> Classe do lab e o endpoint:</p>
+<pre class="code">kafka.send(topic, pedidoId, evento)
+    .whenComplete((result, ex) -> {
+      var meta = result.getRecordMetadata();
+      // meta.partition(), meta.offset()
+    });</pre>
+<pre class="code">curl -X POST "http://localhost:8080/pedidos?pedidoId=99&amp;totalCentavos=8000"</pre>
+        <p class="lab-ref"><strong>No lab.</strong> <code>PedidoProducer.java</code> + <code>PedidoController</code> <code>POST /pedidos</code>. Serializer: <code>KafkaJsonSchemaSerializer</code> (Registry na porta 8081).</p>
+        <div class="warn">
+          “Mandei” no log da aplicação não é “o ISR confirmou”. Trate o <code>whenComplete</code> / o <code>CompletableFuture</code> do send.
+          Sem key, a ordem do pedido 99 não existe — lab 1.
+        </div>
+      </article>
+</section>

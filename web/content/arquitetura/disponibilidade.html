@@ -1,0 +1,8 @@
+<section class="week">
+<article class="term" id="disponibilidade">
+        <div class="tag">Vocabulário</div>
+        <h3>Disponibilidade e consistência</h3>
+        <p class="analogy">Analogia: loja aberta (disponível) versus o estoque no sistema bater com a prateleira (consistente). Abrir com etiqueta errada não é “eventual” — é mentira se nunca corrige.</p>
+        <p><strong>Disponibilidade</strong> é a fração do tempo em que o sistema responde de forma útil. Dois noves (99%) ≠ três noves (99,9%) — a diferença é ordem de grandeza de downtime. <strong>Consistência forte</strong>: depois do write, o read vê o novo valor (num modelo simples). <strong>Eventual</strong>: réplicas convergem; por um tempo podem divergir. <strong>Inconsistente de verdade</strong>: não converge, ou viola invariante (cobrou duas vezes e os dois commits ficaram). Eventual não é desculpa para invariante quebrada — é atraso até convergir.</p>
+      </article>
+</section>

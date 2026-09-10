@@ -1,0 +1,1264 @@
+{
+  "questions": [
+    {
+      "q": "Sobre at-least: qual afirmação está certa?",
+      "o": [
+        "Padrão prático: processa depois commita. Pode duplicar o efeito.",
+        "A mensagem some da partição quando qualquer consumidor lê.",
+        "Offset é um UUID global único no cluster inteiro.",
+        "Mais pods no grupo sempre drenam lag, mesmo com 3 partições."
+      ],
+      "a": 0,
+      "w": "Por isso idempotência no consumidor.",
+      "t": "at-least"
+    },
+    {
+      "q": "Qual frase sobre at-least está certa?",
+      "o": [
+        "Padrão prático: processa depois commita. Pode duplicar o efeito.",
+        "Offset é um UUID global único no cluster inteiro.",
+        "acks=all impede a API do cartão de cobrar duas vezes.",
+        "Kafka executa a regra de negócio no broker."
+      ],
+      "a": 0,
+      "w": "Por isso idempotência no consumidor.",
+      "t": "at-least"
+    },
+    {
+      "q": "At-least — o que acontece de verdade?",
+      "o": [
+        "Padrão prático: processa depois commita. Pode duplicar o efeito.",
+        "acks=all impede a API do cartão de cobrar duas vezes.",
+        "Mais pods no grupo sempre drenam lag, mesmo com 3 partições.",
+        "Ordem é global no tópico, da primeira à última linha."
+      ],
+      "a": 0,
+      "w": "Por isso idempotência no consumidor.",
+      "t": "at-least"
+    },
+    {
+      "q": "Marque a leitura correta (at-least).",
+      "o": [
+        "Padrão prático: processa depois commita. Pode duplicar o efeito.",
+        "Mais pods no grupo sempre drenam lag, mesmo com 3 partições.",
+        "Kafka executa a regra de negócio no broker.",
+        "ZooKeeper é obrigatório em todo cluster novo."
+      ],
+      "a": 0,
+      "w": "Por isso idempotência no consumidor.",
+      "t": "at-least"
+    },
+    {
+      "q": "Corrija o mito sobre at-least.",
+      "o": [
+        "Padrão prático: processa depois commita. Pode duplicar o efeito.",
+        "Kafka executa a regra de negócio no broker.",
+        "Ordem é global no tópico, da primeira à última linha.",
+        "Schema Registry é um tópico interno, não um HTTP."
+      ],
+      "a": 0,
+      "w": "Por isso idempotência no consumidor.",
+      "t": "at-least"
+    },
+    {
+      "q": "No caderno, a respeito de at-least: qual vale?",
+      "o": [
+        "Padrão prático: processa depois commita. Pode duplicar o efeito.",
+        "Ordem é global no tópico, da primeira à última linha.",
+        "ZooKeeper é obrigatório em todo cluster novo.",
+        "Commit automático anda a marca só depois do efeito no banco."
+      ],
+      "a": 0,
+      "w": "Por isso idempotência no consumidor.",
+      "t": "at-least"
+    },
+    {
+      "q": "Se perguntarem at-least na mesa, qual frase é a verdadeira?",
+      "o": [
+        "Padrão prático: processa depois commita. Pode duplicar o efeito.",
+        "ZooKeeper é obrigatório em todo cluster novo.",
+        "Schema Registry é um tópico interno, não um HTTP.",
+        "Sem key o pedido 99 ainda fica ordenado na mesma coluna."
+      ],
+      "a": 0,
+      "w": "Por isso idempotência no consumidor.",
+      "t": "at-least"
+    },
+    {
+      "q": "Sobre at-most: qual afirmação está certa?",
+      "o": [
+        "Commit antes de processar: se cair no meio, a mensagem se perde.",
+        "Schema Registry é um tópico interno, não um HTTP.",
+        "Commit automático anda a marca só depois do efeito no banco.",
+        "A mensagem some da partição quando qualquer consumidor lê."
+      ],
+      "a": 0,
+      "w": "Raramente aceitável em cobrança.",
+      "t": "at-most"
+    },
+    {
+      "q": "Qual frase sobre at-most está certa?",
+      "o": [
+        "Commit antes de processar: se cair no meio, a mensagem se perde.",
+        "Commit automático anda a marca só depois do efeito no banco.",
+        "Sem key o pedido 99 ainda fica ordenado na mesma coluna.",
+        "Offset é um UUID global único no cluster inteiro."
+      ],
+      "a": 0,
+      "w": "Raramente aceitável em cobrança.",
+      "t": "at-most"
+    },
+    {
+      "q": "At-most — o que acontece de verdade?",
+      "o": [
+        "Commit antes de processar: se cair no meio, a mensagem se perde.",
+        "Sem key o pedido 99 ainda fica ordenado na mesma coluna.",
+        "A mensagem some da partição quando qualquer consumidor lê.",
+        "acks=all impede a API do cartão de cobrar duas vezes."
+      ],
+      "a": 0,
+      "w": "Raramente aceitável em cobrança.",
+      "t": "at-most"
+    },
+    {
+      "q": "Marque a leitura correta (at-most).",
+      "o": [
+        "Commit antes de processar: se cair no meio, a mensagem se perde.",
+        "A mensagem some da partição quando qualquer consumidor lê.",
+        "Offset é um UUID global único no cluster inteiro.",
+        "Mais pods no grupo sempre drenam lag, mesmo com 3 partições."
+      ],
+      "a": 0,
+      "w": "Raramente aceitável em cobrança.",
+      "t": "at-most"
+    },
+    {
+      "q": "Corrija o mito sobre at-most.",
+      "o": [
+        "Commit antes de processar: se cair no meio, a mensagem se perde.",
+        "Offset é um UUID global único no cluster inteiro.",
+        "acks=all impede a API do cartão de cobrar duas vezes.",
+        "Kafka executa a regra de negócio no broker."
+      ],
+      "a": 0,
+      "w": "Raramente aceitável em cobrança.",
+      "t": "at-most"
+    },
+    {
+      "q": "No caderno, a respeito de at-most: qual vale?",
+      "o": [
+        "Commit antes de processar: se cair no meio, a mensagem se perde.",
+        "acks=all impede a API do cartão de cobrar duas vezes.",
+        "Mais pods no grupo sempre drenam lag, mesmo com 3 partições.",
+        "Ordem é global no tópico, da primeira à última linha."
+      ],
+      "a": 0,
+      "w": "Raramente aceitável em cobrança.",
+      "t": "at-most"
+    },
+    {
+      "q": "Se perguntarem at-most na mesa, qual frase é a verdadeira?",
+      "o": [
+        "Commit antes de processar: se cair no meio, a mensagem se perde.",
+        "Mais pods no grupo sempre drenam lag, mesmo com 3 partições.",
+        "Kafka executa a regra de negócio no broker.",
+        "ZooKeeper é obrigatório em todo cluster novo."
+      ],
+      "a": 0,
+      "w": "Raramente aceitável em cobrança.",
+      "t": "at-most"
+    },
+    {
+      "q": "Sobre EOS: qual afirmação está certa?",
+      "o": [
+        "Exactly-once do Kafka é bolha tópico-a-tópico. Cartão está fora.",
+        "Kafka executa a regra de negócio no broker.",
+        "Ordem é global no tópico, da primeira à última linha.",
+        "Schema Registry é um tópico interno, não um HTTP."
+      ],
+      "a": 0,
+      "w": "Não recite EOS para API HTTP.",
+      "t": "EOS"
+    },
+    {
+      "q": "Qual frase sobre EOS está certa?",
+      "o": [
+        "Exactly-once do Kafka é bolha tópico-a-tópico. Cartão está fora.",
+        "Ordem é global no tópico, da primeira à última linha.",
+        "ZooKeeper é obrigatório em todo cluster novo.",
+        "Commit automático anda a marca só depois do efeito no banco."
+      ],
+      "a": 0,
+      "w": "Não recite EOS para API HTTP.",
+      "t": "EOS"
+    },
+    {
+      "q": "EOS — o que acontece de verdade?",
+      "o": [
+        "Exactly-once do Kafka é bolha tópico-a-tópico. Cartão está fora.",
+        "ZooKeeper é obrigatório em todo cluster novo.",
+        "Schema Registry é um tópico interno, não um HTTP.",
+        "Sem key o pedido 99 ainda fica ordenado na mesma coluna."
+      ],
+      "a": 0,
+      "w": "Não recite EOS para API HTTP.",
+      "t": "EOS"
+    },
+    {
+      "q": "Marque a leitura correta (EOS).",
+      "o": [
+        "Exactly-once do Kafka é bolha tópico-a-tópico. Cartão está fora.",
+        "Schema Registry é um tópico interno, não um HTTP.",
+        "Commit automático anda a marca só depois do efeito no banco.",
+        "A mensagem some da partição quando qualquer consumidor lê."
+      ],
+      "a": 0,
+      "w": "Não recite EOS para API HTTP.",
+      "t": "EOS"
+    },
+    {
+      "q": "Corrija o mito sobre EOS.",
+      "o": [
+        "Exactly-once do Kafka é bolha tópico-a-tópico. Cartão está fora.",
+        "Commit automático anda a marca só depois do efeito no banco.",
+        "Sem key o pedido 99 ainda fica ordenado na mesma coluna.",
+        "Offset é um UUID global único no cluster inteiro."
+      ],
+      "a": 0,
+      "w": "Não recite EOS para API HTTP.",
+      "t": "EOS"
+    },
+    {
+      "q": "No caderno, a respeito de EOS: qual vale?",
+      "o": [
+        "Exactly-once do Kafka é bolha tópico-a-tópico. Cartão está fora.",
+        "Sem key o pedido 99 ainda fica ordenado na mesma coluna.",
+        "A mensagem some da partição quando qualquer consumidor lê.",
+        "acks=all impede a API do cartão de cobrar duas vezes."
+      ],
+      "a": 0,
+      "w": "Não recite EOS para API HTTP.",
+      "t": "EOS"
+    },
+    {
+      "q": "Se perguntarem EOS na mesa, qual frase é a verdadeira?",
+      "o": [
+        "Exactly-once do Kafka é bolha tópico-a-tópico. Cartão está fora.",
+        "A mensagem some da partição quando qualquer consumidor lê.",
+        "Offset é um UUID global único no cluster inteiro.",
+        "Mais pods no grupo sempre drenam lag, mesmo com 3 partições."
+      ],
+      "a": 0,
+      "w": "Não recite EOS para API HTTP.",
+      "t": "EOS"
+    },
+    {
+      "q": "Sobre acks≠efeito: qual afirmação está certa?",
+      "o": [
+        "acks=all não impede a segunda cobrança.",
+        "Offset é um UUID global único no cluster inteiro.",
+        "acks=all impede a API do cartão de cobrar duas vezes.",
+        "Kafka executa a regra de negócio no broker."
+      ],
+      "a": 0,
+      "w": "Durabilidade da escrita ≠ unicidade do efeito.",
+      "t": "acks≠efeito"
+    },
+    {
+      "q": "Qual frase sobre acks≠efeito está certa?",
+      "o": [
+        "acks=all não impede a segunda cobrança.",
+        "acks=all impede a API do cartão de cobrar duas vezes.",
+        "Mais pods no grupo sempre drenam lag, mesmo com 3 partições.",
+        "Ordem é global no tópico, da primeira à última linha."
+      ],
+      "a": 0,
+      "w": "Durabilidade da escrita ≠ unicidade do efeito.",
+      "t": "acks≠efeito"
+    },
+    {
+      "q": "Acks≠efeito — o que acontece de verdade?",
+      "o": [
+        "acks=all não impede a segunda cobrança.",
+        "Mais pods no grupo sempre drenam lag, mesmo com 3 partições.",
+        "Kafka executa a regra de negócio no broker.",
+        "ZooKeeper é obrigatório em todo cluster novo."
+      ],
+      "a": 0,
+      "w": "Durabilidade da escrita ≠ unicidade do efeito.",
+      "t": "acks≠efeito"
+    },
+    {
+      "q": "Marque a leitura correta (acks≠efeito).",
+      "o": [
+        "acks=all não impede a segunda cobrança.",
+        "Kafka executa a regra de negócio no broker.",
+        "Ordem é global no tópico, da primeira à última linha.",
+        "Schema Registry é um tópico interno, não um HTTP."
+      ],
+      "a": 0,
+      "w": "Durabilidade da escrita ≠ unicidade do efeito.",
+      "t": "acks≠efeito"
+    },
+    {
+      "q": "Corrija o mito sobre acks≠efeito.",
+      "o": [
+        "acks=all não impede a segunda cobrança.",
+        "Ordem é global no tópico, da primeira à última linha.",
+        "ZooKeeper é obrigatório em todo cluster novo.",
+        "Commit automático anda a marca só depois do efeito no banco."
+      ],
+      "a": 0,
+      "w": "Durabilidade da escrita ≠ unicidade do efeito.",
+      "t": "acks≠efeito"
+    },
+    {
+      "q": "No caderno, a respeito de acks≠efeito: qual vale?",
+      "o": [
+        "acks=all não impede a segunda cobrança.",
+        "ZooKeeper é obrigatório em todo cluster novo.",
+        "Schema Registry é um tópico interno, não um HTTP.",
+        "Sem key o pedido 99 ainda fica ordenado na mesma coluna."
+      ],
+      "a": 0,
+      "w": "Durabilidade da escrita ≠ unicidade do efeito.",
+      "t": "acks≠efeito"
+    },
+    {
+      "q": "Se perguntarem acks≠efeito na mesa, qual frase é a verdadeira?",
+      "o": [
+        "acks=all não impede a segunda cobrança.",
+        "Schema Registry é um tópico interno, não um HTTP.",
+        "Commit automático anda a marca só depois do efeito no banco.",
+        "A mensagem some da partição quando qualquer consumidor lê."
+      ],
+      "a": 0,
+      "w": "Durabilidade da escrita ≠ unicidade do efeito.",
+      "t": "acks≠efeito"
+    },
+    {
+      "q": "Sobre dois cadeados: qual afirmação está certa?",
+      "o": [
+        "Idempotência do producer ≠ inbox do consumidor.",
+        "Commit automático anda a marca só depois do efeito no banco.",
+        "Sem key o pedido 99 ainda fica ordenado na mesma coluna.",
+        "Offset é um UUID global único no cluster inteiro."
+      ],
+      "a": 0,
+      "w": "Um não substitui o outro.",
+      "t": "dois cadeados"
+    },
+    {
+      "q": "Qual frase sobre dois cadeados está certa?",
+      "o": [
+        "Idempotência do producer ≠ inbox do consumidor.",
+        "Sem key o pedido 99 ainda fica ordenado na mesma coluna.",
+        "A mensagem some da partição quando qualquer consumidor lê.",
+        "acks=all impede a API do cartão de cobrar duas vezes."
+      ],
+      "a": 0,
+      "w": "Um não substitui o outro.",
+      "t": "dois cadeados"
+    },
+    {
+      "q": "Dois cadeados — o que acontece de verdade?",
+      "o": [
+        "Idempotência do producer ≠ inbox do consumidor.",
+        "A mensagem some da partição quando qualquer consumidor lê.",
+        "Offset é um UUID global único no cluster inteiro.",
+        "Mais pods no grupo sempre drenam lag, mesmo com 3 partições."
+      ],
+      "a": 0,
+      "w": "Um não substitui o outro.",
+      "t": "dois cadeados"
+    },
+    {
+      "q": "Marque a leitura correta (dois cadeados).",
+      "o": [
+        "Idempotência do producer ≠ inbox do consumidor.",
+        "Offset é um UUID global único no cluster inteiro.",
+        "acks=all impede a API do cartão de cobrar duas vezes.",
+        "Kafka executa a regra de negócio no broker."
+      ],
+      "a": 0,
+      "w": "Um não substitui o outro.",
+      "t": "dois cadeados"
+    },
+    {
+      "q": "Corrija o mito sobre dois cadeados.",
+      "o": [
+        "Idempotência do producer ≠ inbox do consumidor.",
+        "acks=all impede a API do cartão de cobrar duas vezes.",
+        "Mais pods no grupo sempre drenam lag, mesmo com 3 partições.",
+        "Ordem é global no tópico, da primeira à última linha."
+      ],
+      "a": 0,
+      "w": "Um não substitui o outro.",
+      "t": "dois cadeados"
+    },
+    {
+      "q": "No caderno, a respeito de dois cadeados: qual vale?",
+      "o": [
+        "Idempotência do producer ≠ inbox do consumidor.",
+        "Mais pods no grupo sempre drenam lag, mesmo com 3 partições.",
+        "Kafka executa a regra de negócio no broker.",
+        "ZooKeeper é obrigatório em todo cluster novo."
+      ],
+      "a": 0,
+      "w": "Um não substitui o outro.",
+      "t": "dois cadeados"
+    },
+    {
+      "q": "Se perguntarem dois cadeados na mesa, qual frase é a verdadeira?",
+      "o": [
+        "Idempotência do producer ≠ inbox do consumidor.",
+        "Kafka executa a regra de negócio no broker.",
+        "Ordem é global no tópico, da primeira à última linha.",
+        "Schema Registry é um tópico interno, não um HTTP."
+      ],
+      "a": 0,
+      "w": "Um não substitui o outro.",
+      "t": "dois cadeados"
+    },
+    {
+      "q": "Sobre morte no meio: qual afirmação está certa?",
+      "o": [
+        "Cartão cobrou, offset não commitou, restart relê o 99.",
+        "Ordem é global no tópico, da primeira à última linha.",
+        "ZooKeeper é obrigatório em todo cluster novo.",
+        "Commit automático anda a marca só depois do efeito no banco."
+      ],
+      "a": 0,
+      "w": "Duplicata de negócio, log certo.",
+      "t": "morte no meio"
+    },
+    {
+      "q": "Qual frase sobre morte no meio está certa?",
+      "o": [
+        "Cartão cobrou, offset não commitou, restart relê o 99.",
+        "ZooKeeper é obrigatório em todo cluster novo.",
+        "Schema Registry é um tópico interno, não um HTTP.",
+        "Sem key o pedido 99 ainda fica ordenado na mesma coluna."
+      ],
+      "a": 0,
+      "w": "Duplicata de negócio, log certo.",
+      "t": "morte no meio"
+    },
+    {
+      "q": "Morte no meio — o que acontece de verdade?",
+      "o": [
+        "Cartão cobrou, offset não commitou, restart relê o 99.",
+        "Schema Registry é um tópico interno, não um HTTP.",
+        "Commit automático anda a marca só depois do efeito no banco.",
+        "A mensagem some da partição quando qualquer consumidor lê."
+      ],
+      "a": 0,
+      "w": "Duplicata de negócio, log certo.",
+      "t": "morte no meio"
+    },
+    {
+      "q": "Marque a leitura correta (morte no meio).",
+      "o": [
+        "Cartão cobrou, offset não commitou, restart relê o 99.",
+        "Commit automático anda a marca só depois do efeito no banco.",
+        "Sem key o pedido 99 ainda fica ordenado na mesma coluna.",
+        "Offset é um UUID global único no cluster inteiro."
+      ],
+      "a": 0,
+      "w": "Duplicata de negócio, log certo.",
+      "t": "morte no meio"
+    },
+    {
+      "q": "Corrija o mito sobre morte no meio.",
+      "o": [
+        "Cartão cobrou, offset não commitou, restart relê o 99.",
+        "Sem key o pedido 99 ainda fica ordenado na mesma coluna.",
+        "A mensagem some da partição quando qualquer consumidor lê.",
+        "acks=all impede a API do cartão de cobrar duas vezes."
+      ],
+      "a": 0,
+      "w": "Duplicata de negócio, log certo.",
+      "t": "morte no meio"
+    },
+    {
+      "q": "No caderno, a respeito de morte no meio: qual vale?",
+      "o": [
+        "Cartão cobrou, offset não commitou, restart relê o 99.",
+        "A mensagem some da partição quando qualquer consumidor lê.",
+        "Offset é um UUID global único no cluster inteiro.",
+        "Mais pods no grupo sempre drenam lag, mesmo com 3 partições."
+      ],
+      "a": 0,
+      "w": "Duplicata de negócio, log certo.",
+      "t": "morte no meio"
+    },
+    {
+      "q": "Se perguntarem morte no meio na mesa, qual frase é a verdadeira?",
+      "o": [
+        "Cartão cobrou, offset não commitou, restart relê o 99.",
+        "Offset é um UUID global único no cluster inteiro.",
+        "acks=all impede a API do cartão de cobrar duas vezes.",
+        "Kafka executa a regra de negócio no broker."
+      ],
+      "a": 0,
+      "w": "Duplicata de negócio, log certo.",
+      "t": "morte no meio"
+    },
+    {
+      "q": "Sobre auto-commit: qual afirmação está certa?",
+      "o": [
+        "Auto-commit anda a marca por relógio, não por “terminei o trabalho”.",
+        "acks=all impede a API do cartão de cobrar duas vezes.",
+        "Mais pods no grupo sempre drenam lag, mesmo com 3 partições.",
+        "Ordem é global no tópico, da primeira à última linha."
+      ],
+      "a": 0,
+      "w": "Manual no lab.",
+      "t": "auto-commit"
+    },
+    {
+      "q": "Qual frase sobre auto-commit está certa?",
+      "o": [
+        "Auto-commit anda a marca por relógio, não por “terminei o trabalho”.",
+        "Mais pods no grupo sempre drenam lag, mesmo com 3 partições.",
+        "Kafka executa a regra de negócio no broker.",
+        "ZooKeeper é obrigatório em todo cluster novo."
+      ],
+      "a": 0,
+      "w": "Manual no lab.",
+      "t": "auto-commit"
+    },
+    {
+      "q": "Auto-commit — o que acontece de verdade?",
+      "o": [
+        "Auto-commit anda a marca por relógio, não por “terminei o trabalho”.",
+        "Kafka executa a regra de negócio no broker.",
+        "Ordem é global no tópico, da primeira à última linha.",
+        "Schema Registry é um tópico interno, não um HTTP."
+      ],
+      "a": 0,
+      "w": "Manual no lab.",
+      "t": "auto-commit"
+    },
+    {
+      "q": "Marque a leitura correta (auto-commit).",
+      "o": [
+        "Auto-commit anda a marca por relógio, não por “terminei o trabalho”.",
+        "Ordem é global no tópico, da primeira à última linha.",
+        "ZooKeeper é obrigatório em todo cluster novo.",
+        "Commit automático anda a marca só depois do efeito no banco."
+      ],
+      "a": 0,
+      "w": "Manual no lab.",
+      "t": "auto-commit"
+    },
+    {
+      "q": "Corrija o mito sobre auto-commit.",
+      "o": [
+        "Auto-commit anda a marca por relógio, não por “terminei o trabalho”.",
+        "ZooKeeper é obrigatório em todo cluster novo.",
+        "Schema Registry é um tópico interno, não um HTTP.",
+        "Sem key o pedido 99 ainda fica ordenado na mesma coluna."
+      ],
+      "a": 0,
+      "w": "Manual no lab.",
+      "t": "auto-commit"
+    },
+    {
+      "q": "No caderno, a respeito de auto-commit: qual vale?",
+      "o": [
+        "Auto-commit anda a marca por relógio, não por “terminei o trabalho”.",
+        "Schema Registry é um tópico interno, não um HTTP.",
+        "Commit automático anda a marca só depois do efeito no banco.",
+        "A mensagem some da partição quando qualquer consumidor lê."
+      ],
+      "a": 0,
+      "w": "Manual no lab.",
+      "t": "auto-commit"
+    },
+    {
+      "q": "Se perguntarem auto-commit na mesa, qual frase é a verdadeira?",
+      "o": [
+        "Auto-commit anda a marca por relógio, não por “terminei o trabalho”.",
+        "Commit automático anda a marca só depois do efeito no banco.",
+        "Sem key o pedido 99 ainda fica ordenado na mesma coluna.",
+        "Offset é um UUID global único no cluster inteiro."
+      ],
+      "a": 0,
+      "w": "Manual no lab.",
+      "t": "auto-commit"
+    },
+    {
+      "q": "Sobre lag: qual afirmação está certa?",
+      "o": [
+        "Lag não mede duplicata; mede atraso da marca.",
+        "Sem key o pedido 99 ainda fica ordenado na mesma coluna.",
+        "A mensagem some da partição quando qualquer consumidor lê.",
+        "acks=all impede a API do cartão de cobrar duas vezes."
+      ],
+      "a": 0,
+      "w": "10k-8400=1600 linhas atrás.",
+      "t": "lag"
+    },
+    {
+      "q": "Qual frase sobre lag está certa?",
+      "o": [
+        "Lag não mede duplicata; mede atraso da marca.",
+        "A mensagem some da partição quando qualquer consumidor lê.",
+        "Offset é um UUID global único no cluster inteiro.",
+        "Mais pods no grupo sempre drenam lag, mesmo com 3 partições."
+      ],
+      "a": 0,
+      "w": "10k-8400=1600 linhas atrás.",
+      "t": "lag"
+    },
+    {
+      "q": "Lag — o que acontece de verdade?",
+      "o": [
+        "Lag não mede duplicata; mede atraso da marca.",
+        "Offset é um UUID global único no cluster inteiro.",
+        "acks=all impede a API do cartão de cobrar duas vezes.",
+        "Kafka executa a regra de negócio no broker."
+      ],
+      "a": 0,
+      "w": "10k-8400=1600 linhas atrás.",
+      "t": "lag"
+    },
+    {
+      "q": "Marque a leitura correta (lag).",
+      "o": [
+        "Lag não mede duplicata; mede atraso da marca.",
+        "acks=all impede a API do cartão de cobrar duas vezes.",
+        "Mais pods no grupo sempre drenam lag, mesmo com 3 partições.",
+        "Ordem é global no tópico, da primeira à última linha."
+      ],
+      "a": 0,
+      "w": "10k-8400=1600 linhas atrás.",
+      "t": "lag"
+    },
+    {
+      "q": "Corrija o mito sobre lag.",
+      "o": [
+        "Lag não mede duplicata; mede atraso da marca.",
+        "Mais pods no grupo sempre drenam lag, mesmo com 3 partições.",
+        "Kafka executa a regra de negócio no broker.",
+        "ZooKeeper é obrigatório em todo cluster novo."
+      ],
+      "a": 0,
+      "w": "10k-8400=1600 linhas atrás.",
+      "t": "lag"
+    },
+    {
+      "q": "No caderno, a respeito de lag: qual vale?",
+      "o": [
+        "Lag não mede duplicata; mede atraso da marca.",
+        "Kafka executa a regra de negócio no broker.",
+        "Ordem é global no tópico, da primeira à última linha.",
+        "Schema Registry é um tópico interno, não um HTTP."
+      ],
+      "a": 0,
+      "w": "10k-8400=1600 linhas atrás.",
+      "t": "lag"
+    },
+    {
+      "q": "Se perguntarem lag na mesa, qual frase é a verdadeira?",
+      "o": [
+        "Lag não mede duplicata; mede atraso da marca.",
+        "Ordem é global no tópico, da primeira à última linha.",
+        "ZooKeeper é obrigatório em todo cluster novo.",
+        "Commit automático anda a marca só depois do efeito no banco."
+      ],
+      "a": 0,
+      "w": "10k-8400=1600 linhas atrás.",
+      "t": "lag"
+    },
+    {
+      "q": "Sobre inbox: qual afirmação está certa?",
+      "o": [
+        "eventId na mesma transação do efeito impede a segunda cobrança.",
+        "ZooKeeper é obrigatório em todo cluster novo.",
+        "Schema Registry é um tópico interno, não um HTTP.",
+        "Sem key o pedido 99 ainda fica ordenado na mesma coluna."
+      ],
+      "a": 0,
+      "w": "Unique / if exists.",
+      "t": "inbox"
+    },
+    {
+      "q": "Qual frase sobre inbox está certa?",
+      "o": [
+        "eventId na mesma transação do efeito impede a segunda cobrança.",
+        "Schema Registry é um tópico interno, não um HTTP.",
+        "Commit automático anda a marca só depois do efeito no banco.",
+        "A mensagem some da partição quando qualquer consumidor lê."
+      ],
+      "a": 0,
+      "w": "Unique / if exists.",
+      "t": "inbox"
+    },
+    {
+      "q": "Inbox — o que acontece de verdade?",
+      "o": [
+        "eventId na mesma transação do efeito impede a segunda cobrança.",
+        "Commit automático anda a marca só depois do efeito no banco.",
+        "Sem key o pedido 99 ainda fica ordenado na mesma coluna.",
+        "Offset é um UUID global único no cluster inteiro."
+      ],
+      "a": 0,
+      "w": "Unique / if exists.",
+      "t": "inbox"
+    },
+    {
+      "q": "Marque a leitura correta (inbox).",
+      "o": [
+        "eventId na mesma transação do efeito impede a segunda cobrança.",
+        "Sem key o pedido 99 ainda fica ordenado na mesma coluna.",
+        "A mensagem some da partição quando qualquer consumidor lê.",
+        "acks=all impede a API do cartão de cobrar duas vezes."
+      ],
+      "a": 0,
+      "w": "Unique / if exists.",
+      "t": "inbox"
+    },
+    {
+      "q": "Corrija o mito sobre inbox.",
+      "o": [
+        "eventId na mesma transação do efeito impede a segunda cobrança.",
+        "A mensagem some da partição quando qualquer consumidor lê.",
+        "Offset é um UUID global único no cluster inteiro.",
+        "Mais pods no grupo sempre drenam lag, mesmo com 3 partições."
+      ],
+      "a": 0,
+      "w": "Unique / if exists.",
+      "t": "inbox"
+    },
+    {
+      "q": "No caderno, a respeito de inbox: qual vale?",
+      "o": [
+        "eventId na mesma transação do efeito impede a segunda cobrança.",
+        "Offset é um UUID global único no cluster inteiro.",
+        "acks=all impede a API do cartão de cobrar duas vezes.",
+        "Kafka executa a regra de negócio no broker."
+      ],
+      "a": 0,
+      "w": "Unique / if exists.",
+      "t": "inbox"
+    },
+    {
+      "q": "Se perguntarem inbox na mesa, qual frase é a verdadeira?",
+      "o": [
+        "eventId na mesma transação do efeito impede a segunda cobrança.",
+        "acks=all impede a API do cartão de cobrar duas vezes.",
+        "Mais pods no grupo sempre drenam lag, mesmo com 3 partições.",
+        "Ordem é global no tópico, da primeira à última linha."
+      ],
+      "a": 0,
+      "w": "Unique / if exists.",
+      "t": "inbox"
+    },
+    {
+      "q": "Sobre producer idemp: qual afirmação está certa?",
+      "o": [
+        "enable.idempotence evita duas linhas iguais do mesmo producer no retry.",
+        "Mais pods no grupo sempre drenam lag, mesmo com 3 partições.",
+        "Kafka executa a regra de negócio no broker.",
+        "ZooKeeper é obrigatório em todo cluster novo."
+      ],
+      "a": 0,
+      "w": "O cartão ainda precisa de chave.",
+      "t": "producer idemp"
+    },
+    {
+      "q": "Qual frase sobre producer idemp está certa?",
+      "o": [
+        "enable.idempotence evita duas linhas iguais do mesmo producer no retry.",
+        "Kafka executa a regra de negócio no broker.",
+        "Ordem é global no tópico, da primeira à última linha.",
+        "Schema Registry é um tópico interno, não um HTTP."
+      ],
+      "a": 0,
+      "w": "O cartão ainda precisa de chave.",
+      "t": "producer idemp"
+    },
+    {
+      "q": "Producer idemp — o que acontece de verdade?",
+      "o": [
+        "enable.idempotence evita duas linhas iguais do mesmo producer no retry.",
+        "Ordem é global no tópico, da primeira à última linha.",
+        "ZooKeeper é obrigatório em todo cluster novo.",
+        "Commit automático anda a marca só depois do efeito no banco."
+      ],
+      "a": 0,
+      "w": "O cartão ainda precisa de chave.",
+      "t": "producer idemp"
+    },
+    {
+      "q": "Marque a leitura correta (producer idemp).",
+      "o": [
+        "enable.idempotence evita duas linhas iguais do mesmo producer no retry.",
+        "ZooKeeper é obrigatório em todo cluster novo.",
+        "Schema Registry é um tópico interno, não um HTTP.",
+        "Sem key o pedido 99 ainda fica ordenado na mesma coluna."
+      ],
+      "a": 0,
+      "w": "O cartão ainda precisa de chave.",
+      "t": "producer idemp"
+    },
+    {
+      "q": "Corrija o mito sobre producer idemp.",
+      "o": [
+        "enable.idempotence evita duas linhas iguais do mesmo producer no retry.",
+        "Schema Registry é um tópico interno, não um HTTP.",
+        "Commit automático anda a marca só depois do efeito no banco.",
+        "A mensagem some da partição quando qualquer consumidor lê."
+      ],
+      "a": 0,
+      "w": "O cartão ainda precisa de chave.",
+      "t": "producer idemp"
+    },
+    {
+      "q": "No caderno, a respeito de producer idemp: qual vale?",
+      "o": [
+        "enable.idempotence evita duas linhas iguais do mesmo producer no retry.",
+        "Commit automático anda a marca só depois do efeito no banco.",
+        "Sem key o pedido 99 ainda fica ordenado na mesma coluna.",
+        "Offset é um UUID global único no cluster inteiro."
+      ],
+      "a": 0,
+      "w": "O cartão ainda precisa de chave.",
+      "t": "producer idemp"
+    },
+    {
+      "q": "Se perguntarem producer idemp na mesa, qual frase é a verdadeira?",
+      "o": [
+        "enable.idempotence evita duas linhas iguais do mesmo producer no retry.",
+        "Sem key o pedido 99 ainda fica ordenado na mesma coluna.",
+        "A mensagem some da partição quando qualquer consumidor lê.",
+        "acks=all impede a API do cartão de cobrar duas vezes."
+      ],
+      "a": 0,
+      "w": "O cartão ainda precisa de chave.",
+      "t": "producer idemp"
+    },
+    {
+      "q": "Sobre frase da mesa: qual afirmação está certa?",
+      "o": [
+        "At-least-once + consumidor idempotente é o que o sênior quer ouvir.",
+        "A mensagem some da partição quando qualquer consumidor lê.",
+        "Offset é um UUID global único no cluster inteiro.",
+        "Mais pods no grupo sempre drenam lag, mesmo com 3 partições."
+      ],
+      "a": 0,
+      "w": "Não “exactly-once porque tem Kafka”.",
+      "t": "frase da mesa"
+    },
+    {
+      "q": "Qual frase sobre frase da mesa está certa?",
+      "o": [
+        "At-least-once + consumidor idempotente é o que o sênior quer ouvir.",
+        "Offset é um UUID global único no cluster inteiro.",
+        "acks=all impede a API do cartão de cobrar duas vezes.",
+        "Kafka executa a regra de negócio no broker."
+      ],
+      "a": 0,
+      "w": "Não “exactly-once porque tem Kafka”.",
+      "t": "frase da mesa"
+    },
+    {
+      "q": "Frase da mesa — o que acontece de verdade?",
+      "o": [
+        "At-least-once + consumidor idempotente é o que o sênior quer ouvir.",
+        "acks=all impede a API do cartão de cobrar duas vezes.",
+        "Mais pods no grupo sempre drenam lag, mesmo com 3 partições.",
+        "Ordem é global no tópico, da primeira à última linha."
+      ],
+      "a": 0,
+      "w": "Não “exactly-once porque tem Kafka”.",
+      "t": "frase da mesa"
+    },
+    {
+      "q": "Marque a leitura correta (frase da mesa).",
+      "o": [
+        "At-least-once + consumidor idempotente é o que o sênior quer ouvir.",
+        "Mais pods no grupo sempre drenam lag, mesmo com 3 partições.",
+        "Kafka executa a regra de negócio no broker.",
+        "ZooKeeper é obrigatório em todo cluster novo."
+      ],
+      "a": 0,
+      "w": "Não “exactly-once porque tem Kafka”.",
+      "t": "frase da mesa"
+    },
+    {
+      "q": "Corrija o mito sobre frase da mesa.",
+      "o": [
+        "At-least-once + consumidor idempotente é o que o sênior quer ouvir.",
+        "Kafka executa a regra de negócio no broker.",
+        "Ordem é global no tópico, da primeira à última linha.",
+        "Schema Registry é um tópico interno, não um HTTP."
+      ],
+      "a": 0,
+      "w": "Não “exactly-once porque tem Kafka”.",
+      "t": "frase da mesa"
+    },
+    {
+      "q": "No caderno, a respeito de frase da mesa: qual vale?",
+      "o": [
+        "At-least-once + consumidor idempotente é o que o sênior quer ouvir.",
+        "Ordem é global no tópico, da primeira à última linha.",
+        "ZooKeeper é obrigatório em todo cluster novo.",
+        "Commit automático anda a marca só depois do efeito no banco."
+      ],
+      "a": 0,
+      "w": "Não “exactly-once porque tem Kafka”.",
+      "t": "frase da mesa"
+    },
+    {
+      "q": "Se perguntarem frase da mesa na mesa, qual frase é a verdadeira?",
+      "o": [
+        "At-least-once + consumidor idempotente é o que o sênior quer ouvir.",
+        "ZooKeeper é obrigatório em todo cluster novo.",
+        "Schema Registry é um tópico interno, não um HTTP.",
+        "Sem key o pedido 99 ainda fica ordenado na mesma coluna."
+      ],
+      "a": 0,
+      "w": "Não “exactly-once porque tem Kafka”.",
+      "t": "frase da mesa"
+    },
+    {
+      "q": "Sobre lote commit: qual afirmação está certa?",
+      "o": [
+        "Morte no meio do lote reprocessa o lote.",
+        "Schema Registry é um tópico interno, não um HTTP.",
+        "Commit automático anda a marca só depois do efeito no banco.",
+        "A mensagem some da partição quando qualquer consumidor lê."
+      ],
+      "a": 0,
+      "w": "Inbox cobre o replay.",
+      "t": "lote commit"
+    },
+    {
+      "q": "Qual frase sobre lote commit está certa?",
+      "o": [
+        "Morte no meio do lote reprocessa o lote.",
+        "Commit automático anda a marca só depois do efeito no banco.",
+        "Sem key o pedido 99 ainda fica ordenado na mesma coluna.",
+        "Offset é um UUID global único no cluster inteiro."
+      ],
+      "a": 0,
+      "w": "Inbox cobre o replay.",
+      "t": "lote commit"
+    },
+    {
+      "q": "Lote commit — o que acontece de verdade?",
+      "o": [
+        "Morte no meio do lote reprocessa o lote.",
+        "Sem key o pedido 99 ainda fica ordenado na mesma coluna.",
+        "A mensagem some da partição quando qualquer consumidor lê.",
+        "acks=all impede a API do cartão de cobrar duas vezes."
+      ],
+      "a": 0,
+      "w": "Inbox cobre o replay.",
+      "t": "lote commit"
+    },
+    {
+      "q": "Marque a leitura correta (lote commit).",
+      "o": [
+        "Morte no meio do lote reprocessa o lote.",
+        "A mensagem some da partição quando qualquer consumidor lê.",
+        "Offset é um UUID global único no cluster inteiro.",
+        "Mais pods no grupo sempre drenam lag, mesmo com 3 partições."
+      ],
+      "a": 0,
+      "w": "Inbox cobre o replay.",
+      "t": "lote commit"
+    },
+    {
+      "q": "Corrija o mito sobre lote commit.",
+      "o": [
+        "Morte no meio do lote reprocessa o lote.",
+        "Offset é um UUID global único no cluster inteiro.",
+        "acks=all impede a API do cartão de cobrar duas vezes.",
+        "Kafka executa a regra de negócio no broker."
+      ],
+      "a": 0,
+      "w": "Inbox cobre o replay.",
+      "t": "lote commit"
+    },
+    {
+      "q": "No caderno, a respeito de lote commit: qual vale?",
+      "o": [
+        "Morte no meio do lote reprocessa o lote.",
+        "acks=all impede a API do cartão de cobrar duas vezes.",
+        "Mais pods no grupo sempre drenam lag, mesmo com 3 partições.",
+        "Ordem é global no tópico, da primeira à última linha."
+      ],
+      "a": 0,
+      "w": "Inbox cobre o replay.",
+      "t": "lote commit"
+    },
+    {
+      "q": "Se perguntarem lote commit na mesa, qual frase é a verdadeira?",
+      "o": [
+        "Morte no meio do lote reprocessa o lote.",
+        "Mais pods no grupo sempre drenam lag, mesmo com 3 partições.",
+        "Kafka executa a regra de negócio no broker.",
+        "ZooKeeper é obrigatório em todo cluster novo."
+      ],
+      "a": 0,
+      "w": "Inbox cobre o replay.",
+      "t": "lote commit"
+    },
+    {
+      "q": "Sobre YAML ack: qual afirmação está certa?",
+      "o": [
+        "AckMode manual: você chama ack depois do efeito.",
+        "Kafka executa a regra de negócio no broker.",
+        "Ordem é global no tópico, da primeira à última linha.",
+        "Schema Registry é um tópico interno, não um HTTP."
+      ],
+      "a": 0,
+      "w": "PedidoConsumer.",
+      "t": "YAML ack"
+    },
+    {
+      "q": "Qual frase sobre YAML ack está certa?",
+      "o": [
+        "AckMode manual: você chama ack depois do efeito.",
+        "Ordem é global no tópico, da primeira à última linha.",
+        "ZooKeeper é obrigatório em todo cluster novo.",
+        "Commit automático anda a marca só depois do efeito no banco."
+      ],
+      "a": 0,
+      "w": "PedidoConsumer.",
+      "t": "YAML ack"
+    },
+    {
+      "q": "YAML ack — o que acontece de verdade?",
+      "o": [
+        "AckMode manual: você chama ack depois do efeito.",
+        "ZooKeeper é obrigatório em todo cluster novo.",
+        "Schema Registry é um tópico interno, não um HTTP.",
+        "Sem key o pedido 99 ainda fica ordenado na mesma coluna."
+      ],
+      "a": 0,
+      "w": "PedidoConsumer.",
+      "t": "YAML ack"
+    },
+    {
+      "q": "Marque a leitura correta (YAML ack).",
+      "o": [
+        "AckMode manual: você chama ack depois do efeito.",
+        "Schema Registry é um tópico interno, não um HTTP.",
+        "Commit automático anda a marca só depois do efeito no banco.",
+        "A mensagem some da partição quando qualquer consumidor lê."
+      ],
+      "a": 0,
+      "w": "PedidoConsumer.",
+      "t": "YAML ack"
+    },
+    {
+      "q": "Corrija o mito sobre YAML ack.",
+      "o": [
+        "AckMode manual: você chama ack depois do efeito.",
+        "Commit automático anda a marca só depois do efeito no banco.",
+        "Sem key o pedido 99 ainda fica ordenado na mesma coluna.",
+        "Offset é um UUID global único no cluster inteiro."
+      ],
+      "a": 0,
+      "w": "PedidoConsumer.",
+      "t": "YAML ack"
+    },
+    {
+      "q": "No caderno, a respeito de YAML ack: qual vale?",
+      "o": [
+        "AckMode manual: você chama ack depois do efeito.",
+        "Sem key o pedido 99 ainda fica ordenado na mesma coluna.",
+        "A mensagem some da partição quando qualquer consumidor lê.",
+        "acks=all impede a API do cartão de cobrar duas vezes."
+      ],
+      "a": 0,
+      "w": "PedidoConsumer.",
+      "t": "YAML ack"
+    },
+    {
+      "q": "Se perguntarem YAML ack na mesa, qual frase é a verdadeira?",
+      "o": [
+        "AckMode manual: você chama ack depois do efeito.",
+        "A mensagem some da partição quando qualquer consumidor lê.",
+        "Offset é um UUID global único no cluster inteiro.",
+        "Mais pods no grupo sempre drenam lag, mesmo com 3 partições."
+      ],
+      "a": 0,
+      "w": "PedidoConsumer.",
+      "t": "YAML ack"
+    },
+    {
+      "q": "Sobre log não duplicou: qual afirmação está certa?",
+      "o": [
+        "O log está certo; quem duplicou foi o efeito.",
+        "Offset é um UUID global único no cluster inteiro.",
+        "acks=all impede a API do cartão de cobrar duas vezes.",
+        "Kafka executa a regra de negócio no broker."
+      ],
+      "a": 0,
+      "w": "Não culpe o broker primeiro.",
+      "t": "log não duplicou"
+    },
+    {
+      "q": "Qual frase sobre log não duplicou está certa?",
+      "o": [
+        "O log está certo; quem duplicou foi o efeito.",
+        "acks=all impede a API do cartão de cobrar duas vezes.",
+        "Mais pods no grupo sempre drenam lag, mesmo com 3 partições.",
+        "Ordem é global no tópico, da primeira à última linha."
+      ],
+      "a": 0,
+      "w": "Não culpe o broker primeiro.",
+      "t": "log não duplicou"
+    },
+    {
+      "q": "Log não duplicou — o que acontece de verdade?",
+      "o": [
+        "O log está certo; quem duplicou foi o efeito.",
+        "Mais pods no grupo sempre drenam lag, mesmo com 3 partições.",
+        "Kafka executa a regra de negócio no broker.",
+        "ZooKeeper é obrigatório em todo cluster novo."
+      ],
+      "a": 0,
+      "w": "Não culpe o broker primeiro.",
+      "t": "log não duplicou"
+    },
+    {
+      "q": "Marque a leitura correta (log não duplicou).",
+      "o": [
+        "O log está certo; quem duplicou foi o efeito.",
+        "Kafka executa a regra de negócio no broker.",
+        "Ordem é global no tópico, da primeira à última linha.",
+        "Schema Registry é um tópico interno, não um HTTP."
+      ],
+      "a": 0,
+      "w": "Não culpe o broker primeiro.",
+      "t": "log não duplicou"
+    },
+    {
+      "q": "Corrija o mito sobre log não duplicou.",
+      "o": [
+        "O log está certo; quem duplicou foi o efeito.",
+        "Ordem é global no tópico, da primeira à última linha.",
+        "ZooKeeper é obrigatório em todo cluster novo.",
+        "Commit automático anda a marca só depois do efeito no banco."
+      ],
+      "a": 0,
+      "w": "Não culpe o broker primeiro.",
+      "t": "log não duplicou"
+    },
+    {
+      "q": "No caderno, a respeito de log não duplicou: qual vale?",
+      "o": [
+        "O log está certo; quem duplicou foi o efeito.",
+        "ZooKeeper é obrigatório em todo cluster novo.",
+        "Schema Registry é um tópico interno, não um HTTP.",
+        "Sem key o pedido 99 ainda fica ordenado na mesma coluna."
+      ],
+      "a": 0,
+      "w": "Não culpe o broker primeiro.",
+      "t": "log não duplicou"
+    },
+    {
+      "q": "Se perguntarem log não duplicou na mesa, qual frase é a verdadeira?",
+      "o": [
+        "O log está certo; quem duplicou foi o efeito.",
+        "Schema Registry é um tópico interno, não um HTTP.",
+        "Commit automático anda a marca só depois do efeito no banco.",
+        "A mensagem some da partição quando qualquer consumidor lê."
+      ],
+      "a": 0,
+      "w": "Não culpe o broker primeiro.",
+      "t": "log não duplicou"
+    },
+    {
+      "q": "Sobre lab 7: qual afirmação está certa?",
+      "o": [
+        "Kill entre log e ack: o recado volta. At-least-once visível.",
+        "Commit automático anda a marca só depois do efeito no banco.",
+        "Sem key o pedido 99 ainda fica ordenado na mesma coluna.",
+        "Offset é um UUID global único no cluster inteiro."
+      ],
+      "a": 0,
+      "w": "Spring Kafka lab 7.",
+      "t": "lab 7"
+    },
+    {
+      "q": "Qual frase sobre lab 7 está certa?",
+      "o": [
+        "Kill entre log e ack: o recado volta. At-least-once visível.",
+        "Sem key o pedido 99 ainda fica ordenado na mesma coluna.",
+        "A mensagem some da partição quando qualquer consumidor lê.",
+        "acks=all impede a API do cartão de cobrar duas vezes."
+      ],
+      "a": 0,
+      "w": "Spring Kafka lab 7.",
+      "t": "lab 7"
+    },
+    {
+      "q": "Lab 7 — o que acontece de verdade?",
+      "o": [
+        "Kill entre log e ack: o recado volta. At-least-once visível.",
+        "A mensagem some da partição quando qualquer consumidor lê.",
+        "Offset é um UUID global único no cluster inteiro.",
+        "Mais pods no grupo sempre drenam lag, mesmo com 3 partições."
+      ],
+      "a": 0,
+      "w": "Spring Kafka lab 7.",
+      "t": "lab 7"
+    },
+    {
+      "q": "Marque a leitura correta (lab 7).",
+      "o": [
+        "Kill entre log e ack: o recado volta. At-least-once visível.",
+        "Offset é um UUID global único no cluster inteiro.",
+        "acks=all impede a API do cartão de cobrar duas vezes.",
+        "Kafka executa a regra de negócio no broker."
+      ],
+      "a": 0,
+      "w": "Spring Kafka lab 7.",
+      "t": "lab 7"
+    },
+    {
+      "q": "Corrija o mito sobre lab 7.",
+      "o": [
+        "Kill entre log e ack: o recado volta. At-least-once visível.",
+        "acks=all impede a API do cartão de cobrar duas vezes.",
+        "Mais pods no grupo sempre drenam lag, mesmo com 3 partições.",
+        "Ordem é global no tópico, da primeira à última linha."
+      ],
+      "a": 0,
+      "w": "Spring Kafka lab 7.",
+      "t": "lab 7"
+    },
+    {
+      "q": "No caderno, a respeito de lab 7: qual vale?",
+      "o": [
+        "Kill entre log e ack: o recado volta. At-least-once visível.",
+        "Mais pods no grupo sempre drenam lag, mesmo com 3 partições.",
+        "Kafka executa a regra de negócio no broker.",
+        "ZooKeeper é obrigatório em todo cluster novo."
+      ],
+      "a": 0,
+      "w": "Spring Kafka lab 7.",
+      "t": "lab 7"
+    },
+    {
+      "q": "Se perguntarem lab 7 na mesa, qual frase é a verdadeira?",
+      "o": [
+        "Kill entre log e ack: o recado volta. At-least-once visível.",
+        "Kafka executa a regra de negócio no broker.",
+        "Ordem é global no tópico, da primeira à última linha.",
+        "Schema Registry é um tópico interno, não um HTTP."
+      ],
+      "a": 0,
+      "w": "Spring Kafka lab 7.",
+      "t": "lab 7"
+    }
+  ]
+}

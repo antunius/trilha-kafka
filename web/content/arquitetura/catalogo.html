@@ -1,0 +1,225 @@
+<section id="catalogo" class="week">
+      <h2>Catálogo de componentes — o que o curso cobra e o arquiteto decide</h2>
+      <p>
+        Daqui para baixo: peças que o currículo lista em aulas separadas.
+        Analogia primeiro, trade-off depois. Sem lab de Redis nem curso de Spark —
+        o julgamento de <em>quando</em> entra cada peça.
+      </p>
+
+      <h3 id="api">API de contrato</h3>
+      <p class="analogy" style="margin-top:0">Analogia: o cardápio (contrato) não é a cozinha (serviço) nem o host que distribui mesas (load balancer). Auth é o crachá; autorização é se o crachá abre a geladeira.</p>
+      <div class="grid2">
+        <article class="term">
+          <div class="tag">Paginação</div>
+          <h3>Offset vs cursor (keyset)</h3>
+          <p><code>OFFSET 10000</code> obriga o banco a varrer e descartar 10 mil linhas — fica mais lento a cada página. Em feed, ainda é pior: uma linha nova no topo <em>desloca</em> o offset e o cliente vê duplicata ou furo. <strong>Cursor / keyset</strong> (<code>WHERE (created_at, id) &lt; (:t, :id) ORDER BY created_at DESC, id DESC LIMIT n</code>) usa índice, custo estável, e sobrevive a inserts no meio. Trilha Spring pergunta isso no JPA; aqui a decisão é: lista administrativa pode offset; timeline pública não.</p>
+        </article>
+        <article class="term">
+          <div class="tag">Authn vs authz</div>
+          <h3>Quem é vs o que pode</h3>
+          <p><strong>Autenticação:</strong> prova de identidade (senha, sessão, JWT, OAuth2/OIDC). <strong>Autorização:</strong> permissão (RBAC: papel; ACL: recurso; ABAC: atributo). JWT na borda é conveniente (stateless) e caro de revogar — use TTL curto + denylist ou introspection se “desligar o funcionário agora” for requisito. Sessão no Redis: revoga fácil, acopla o gateway ao store. OAuth2: o IdP autentica; o <em>seu</em> serviço ainda autoriza no recurso (escopo ≠ regra de negócio do pedido).</p>
+        </article>
+      </div>
+      <details>
+        <summary>Gateway e load balancer são a mesma caixa?</summary>
+        <p><strong>Load balancer</strong> espalha tráfego (L4 TCP ou L7 HTTP) para instâncias saudáveis — capacidade e AZ. <strong>API Gateway</strong> é política L7: auth, rate limit, TLS, roteamento por path, às vezes transformação. Dá para um produto fazer os dois (ALB + API Gateway da nuvem). Na entrevista, separe: “quem autentica e limita” vs “quem espalha e tira o pod doentio”. Service discovery (DNS/K8s Service) é como o LB acha os backends — detalhe na trilha Kubernetes.</p>
+      </details>
+      <div class="warn">Não empilhe regra de checkout no gateway. BFF agrega payload de cliente; gateway não vira o segundo monolito.</div>
+
+      <h3 id="escala">Como um sistema cresce</h3>
+      <ol class="flow" aria-label="Evolução de um sistema que escala">
+        <li><span class="kicker">1 · Uma caixa</span><strong>VM + um Postgres</strong><span class="hint">Simples. Um disco é o ponto único de falha.</span></li>
+        <li><span class="kicker">2 · Réplicas</span><strong>App stateless × N atrás do LB</strong><span class="hint">Escala CPU/leitura. Sessão no cookie, JWT ou Redis — não na memória do pod.</span></li>
+        <li><span class="kicker">3 · Leitura</span><strong>Réplica de leitura</strong><span class="hint">“Gravei e não vejo”. Write continua no primary.</span></li>
+        <li><span class="kicker">4 · Escrita</span><strong>Shard / células</strong><span class="hint">Write escala. Chave ruim queima um pedaço.</span></li>
+        <li><span class="kicker">5 · Região</span><strong>Multi-AZ / multi-região</strong><span class="hint">HA de verdade. Custo e conflito de write entram no ADR.</span></li>
+      </ol>
+      <article class="term">
+        <h3>Stateless, sticky, auto-scale, read-write split</h3>
+        <p><strong>Stateless:</strong> qualquer réplica atende qualquer request. É a premissa do HPA (trilha K8s). Upload em disco local, sessão só na memória do pod = você não escala, só replica o problema. <strong>Sticky session:</strong> o LB gruda o cliente num pod — atalho que vira dor no deploy. Prefira estado no Redis/JWT.</p>
+        <p><strong>Auto-scale</strong> adiciona pods. Não adiciona conexões infinitas no Postgres, não isola PSP lento, não substitui timeout/bulkhead. Escalar um gargalo de lock de linha é jogar mais workers na mesma briga.</p>
+        <p><strong>Read-write split:</strong> writes no primary, reads na réplica. Resolve leitura, não o volume de escrita. Lag é eventual. CQRS é o primo mais caro: modelo de leitura <em>diferente</em>, não só outro endpoint no mesmo schema. HA de stack: multi-AZ (dois data centers na região), health check, DNS/failover com RPO/RTO no ADR — “tem replica” sem AZ é um prédio com dois geradores na mesma enchente.</p>
+      </article>
+      <details>
+        <summary>Estimativa: 10M DAU, 20 requests/usuário/dia, pico 5× a média. QPS de pico?</summary>
+        <p>10M × 20 = 200M req/dia. Média ≈ 200e6 / 86400 ≈ 2,3k QPS. Pico 5× ≈ 12k QPS. Ordem de grandeza: “dezenas de milhares”, não 12.347. Com payload 2 KB na resposta: banda de saída no pico ≈ 12k × 2 KB ≈ 24 MB/s — cabe numa NIC; o banco e o lock é que não cabem. É para isso que o envelope existe.</p>
+      </details>
+
+      <h3 id="cache-camadas">Cache em camadas</h3>
+      <p>Cache não é “pôr Redis”. É uma <strong>defesa em camadas</strong>, cada uma com TTL, chave e falha diferentes.</p>
+      <div class="cols">
+        <div class="col">
+          <h4>Borda</h4>
+          <div class="msg">CDN / browser</div>
+          <p>GET imutável (<code>/assets/app.abc123.js</code>), mídia, HTML com TTL curto. CDN ≠ cache de saldo. Purge é caro e eventualmente coerente.</p>
+        </div>
+        <div class="col">
+          <h4>Aplicação</h4>
+          <div class="msg">Redis / local</div>
+          <p>Objeto de negócio. Chave: <code>produto:v2:{id}</code> — versão na chave quando o schema muda. Local (Caffeine) é L1; Redis é L2 compartilhado.</p>
+        </div>
+        <div class="col">
+          <h4>Banco</h4>
+          <div class="msg">buffer pool / replica</div>
+          <p>Você já cacheia páginas. Não trate Redis como substituto de índice. OLAP não se resolve com TTL.</p>
+        </div>
+      </div>
+      <article class="term">
+        <h3>Leitura, escrita, frescura, desastre</h3>
+        <ul class="tight">
+          <li><strong>Read:</strong> cache-aside (o default); refresh-ahead (renova antes do TTL — mata stampede no item quente).</li>
+          <li><strong>Write:</strong> through (lento, coerente); behind (rápido, risco de perder o buffer); invalidate-on-write (o mais comum: apaga a chave e deixa o próximo read preencher).</li>
+          <li><strong>Eviction:</strong> LRU quando a memória acaba — sizing é “quantas chaves quentes cabem?”, não “64 GB porque a nuvem vende”. Trilha de algoritmos: LRU é HashMap + lista.</li>
+          <li><strong>Cold start:</strong> cache vazio depois do flush ou do deploy. Mitigar: warm das chaves do pico, TTL jitter, não reiniciar o cluster inteiro no Black Friday.</li>
+          <li><strong>HA do Redis:</strong> réplica + failover (ou cluster). Cache como único caminho do GET vira SPOF: a app deve sobreviver com miss → banco (e o banco precisa aguentar o thundering herd — lock/singleflight).</li>
+          <li><strong>Segurança:</strong> não cachear dado de outro tenant na mesma chave; não logar o valor; TTL em token.</li>
+        </ul>
+      </article>
+      <details>
+        <summary>Cache-first na entrevista: quando o arquiteto aceita?</summary>
+        <p>Quando o invariante tolera atraso (catálogo, perfil público) e você nomeou invalidação. Recuse cache-first em débito, reserva de assento, “já paguei?”. Cache-first + write-behind em pagamento é perder dado com cara de performance.</p>
+      </details>
+
+      <h3 id="storage">Por dentro do storage</h3>
+      <div class="grid2">
+        <article class="term">
+          <div class="tag">Estrutura</div>
+          <h3>B-tree vs LSM / SSTable</h3>
+          <p class="analogy">Analogia: B-tree é uma agenda em que você abre a letra e atualiza a linha no lugar — ótimo para achar um CPF. LSM é um caderno em que você só <em>acrescenta</em> no fim (memtable) e de vez em quando junta cadernos velhos (compaction) — ótimo quando todo mundo está escrevendo ao mesmo tempo; leitura pode ter que olhar vários cadernos.</p>
+          <p>InnoDB/Postgres: B-tree (e variantes). Cassandra, RocksDB, Lucene (em espírito): LSM + SSTable imutável. Write-heavy + TTL nativo puxa LSM. Point lookup transacional puxa B-tree. “NoSQL é mais rápido” sem essa frase é moda.</p>
+        </article>
+        <article class="term">
+          <div class="tag">Carga</div>
+          <h3>KV, documento, search, blob, OLTP vs OLAP</h3>
+          <ul class="tight">
+            <li><strong>KV</strong> (Redis, Dynamo): get/put, sessão, cache, feature flag.</li>
+            <li><strong>Documento</strong>: agregado que você lê junto (carrinho). Query ad hoc fraca.</li>
+            <li><strong>Full-text</strong> (OpenSearch/ES): relevância, não fonte da verdade do pedido.</li>
+            <li><strong>Blob/object</strong> (S3): arquivo, imagem, dump; a API guarda a chave, não o binário no Postgres.</li>
+            <li><strong>OLTP:</strong> transação curta, linha, checkout. <strong>OLAP:</strong> varredura, coluna, BI. Relatório pesado no primary de checkout é incidente anunciado — replica analítica, warehouse, ou view materializada atualizada por pipeline.</li>
+          </ul>
+        </article>
+      </div>
+      <div class="ok">Time-series (métrica, IoT): write append, query por intervalo — Cassandra/Timescale/Prometheus, não um <code>events</code> no InnoDB para sempre.</div>
+
+      <h3 id="particionar">Particionar de verdade</h3>
+      <article class="term">
+        <h3>Consistent hashing</h3>
+        <p class="analogy">Analogia: as cadeiras numa mesa redonda. Cada nó ocupa um arco. Quando entra um nó, só os vizinhos cedem fatias — não se reembaralha <em>todo</em> o hash % N (que no Kafka, ao subir partições, redistribui keys).</p>
+        <p>Use quando o conjunto de nós muda o tempo todo (cache cluster, alguns KV). Virtual nodes suavizam hot spots. Não substitui escolher a chave de negócio: consistent hashing de <code>userId</code> famoso ainda concentra o celebrity num nó. Custo: lookup mais chato que módulo; rebalance ainda move dados — só move <em>menos</em>.</p>
+      </article>
+      <article class="term">
+        <h3>Geradores de ID único</h3>
+        <table class="compare">
+          <thead>
+            <tr><th>Jeito</th><th>Ganho</th><th>Custo</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Sequence / identity no banco</td>
+              <td>Simples, ordenado</td>
+              <td>Gargalo no primary; ruim multi-região; vaza volume</td>
+            </tr>
+            <tr>
+              <td>UUID v4</td>
+              <td>Geração local, sem coordenação</td>
+              <td>Não ordena no tempo; índice B-tree fragmenta (melhor UUIDv7 / ULID)</td>
+            </tr>
+            <tr>
+              <td>Snowflake (timestamp + datacenter + worker + seq)</td>
+              <td>K-sort no tempo, gera na app, cabe em 64 bits</td>
+              <td>Relógio (NTP), ID de worker único, estouro da sequência no ms</td>
+            </tr>
+          </tbody>
+        </table>
+        <p>Encurtador de URL: ID curto (base62 de um Snowflake ou hash + checagem de colisão). Não use MD5 do URL longo como PK se o requisito for link estável e não enumerável — misture aleatoriedade.</p>
+      </article>
+
+      <h3 id="dataflow">Fluxo de dados</h3>
+      <div class="grid2">
+        <article class="term">
+          <h3>Push vs pull</h3>
+          <p><strong>Push</strong> (fan-out on write): na hora do tweet, escreve na timeline de cada follower. Leitura barata; celebrity explode o write. <strong>Pull</strong> (fan-out on read): na hora do GET, monta a timeline. Write barato; p99 da leitura dói. Híbrido: push para usuários comuns, pull para celebridade. Nomeie o eixo — não “vamos Kafka porque timeline”.</p>
+        </article>
+        <article class="term">
+          <h3>Two-stage, fan-in, CDC</h3>
+          <p><strong>Two-stage:</strong> a API só aceita o trabalho (valida, persiste intenção, 202) e um worker faz o pesado (vídeo, PDF, PSP). É o padrão do pagamento nesta trilha. <strong>Fan-in:</strong> vários produtores, um agregador (contagem, redução). <strong>CDC:</strong> o log do banco vira evento (Debezium) quando você não controla o writer ou já tem o dado sem outbox. Outbox quando você controla a transação de negócio. CDC quando o legado já escreve e você não pode mudar o commit.</p>
+        </article>
+      </div>
+      <div class="callout">Fila “clássica” (SQS/Rabbit) vs log (Kafka): ver <a href="/kafka">trilha Kafka</a>. Redis como fila: serve volume baixo e job curto; não é o caderno de replay. Arquiteto não troca Kafka por Redis List “porque é mais simples” se o requisito é reprocessar 3 dias.</div>
+
+      <h3 id="pipeline">Batch e stream — nível arquiteto</h3>
+      <p>Unix pipeline e MapReduce são a mesma ideia: fatiar o arquivo, mapear, juntar. Spark é MapReduce que cabe na memória com DAG. Flink/Kafka Streams são o primo que não espera o dia acabar.</p>
+      <table class="compare">
+        <thead>
+          <tr><th>Pergunta</th><th>Batch (Spark / job noturno)</th><th>Stream (Kafka / Flink)</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Quando</td>
+            <td>Relatório, treino de modelo, backfill enorme, custo por hora</td>
+            <td>Fraude em segundos, painel ao vivo, reação a evento</td>
+          </tr>
+          <tr>
+            <td>Tempo</td>
+            <td>Tempo de processamento (o arquivo já fechou)</td>
+            <td>Event time (quando aconteceu) ≠ processing time (quando chegou)</td>
+          </tr>
+          <tr>
+            <td>Atraso</td>
+            <td>Horas, aceitável</td>
+            <td>Watermark: “espero até T para fechar a janela dos últimos 5 min” — evento atrasado depois disso cai ou vai pra lado</td>
+          </tr>
+        </tbody>
+      </table>
+      <article class="term">
+        <h3>Lambda, Kappa, ETL/ELT, view</h3>
+        <p><strong>Lambda:</strong> um pipeline batch (correto, lento) + um stream (rápido, aproximado) + uma camada que une os dois. Dois jeitos de errar a mesma conta. <strong>Kappa:</strong> o log é a fonte; replay o batch reprocessando o tópico. Mais simples se o log aguenta. Custo: retenção e disciplina de replay (trilha Kafka).</p>
+        <p><strong>ETL:</strong> transforma antes de entrar no warehouse (contrato no meio). <strong>ELT:</strong> joga o bruto e transforma no destino (Snowflake/BigQuery) — flexível, mais fácil de vazar PII se ninguém governar.</p>
+        <p><strong>Backfill:</strong> é replay. Sem idempotência, você duplica o mundo. <strong>View materializada:</strong> precompute da query cara; tem lag. Prefira isso a CQRS de fachada quando o modelo de escrita ainda serve. Analytics architecture: checkout OLTP separado do warehouse; não rode JOIN de 2 anos no primary.</p>
+      </article>
+      <details>
+        <summary>Unified processing — uma frase para a mesa</summary>
+        <p>O mesmo motor (Flink, Spark Structured Streaming) pode fazer batch e stream com o mesmo código. O trade-off não some: você ainda escolhe latência vs custo vs complexidade operacional. “Unified” não é desculpa para um único cluster fazendo checkout e BI.</p>
+      </details>
+
+      <h3 id="rate-limit">Rate limit — o desenho, não só o exercício</h3>
+      <div class="grid2">
+        <article class="term">
+          <h3>Algoritmos</h3>
+          <p><strong>Token bucket:</strong> tokens pingam; a request gasta um. Permite rajada até o balde. <strong>Leaky bucket:</strong> sai a taxa constante; rajada vira fila ou 429. <strong>Sliding window:</strong> conta no intervalo recente — mais justo, mais estado. Fixed window é simples e tem pico na virada do minuto (todo mundo libera junto).</p>
+        </article>
+        <article class="term">
+          <h3>Onde vive</h3>
+          <p>Borda / gateway: protege o planeta (IP, API key). Redis: contador compartilhado entre pods (INCR + TTL ou token bucket distribuído). Local no pod: barato e furado (N pods = N× limite). Autenticado: limite por usuário, não só por IP (NAT de operadora). Resposta: 429 + <code>Retry-After</code>. Não rate-limite o health check.</p>
+        </article>
+      </div>
+
+      <article class="term" id="comentarios">
+        <div class="tag">Walkthrough 3 · template do curso</div>
+        <h3>Comentários em post de rede social</h3>
+        <p><strong>Pergunte:</strong> threads? edição/delete? ordenação (tempo vs relevância)? anônimo? QPS de leitura vs escrita? um post viral vs muitos posts morninhos? notificação ao autor?</p>
+        <div class="arch" aria-label="Leitura e escrita de comentários">
+          <div class="arch-row">
+            <div class="arch-box"><span class="kicker">GET</span><strong>/posts/{id}/comments</strong><small>cursor, não offset · cache L1/L2 da página 1</small></div>
+          </div>
+          <div class="arch-arrow" aria-hidden="true">e, no write</div>
+          <div class="arch-row">
+            <div class="arch-box"><span class="kicker">POST</span><strong>API + Snowflake</strong><small>authz, comentário visível na hora</small></div>
+            <div class="arch-box"><span class="kicker">Mesma tx</span><strong>Postgres (shard postId)</strong><small>+ outbox</small></div>
+          </div>
+          <div class="arch-arrow" aria-hidden="true">↓</div>
+          <div class="arch-row">
+            <div class="arch-box"><span class="kicker">Kafka</span><strong>ComentarioCriado</strong><small>fan-out: contador, notificação, search</small></div>
+            <div class="arch-box"><span class="kicker">Cache</span><strong>Invalida p1</strong><small>comments:{postId}:p1</small></div>
+          </div>
+        </div>
+        <ul class="tight">
+          <li>Paginação: cursor <code>(created_at, commentId)</code>, nunca offset na página 500 do post viral.</li>
+          <li>Hot post: a primeira página é cache; write invalida ou versiona a chave. Contador de comentários é eventual (cache + async) — o texto do comentário novo do autor pode ser read-your-writes na sessão.</li>
+          <li>ID: Snowflake (ordenado no tempo, gera na API). Shard por <code>postId</code> para listar sem scatter-gather. Celebrity post: célula ou split da primeira página para um store mais quente.</li>
+          <li>Two-stage: o POST confirma o comentário visível; notificar milhões de followers é fan-out async (ou pull na caixa de entrada).</li>
+          <li><strong>Tráfego dobrou no post viral:</strong> cache da página 1, rate limit de write por user, não um row de “lock do post”. Search/analytics não passam no OLTP.</li>
+        </ul>
+      </article>
+    </section>

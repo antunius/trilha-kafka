@@ -1,0 +1,30 @@
+<section class="week">
+<article class="term" id="topico">
+        <div class="tag">Vocabulário</div>
+        <h3>Tópico</h3>
+        <p>
+          <strong>O que é.</strong> Um tópico é um <em>nome</em> no cluster que aponta para um conjunto de logs
+          (as partições). Não é um processo, não é uma fila na memória do broker.
+          Metadata do tópico (quantas partições, fator de réplica, configs de retenção) fica no controller.
+          Os bytes das mensagens ficam nos arquivos das partições, nos discos dos brokers líderes/followers.
+          Append-only: ninguém reescreve a linha 40. Quem “apaga” é retenção ou compaction, em segmentos velhos.
+        </p>
+        <p class="analogy">Analogia: o nome da página do caderno. “Pedidos criados”, não “caixa do João”.</p>
+        <p>
+          Consumidores se inscrevem no tópico, não no produtor. O tópico é o contrato.
+          Nomeie pelo fato (<code>pedidos.criados</code>), não pelo destinatário (<code>fila-do-faturamento</code>).
+        </p>
+        <p><strong>Na prática.</strong> Criar o tópico do lab com 3 partições:</p>
+<pre class="code">docker compose exec kafka /opt/kafka/bin/kafka-topics.sh \
+  --bootstrap-server localhost:9092 \
+  --create --if-not-exists \
+  --topic pedidos.criados \
+  --partitions 3 \
+  --replication-factor 1</pre>
+        <p class="lab-ref"><strong>No lab.</strong> O Spring faz o mesmo no boot: <code>labs/kafka/pedido-service/.../TopicConfig.java</code> (<code>TopicBuilder.name(...).partitions(3)</code>).</p>
+        <div class="warn">
+          Auto-create de tópico em produção esconde o contrato: alguém publica e o cluster inventa 1 partição.
+          No Compose do lab isso está <code>KAFKA_AUTO_CREATE_TOPICS_ENABLE=false</code> de propósito.
+        </div>
+      </article>
+</section>

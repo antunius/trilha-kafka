@@ -1,0 +1,45 @@
+<section class="week">
+<article class="term" id="evento">
+        <div class="tag">Vocabulário</div>
+        <h3>Evento (também chamado de mensagem ou record)</h3>
+        <p class="analogy">Analogia: uma nota no caderno que diz “isso já aconteceu”, nunca “por favor faça isso”.</p>
+        <p>
+          Um evento é um <strong>fato do passado</strong>, imutável.
+          Exemplos bons: <code>PedidoCriado</code>, <code>PagamentoAprovado</code>,
+          <code>ItemAdicionadoAoCarrinho</code>.
+        </p>
+        <p>No Kafka, o envelope técnico tem no mínimo:</p>
+        <table>
+          <thead>
+            <tr><th>Campo</th><th>Papel, em português</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>key</td><td>Decide em qual coluna (partição) a linha cai. Mesma key → mesma coluna → ordem daquela entidade.</td></tr>
+            <tr><td>value</td><td>O conteúdo: o que aconteceu. JSON, Avro, Protobuf…</td></tr>
+            <tr><td>timestamp</td><td>Quando o fato foi registrado.</td></tr>
+            <tr><td>headers</td><td>Etiquetas laterais: tipo do evento, correlação, tracing.</td></tr>
+            <tr><td>offset</td><td>Número da linha <em>naquela coluna</em>. Quem escreve não escolhe: o servidor carimba.</td></tr>
+            <tr><td>partition</td><td>Em qual coluna a linha caiu.</td></tr>
+          </tbody>
+        </table>
+        <p>
+          <strong>Para que serve.</strong> Separar quem produz o fato de quem reage.
+          O serviço de pedidos não precisa conhecer faturamento, estoque e analytics.
+          Ele só anuncia: “um pedido foi criado”.
+        </p>
+        <div class="warn">
+          <strong>Não é um comando nem um HTTP.</strong>
+          Evento descreve o passado. Comando pede o futuro (“cobre este cartão”).
+          Se o tópico vira “para o faturamento fazer X”, você reacoplou todo mundo.
+          Outro erro: publicar <code>PedidoUpdated</code> genérico. O consumidor precisa adivinhar o que mudou.
+          Nomeie o fato: <code>PedidoCriado</code>, <code>PedidoCancelado</code>.
+        </div>
+        <p><strong>Na prática.</strong> O payload do lab é um record Java (JSON Schema no Registry):</p>
+<pre class="code">public record PedidoCriado(
+    String eventId,
+    String pedidoId,
+    int totalCentavos,
+    String cupom) {}  // cupom opcional</pre>
+        <p class="lab-ref"><strong>No lab.</strong> <code>PedidoCriado.java</code>. O <code>eventId</code> estável é o que a inbox da aula de garantias usa para não cobrar duas vezes.</p>
+      </article>
+</section>

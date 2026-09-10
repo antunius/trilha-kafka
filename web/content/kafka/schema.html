@@ -1,0 +1,30 @@
+<section class="week">
+<article class="term" id="schema">
+        <div class="tag">Vocabulário</div>
+        <h3>Schema Registry</h3>
+        <p>
+          <strong>O que é.</strong> Um serviço HTTP (no lab: porta <code>8081</code>) que guarda versões de schema
+          por <em>subject</em> (em geral <code>{tópico}-value</code> e <code>{tópico}-key</code>).
+          O producer, com o serializer Confluent, registra o schema se ainda não existe, e manda no wire
+          um magic byte + schema id + payload (não um JSON solto “sem contrato”).
+          O consumer pede o schema daquele id ao Registry e desserializa.
+          Nível de compatibilidade (<code>BACKWARD</code> no Compose): o Registry <em>recusa</em> PUT/POST de schema que quebra quem já lê.
+          BACKWARD = consumidor <em>novo</em> lê dado <em>antigo</em>. FORWARD = consumidor antigo lê dado novo.
+          Campo opcional novo costuma ser BACKWARD-safe. Remover ou renomear campo obrigatório não é.
+        </p>
+        <p class="analogy">Analogia: um cartório de contratos. Ninguém muda o formulário sem checar se o outro lado ainda lê.</p>
+        <p><strong>Na prática.</strong> Sobe no Compose. YAML do app:</p>
+<pre class="code">spring.kafka.producer.value-serializer: io.confluent.kafka.serializers.json.KafkaJsonSchemaSerializer
+spring.kafka.consumer.value-deserializer: io.confluent.kafka.serializers.json.KafkaJsonSchemaDeserializer
+spring.kafka.producer.properties.schema.registry.url: http://localhost:8081</pre>
+        <p>Depois do primeiro produce:</p>
+<pre class="code">curl -s http://localhost:8081/subjects
+curl -s http://localhost:8081/subjects/pedidos.criados-value/versions/1</pre>
+        <p>Evolução que o cartório recusa (some o campo obrigatório) — comando no README do lab. Passo a passo de compatibilidade: <a href="/kafka/outbox">Integração</a>.</p>
+        <p class="lab-ref"><strong>No lab.</strong> Serviço <code>schema-registry</code> no Compose; record <code>PedidoCriado</code> com <code>eventId</code>, <code>pedidoId</code>, <code>totalCentavos</code> obrigatórios e <code>cupom</code> opcional.</p>
+        <div class="warn">
+          Sem Registry, um produtor muda <code>total</code> para <code>amount</code> e todos os consumers em produção quebram no deserializer.
+          JSON “na mão” no tópico não tem esse travão.
+        </div>
+      </article>
+</section>

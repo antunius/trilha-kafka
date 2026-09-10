@@ -1,0 +1,180 @@
+<section id="s5" class="week">
+      <h2>Spring Kafka e laboratório</h2>
+      <p>
+        Os arquivos já existem em <code>labs/kafka</code>. Esta aula você <strong>sobe o Compose, sobe o <code>pedido-service</code> e lê o log</strong>.
+        Sem isso a trilha não fecha. Não monte outro repositório.
+      </p>
+      <div class="callout">
+        <strong>Antes dos labs.</strong>
+<pre class="code">cd labs/kafka
+docker compose up -d
+mvn -f pedido-service/pom.xml spring-boot:run</pre>
+        README: <code>labs/kafka/README.md</code>. Classes: <code>PedidoProducer</code>, <code>PedidoConsumer</code>, <code>TopicConfig</code>, <code>OutboxPublisher</code>.
+      </div>
+      <div class="sessions">
+        <article>
+          <div class="tag">Sessão 1 · 45 min</div>
+          <h4>Peças do Spring</h4>
+          <p>Template, Listener, concurrency, AckMode, serializer. Entenda cada nome <em>antes</em> de copiar YAML. Labs 1–3.</p>
+        </article>
+        <article>
+          <div class="tag">Sessão 2 · 45 min</div>
+          <h4>Falha e grupo</h4>
+          <p>Labs 4–7: rebalance, ocioso, poison pill, duplicata. Mate processo de propósito. Anote o que o log mostrou versus o que você esperava.</p>
+        </article>
+        <article>
+          <div class="tag">Sessão 3 · 45 min</div>
+          <h4>Integração e carga</h4>
+          <p>Labs 8–9: outbox com Kafka fora; lag e hot key. No fim, explique cada lab em 60 segundos sem olhar o código.</p>
+        </article>
+      </div>
+
+      <div class="lesson">
+        <h3>Sessão 1 — As peças <em>antes</em> do lab</h3>
+        <p><strong>O que você precisa entender.</strong> Spring é fiação. <code>KafkaTemplate</code> escreve. <code>@KafkaListener</code> lê com um <code>groupId</code>. <code>concurrency</code> é quantas mãos no mesmo crachá — o teto é o número de partições. <code>AckMode</code> é quando a marca anda. Serializer quebrado sem handler vira poison pill.</p>
+        <p><strong>Exemplo concreto.</strong> Tópico <code>pedidos</code> com 3 partições. <code>concurrency = 6</code> (ou 6 pods): três threads trabalham, três olham o teto. Listener com auto-commit: a marca pode andar antes da cobrança do 99. Manual depois do efeito: morte no meio relê o 99 — lab 7.</p>
+        <div class="warn"><strong>Pegadinha.</strong> Copiar YAML com concurrency 8 porque “o notebook tem 8 cores”. A conta é <code>min(concurrency × instâncias, partitions)</code>.</div>
+        <div class="callout"><strong>Agora você (5 min).</strong> Sem abrir o lab: escreva o que você espera ver no log quando publicar 9 mensagens com keys pedido-1/2/3. Só então rode os labs 1–3.</div>
+      </div>
+      <p>Labs 4–9 continuam nas sessões 2 e 3: mate processo, veja ocioso, veneno, duplicata, outbox com broker morto, lag e hot key. A aula acima é o mapa; os nove laboratórios abaixo são o chão.</p>
+
+      <h3>As peças do Spring, em linguagem de leigo</h3>
+      <p>
+        O Spring não muda o Kafka. Ele só é a fiação: quem escreve, quem lê, quantas mãos no caderno, quando a marca anda.
+      </p>
+      <article class="term">
+        <h3>KafkaTemplate — quem escreve</h3>
+        <p class="analogy">Analogia: a caneta da sua aplicação. Você diz tópico, key e value; o template serializa e manda para o líder da coluna.</p>
+        <p>
+          É o produtor. <code>template.send("pedidos.criados", pedidoId, evento)</code>.
+          A key no segundo argumento é a que escolhe a partição. Sem key, o Spring/cliente espalha — e a ordem por pedido some.
+          Trate erro de send: “mandei” não é “o ISR confirmou”. Com <code>acks=all</code> você espera a confirmação; ignore isso e o checkout mente para o usuário.
+        </p>
+      </article>
+      <article class="term">
+        <h3>@KafkaListener — quem lê</h3>
+        <p class="analogy">Analogia: a pessoa do time com o crachá <code>group.id</code>, olhando a coluna que o Kafka atribuiu.</p>
+        <p>
+          O método anota “quando chegar recado neste tópico, rode isto”.
+          O <code>groupId</code> é o crachá. Mude o groupId e você lê o caderno de novo, da sua própria marca.
+          Dá para receber o objeto já desserializado ou o <code>ConsumerRecord</code> cru (aí você imprime partition, offset, key — obrigatório nos labs).
+        </p>
+      </article>
+      <article class="term">
+        <h3>concurrency — quantas mãos no mesmo crachá</h3>
+        <p>
+          <code>ConcurrentKafkaListenerContainerFactory</code> cria N consumidores no <em>mesmo</em> grupo.
+          Cada um pode ficar com partições. O teto é o número de partições.
+          <strong>concurrency = 6</strong> num tópico de <strong>3 partições</strong> deixa 3 threads olhando o teto.
+          O número que importa é <code>min(concurrency, partitions)</code>.
+          Subir replica no Kubernetes é a mesma conta: 8 pods × tópico de 3 partições = 5 ociosos.
+        </p>
+      </article>
+      <article class="term">
+        <h3>AckMode — quando a marca anda</h3>
+        <p>
+          <code>BATCH</code>: o Spring commita o lote depois de processar (rápido; morte no meio = replay do lote).
+          <code>RECORD</code>: commita cada recado (mais chatice, menos replay).
+          <code>MANUAL</code> / <code>MANUAL_IMMEDIATE</code>: você chama ack depois do efeito — o lugar certo se cobra cartão.
+          Auto-commit ligado no consumer factory é o atalho que perde mensagem. Nos labs de duplicata, use manual de propósito.
+        </p>
+      </article>
+      <article class="term">
+        <h3>Serializer, ErrorHandlingDeserializer, RetryableTopic</h3>
+        <ul class="tight">
+          <li><strong>Serializer / deserializer:</strong> transforma objeto ↔ bytes. JSON é didático. Avro/Protobuf + Schema Registry é o que time grande usa.</li>
+          <li><strong>ErrorHandlingDeserializer:</strong> JSON quebrado não deve derrubar o listener inteiro. Sem isso, a poison pill vira loop de crash.</li>
+          <li><strong>RetryableTopic / DefaultErrorHandler + DLT:</strong> tenta de novo com espera; depois manda para o tópico cemitério. Erro permanente ≠ timeout de banco.</li>
+        </ul>
+      </article>
+      <div class="warn">
+        Narrar em voz alta <em>antes</em> de rodar: “eu espero ver as 9 keys pedido-1/2/3 cada uma numa coluna só”.
+        Se o resultado surpreender e você não souber por quê, o lab falhou mesmo com o teste verde.
+      </div>
+
+      <h3>Os nove laboratórios (coração da trilha)</h3>
+      <p>O listener já imprime <code>partition</code>, <code>offset</code>, <code>key</code>, <code>value</code>, <code>group</code>. Sem isso no log você está voando cego.</p>
+
+      <article class="term">
+        <div class="step">Lab 1 · Anatomia</div>
+        <h3>Ver as colunas de verdade</h3>
+        <p><strong>Abrir.</strong> Compose + <code>pedido-service</code>. Tópico: <code>TopicConfig</code> (3 partições).</p>
+        <p><strong>Rodar.</strong> Sem key, depois com key:</p>
+<pre class="code">curl -s -X POST "http://localhost:8080/pedidos/lote?comKey=false&amp;n=9"
+curl -s -X POST "http://localhost:8080/pedidos/lote?comKey=true&amp;n=9"</pre>
+        <p><strong>Olhar.</strong> Log do <code>PedidoConsumer</code>: sem key as linhas saltam de <code>partition</code>; com <code>pedido-1/2/3</code> cada key cola numa coluna. Offsets 0,1,2 da partição 0 não são os da partição 1.</p>
+        <p class="lab-ref"><strong>Arquivos.</strong> <code>PedidoController</code> <code>/pedidos/lote</code>, <code>PedidoProducer.publicar(..., comKey)</code>.</p>
+      </article>
+      <article class="term">
+        <div class="step">Lab 2 · Ordem</div>
+        <h3>O mesmo pedido, com e sem key</h3>
+        <p><strong>Rodar.</strong> Três eventos do 99, rápido, primeiro <code>comKey=false</code>, depois <code>true</code>:</p>
+<pre class="code">for s in 1 2 3; do curl -s -X POST "http://localhost:8080/pedidos?pedidoId=99&amp;comKey=false"; done
+for s in 1 2 3; do curl -s -X POST "http://localhost:8080/pedidos?pedidoId=99&amp;comKey=true"; done</pre>
+        <p><strong>Olhar.</strong> Sem key, faturamento e analytics podem intercalar colunas. Com key, a sequência daquela entidade permanece na mesma <code>partition</code>.</p>
+      </article>
+      <article class="term">
+        <div class="step">Lab 3 · Dois grupos</div>
+        <h3>Dois crachás, o mesmo caderno</h3>
+        <p><strong>Já está no app.</strong> <code>PedidoConsumer</code> tem <code>groupId = faturamento</code> e <code>analytics</code>.</p>
+        <p><strong>Rodar.</strong> Um lote com key. <strong>Olhar.</strong> Os dois logs imprimem as mesmas 9 linhas; as marcas são independentes:</p>
+<pre class="code">docker compose exec kafka /opt/kafka/bin/kafka-consumer-groups.sh \
+  --bootstrap-server localhost:9092 --group faturamento --describe
+docker compose exec kafka /opt/kafka/bin/kafka-consumer-groups.sh \
+  --bootstrap-server localhost:9092 --group analytics --describe</pre>
+      </article>
+      <article class="term">
+        <div class="step">Lab 4 · Rebalance</div>
+        <h3>Matar o processo e ver a pausa</h3>
+        <p><strong>Rodar.</strong> Com o consumer no ar, Ctrl+C no Spring e suba de novo. <strong>Olhar.</strong> Logs <code>revoked</code> / <code>assigned</code>. Durante o rebalance clássico o Fetch para. <code>concurrency: 3</code> no YAML = três membros no grupo faturamento.</p>
+        <p class="lab-ref"><strong>Arquivos.</strong> <code>application.yml</code> (<code>listener.concurrency</code>, <code>max.poll.interval.ms</code>).</p>
+      </article>
+      <article class="term">
+        <div class="step">Lab 5 · Ociosos</div>
+        <h3>Gente demais para pouca coluna</h3>
+        <p><strong>Rodar.</strong> Mude <code>spring.kafka.listener.concurrency</code> para <code>6</code>, reinicie. Tópico continua com 3 partições. <strong>Olhar.</strong> Três threads sem assignment. A conta é <code>min(concurrency, partitions)</code> por grupo.</p>
+      </article>
+      <article class="term">
+        <div class="step">Lab 6 · Poison pill</div>
+        <h3>Payload que o deserializer não engole</h3>
+        <p><strong>Rodar.</strong> Console producer no tópico (JSON quebrado, sem schema id). Sem error handler o listener daquela partição grita o mesmo erro. Com Schema Registry, payload inválido nem passa no serializer do <code>POST /pedidos</code> — por isso o veneno aqui é o console:</p>
+<pre class="code">docker compose exec -T kafka /opt/kafka/bin/kafka-console-producer.sh \
+  --bootstrap-server localhost:9092 --topic pedidos.criados
+# cole: {quebrado</pre>
+        <p>Depois volte ao producer Spring (payload válido) e veja as outras colunas andarem. DLT de verdade é a aula de operação + <code>DefaultErrorHandler</code> no seu serviço — o lab mostra a coluna travada sem handler.</p>
+      </article>
+      <article class="term">
+        <div class="step">Lab 7 · Duplicação</div>
+        <h3>Ack depois do efeito</h3>
+        <p><strong>Abrir.</strong> <code>PedidoConsumer.faturamento</code>: o <code>ack.acknowledge()</code> está no fim. Coloque um <code>System.exit(1)</code> (ou kill -9) <em>depois</em> do log e <em>antes</em> do ack, publique o 99, mate, suba. <strong>Olhar.</strong> O recado volta (at-least-once). Inbox não está neste método — é o exercício: tabela <code>eventId</code> unique na mesma transação do pagamento.</p>
+        <p class="lab-ref"><strong>Arquivos.</strong> <code>ack-mode: manual</code> no YAML; <code>enable-auto-commit: false</code>.</p>
+      </article>
+      <article class="term">
+        <div class="step">Lab 8 · Outbox</div>
+        <h3>Kafka desligado, pedido salvo</h3>
+        <p><strong>Rodar.</strong></p>
+<pre class="code">docker compose stop kafka
+curl -s -X POST "http://localhost:8080/pedidos/outbox?pedidoId=outbox-1"
+# H2: pedido existe. OutboxPublisher tenta e a linha fica pendente.
+docker compose start kafka
+# em ~2s o poller publica</pre>
+        <p class="lab-ref"><strong>Arquivos.</strong> <code>OutboxService</code> (mesma transação pedido + outbox), <code>OutboxPublisher</code> (<code>@Scheduled</code> 2s), <code>POST /pedidos/outbox</code>.</p>
+      </article>
+      <article class="term">
+        <div class="step">Lab 9 · Lag e partição quente</div>
+        <h3>Atraso visível, depois uma coluna só</h3>
+        <p><strong>Rodar.</strong> Muitos produces com keys espalhadas, depois 90% com a mesma key:</p>
+<pre class="code">curl -s -X POST "http://localhost:8080/pedidos/lote?comKey=true&amp;n=90"
+# depois: muitas vezes pedidoId=vip
+for i in $(seq 1 80); do curl -s -X POST "http://localhost:8080/pedidos?pedidoId=vip&amp;comKey=true"; done
+
+docker compose exec kafka /opt/kafka/bin/kafka-consumer-groups.sh \
+  --bootstrap-server localhost:9092 --group faturamento --describe</pre>
+        <p><strong>Olhar.</strong> Lag por partição. Hot key: uma coluna com CURRENT-OFFSET atrasado, as outras em dia. Subir concurrency não drena a coluna do <code>vip</code>.</p>
+      </article>
+      <div class="ok">
+        <strong>Critério de pronto desta aula.</strong>
+        Você explica cada lab sem abrir o código, e aponta o trecho desta página (partição, offset, grupo, DLT, outbox, lag) que o lab ilustra.
+        Teste verde sem narrativa não conta.
+      </div>
+    </section>

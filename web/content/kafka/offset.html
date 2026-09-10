@@ -1,0 +1,24 @@
+<section class="week">
+<article class="term" id="offset">
+        <div class="tag">Vocabulário</div>
+        <h3>Offset</h3>
+        <p>
+          <strong>O que é.</strong> Inteiro 64-bit que o <em>líder</em> carimba na hora do append.
+          Não vem no ProduceRequest do cliente. Offset 42 da partição 0 e offset 42 da partição 1 são recados diferentes.
+          O <strong>committed offset</strong> do grupo não fica “na mensagem”: o grupo grava num tópico interno
+          (<code>__consumer_offsets</code>) “partição P, já processei até X”. Crash → o grupo relê a partir desse X.
+          Se nunca commitou, <code>auto.offset.reset</code> decide: <code>earliest</code> (início ainda retido) ou <code>latest</code> (só o ao vivo).
+        </p>
+        <p class="analogy">Analogia: o número da linha no caderninho daquela coluna, e a marca “já li até aqui”.</p>
+        <p><strong>Na prática.</strong> O listener do lab imprime o offset de cada recado. A marca do grupo:</p>
+<pre class="code">docker compose exec kafka /opt/kafka/bin/kafka-consumer-groups.sh \
+  --bootstrap-server localhost:9092 \
+  --group faturamento --describe</pre>
+        <p>Coluna CURRENT-OFFSET vs LOG-END-OFFSET = lag daquela partição.</p>
+        <p class="lab-ref"><strong>No lab.</strong> <code>PedidoConsumer</code> loga <code>offset=</code>. Commit é manual: <code>spring.kafka.listener.ack-mode: manual</code> e <code>ack.acknowledge()</code> depois do log.</p>
+        <div class="warn">
+          Commitar antes de processar (auto-commit por relógio) pode avançar a marca e perder o efeito.
+          Commitar depois pode reprocessar — por isso inbox na aula de garantias. Kafka não “entrega e esquece”; quem lembra é o seu grupo.
+        </div>
+      </article>
+</section>

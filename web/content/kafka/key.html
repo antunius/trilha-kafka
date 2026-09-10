@@ -1,0 +1,25 @@
+<section class="week">
+<article class="term" id="key">
+        <div class="tag">Vocabulário</div>
+        <h3>Key</h3>
+        <p>
+          <strong>O que é.</strong> Bytes opcionais no record. O particionador padrão do cliente faz
+          <code>Utils.toPositive(murmur2(key)) % numPartitions</code>.
+          Mesma key + mesmo N de partições → mesma coluna → ordem daquela entidade.
+          Sem key, o produtor espalha (sticky partitioner nas versões recentes: uma coluna por um tempo, para batch, não “rodízio justo por mensagem”).
+        </p>
+        <p class="analogy">Analogia: o sobrenome na lista. Família Silva na mesma coluna; a história dela fica em ordem.</p>
+        <p><strong>Na prática.</strong> O segundo argumento do <code>send</code> é a key. No lab, <code>pedidoId</code>:</p>
+<pre class="code">kafka.send("pedidos.criados", pedidoId, evento);
+// sem key (lab 1):
+kafka.send("pedidos.criados", null, evento);</pre>
+        <p>HTTP equivalente:</p>
+<pre class="code">curl -X POST "http://localhost:8080/pedidos?pedidoId=99&amp;comKey=true"
+curl -X POST "http://localhost:8080/pedidos/lote?comKey=false&amp;n=9"</pre>
+        <p class="lab-ref"><strong>No lab.</strong> <code>PedidoProducer.publicar(..., comKey)</code>. Olhe no log <code>partition=</code> e <code>key=</code>.</p>
+        <div class="warn">
+          Key = timestamp ou UUID novo a cada evento destrói ordem por pedido.
+          Sempre a mesma key (ou um cliente gigante) cria partição quente: uma coluna com lag, as outras zeradas.
+        </div>
+      </article>
+</section>

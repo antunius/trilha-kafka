@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 200" role="img" aria-labelledby="t">
+  <title id="t">Pedido 99 do evento até o offset</title>
+  <defs>
+    <marker id="p" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#c45c26"/>
+    </marker>
+  </defs>
+  <rect width="900" height="200" fill="#fffdf8"/>
+  <g font-family="system-ui, sans-serif">
+    <rect x="16" y="40" width="190" height="100" rx="8" fill="#fff" stroke="#d9d0c2"/>
+    <text x="111" y="68" text-anchor="middle" font-size="11" fill="#c45c26" letter-spacing="0.08em">EVENTO</text>
+    <text x="111" y="94" text-anchor="middle" font-family="Georgia, serif" font-size="16">PedidoCriado</text>
+    <text x="111" y="116" text-anchor="middle" font-size="12" fill="#5c564c">key 99 · e-17</text>
+
+    <line x1="206" y1="90" x2="248" y2="90" stroke="#c45c26" stroke-width="2.5" marker-end="url(#p)"/>
+
+    <rect x="256" y="40" width="160" height="100" rx="8" fill="#fff" stroke="#d9d0c2"/>
+    <text x="336" y="68" text-anchor="middle" font-size="11" fill="#c45c26" letter-spacing="0.08em">TÓPICO</text>
+    <text x="336" y="94" text-anchor="middle" font-family="Georgia, serif" font-size="16">pedidos</text>
+    <text x="336" y="116" text-anchor="middle" font-size="12" fill="#5c564c">o caderno</text>
+
+    <line x1="416" y1="90" x2="458" y2="90" stroke="#c45c26" stroke-width="2.5" marker-end="url(#p)"/>
+
+    <rect x="466" y="40" width="190" height="100" rx="8" fill="#fff" stroke="#d9d0c2"/>
+    <text x="561" y="68" text-anchor="middle" font-size="11" fill="#c45c26" letter-spacing="0.08em">PARTIÇÃO</text>
+    <text x="561" y="94" text-anchor="middle" font-family="Georgia, serif" font-size="16">coluna 1</text>
+    <text x="561" y="116" text-anchor="middle" font-size="12" fill="#5c564c">hash(99) caiu aqui</text>
+
+    <line x1="656" y1="90" x2="698" y2="90" stroke="#c45c26" stroke-width="2.5" marker-end="url(#p)"/>
+
+    <rect x="706" y="40" width="178" height="100" rx="8" fill="#fff" stroke="#d9d0c2"/>
+    <text x="795" y="68" text-anchor="middle" font-size="11" fill="#c45c26" letter-spacing="0.08em">OFFSET</text>
+    <text x="795" y="94" text-anchor="middle" font-family="Georgia, serif" font-size="16">linha 4</text>
+    <text x="795" y="116" text-anchor="middle" font-size="12" fill="#5c564c">só nesta coluna</text>
+  </g>
+</svg>

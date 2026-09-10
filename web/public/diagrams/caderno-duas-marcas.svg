@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 520" role="img" aria-labelledby="t d">
+  <title id="t">Caderno pedidos com duas marcas</title>
+  <desc id="d">Produtor escreve no topico. Tres particoes com eventos. Marca laranja e marca verde em offsets diferentes.</desc>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#c45c26"/>
+    </marker>
+  </defs>
+  <rect width="900" height="520" fill="#fffdf8"/>
+  <rect x="260" y="16" width="380" height="52" rx="8" fill="#fff" stroke="#c45c26" stroke-width="2"/>
+  <text x="450" y="38" text-anchor="middle" font-family="Georgia, serif" font-size="18" fill="#1c1915">Produtor (checkout)</text>
+  <text x="450" y="56" text-anchor="middle" font-family="system-ui, sans-serif" font-size="12" fill="#5c564c">só acrescenta no fim da coluna</text>
+  <path d="M450 68 L450 96" stroke="#c45c26" stroke-width="2.5" fill="none" marker-end="url(#a)"/>
+  <text x="450" y="118" text-anchor="middle" font-family="Georgia, serif" font-size="16" fill="#1c1915">tópico pedidos</text>
+  <text x="450" y="136" text-anchor="middle" font-family="system-ui, sans-serif" font-size="12" fill="#5c564c">um caderno, três colunas</text>
+  <rect x="28" y="152" width="272" height="318" rx="10" fill="#fff" stroke="#d9d0c2"/>
+  <text x="164" y="178" text-anchor="middle" font-family="Georgia, serif" font-size="16">Partição 0</text>
+  <rect x="44" y="192" width="240" height="36" rx="4" fill="#efe8dc"/>
+  <text x="164" y="215" text-anchor="middle" font-size="13" font-family="system-ui, sans-serif">0 · PedidoCriado A</text>
+  <rect x="44" y="236" width="240" height="28" rx="4" fill="#f3e4d6" stroke="#c45c26"/>
+  <text x="164" y="255" text-anchor="middle" font-size="12" font-weight="700" font-family="system-ui, sans-serif" fill="#c45c26">marca faturamento · parou no 0</text>
+  <rect x="44" y="272" width="240" height="36" rx="4" fill="#efe8dc"/>
+  <text x="164" y="295" text-anchor="middle" font-size="13" font-family="system-ui, sans-serif">1 · Pagamento A</text>
+  <rect x="44" y="316" width="240" height="36" rx="4" fill="#efe8dc"/>
+  <text x="164" y="339" text-anchor="middle" font-size="13" font-family="system-ui, sans-serif">2 · PedidoCriado D</text>
+  <rect x="44" y="360" width="240" height="28" rx="4" fill="#e4efe8" stroke="#2f6b4f"/>
+  <text x="164" y="379" text-anchor="middle" font-size="12" font-weight="700" font-family="system-ui, sans-serif" fill="#2f6b4f">marca analytics · já foi até 2</text>
+  <text x="164" y="448" text-anchor="middle" font-size="11" font-family="system-ui, sans-serif" fill="#5c564c">A linha 0 continua no caderno</text>
+  <rect x="314" y="152" width="272" height="318" rx="10" fill="#fff" stroke="#d9d0c2"/>
+  <text x="450" y="178" text-anchor="middle" font-family="Georgia, serif" font-size="16">Partição 1</text>
+  <rect x="330" y="192" width="240" height="36" rx="4" fill="#efe8dc"/>
+  <text x="450" y="215" text-anchor="middle" font-size="13" font-family="system-ui, sans-serif">0 · PedidoCriado B</text>
+  <rect x="330" y="236" width="240" height="36" rx="4" fill="#efe8dc"/>
+  <text x="450" y="259" text-anchor="middle" font-size="13" font-family="system-ui, sans-serif">1 · Item no carrinho B</text>
+  <rect x="330" y="280" width="240" height="28" rx="4" fill="#f3e4d6" stroke="#c45c26"/>
+  <text x="450" y="299" text-anchor="middle" font-size="12" font-weight="700" font-family="system-ui, sans-serif" fill="#c45c26">faturamento · até 1</text>
+  <rect x="330" y="316" width="240" height="28" rx="4" fill="#e4efe8" stroke="#2f6b4f"/>
+  <text x="450" y="335" text-anchor="middle" font-size="12" font-weight="700" font-family="system-ui, sans-serif" fill="#2f6b4f">analytics · até 1</text>
+  <rect x="600" y="152" width="272" height="318" rx="10" fill="#fff" stroke="#d9d0c2"/>
+  <text x="736" y="178" text-anchor="middle" font-family="Georgia, serif" font-size="16">Partição 2</text>
+  <rect x="616" y="192" width="240" height="36" rx="4" fill="#efe8dc"/>
+  <text x="736" y="215" text-anchor="middle" font-size="13" font-family="system-ui, sans-serif">0 · PedidoCriado C</text>
+  <rect x="616" y="236" width="240" height="28" rx="4" fill="#e4efe8" stroke="#2f6b4f"/>
+  <text x="736" y="255" text-anchor="middle" font-size="12" font-weight="700" font-family="system-ui, sans-serif" fill="#2f6b4f">analytics · leu o 0</text>
+  <rect x="616" y="276" width="240" height="28" rx="4" fill="#f3e4d6" stroke="#c45c26"/>
+  <text x="736" y="295" text-anchor="middle" font-size="12" font-weight="700" font-family="system-ui, sans-serif" fill="#c45c26">faturamento · ainda não leu</text>
+  <text x="736" y="340" text-anchor="middle" font-size="11" font-family="system-ui, sans-serif" fill="#5c564c">próximo recado dele = offset 0</text>
+</svg>

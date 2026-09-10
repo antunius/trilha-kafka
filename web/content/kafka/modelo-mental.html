@@ -1,0 +1,51 @@
+<section id="ideia">
+      <h2>A ideia central (leia isto primeiro)</h2>
+      <p>
+        O erro mais comum é tratar Kafka como uma <strong>fila</strong>.
+        Fila é o que você encontra no banco: a pessoa é atendida e some da fila.
+        Kafka é outra coisa: um <strong>caderno compartilhado, ordenado e persistente</strong>.
+      </p>
+      <div class="grid2">
+        <article class="term">
+          <div class="tag">Fila clássica</div>
+          <h3>RabbitMQ, SQS e afins</h3>
+          <p>Alguém entrega a mensagem. Alguém pega. Em geral, a mensagem <em>sai</em> da fila. Um trabalho, um trabalhador.</p>
+        </article>
+        <article class="term">
+          <div class="tag">Kafka</div>
+          <h3>Log distribuído</h3>
+          <p>Alguém escreve no final do caderno. Várias equipes podem ler o mesmo trecho. Ninguém rasga a página. Cada um só anota até onde já leu.</p>
+        </article>
+      </div>
+      <div class="callout">
+        <strong>Por que isso muda tudo.</strong>
+        Dá para reprocessar o passado. Dá para faturamento e analytics lerem os mesmos eventos sem brigar.
+        A ordem não é global. A mensagem não some ao ser lida — ela some depois, por política de retenção.
+      </div>
+    </section>
+
+<section id="caderno">
+      <h2>O mapa mental: o caderno infinito</h2>
+      <p>
+        Imagine um caderno que nunca acaba. Cada <strong>página</strong> é um tópico
+        (por exemplo, “pedidos”). As linhas só são escritas <strong>no final</strong>.
+        Ninguém apaga o que já foi escrito no meio da página. Várias pessoas escrevem
+        (produtores). Várias leem (consumidores). Quem lê não rasga nada: só deixa a
+        marca “já li até a linha 47”. O número da linha é o <strong>offset</strong>.
+        A marca do grupo (committed offset) é “já processei até aqui” — um número por coluna.
+      </p>
+      <p>
+        Se a página fica enorme, você divide em <strong>colunas</strong>. Cada coluna é uma
+        <strong>partição</strong>. Cada coluna tem ordem própria. O caderno inteiro
+        <em>não</em> tem uma ordem única.
+      </p>
+      <p>Isso não é metáfora enfeitada. É o modelo real do Kafka. O desenho abaixo é o caderno <code>pedidos</code> neste instante.</p>
+
+      <figure class="viz">
+        <img src="/diagrams/caderno-duas-marcas.svg" alt="Produtor escreve no tópico pedidos. Três partições com eventos reais. Marca laranja de faturamento e marca verde de analytics em offsets diferentes." width="900" height="520" />
+        <figcaption>Laranja: grupo faturamento. Verde: grupo analytics. Os recados continuam nas colunas depois de lidos. Offset 0 da coluna 0 e offset 0 da coluna 2 são recados diferentes.</figcaption>
+      </figure>
+      <div class="ok">
+        As linhas continuam no caderno depois de lidas. Na partição 0 o faturamento parou no 0 e o analytics já foi até o 2 — os dois estão certos. Ninguém “pegou e tirou” o PedidoCriado A. Offset 0 da coluna 0 e offset 0 da coluna 2 são recados diferentes.
+      </div>
+    </section>

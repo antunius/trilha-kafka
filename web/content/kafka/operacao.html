@@ -1,0 +1,162 @@
+<section id="s3" class="week">
+      <h2>Operação, rebalance e tuning</h2>
+      <p>
+        Quando o cluster “está estranho”, quase sempre é um destes: rebalance em loop, lag crescendo, partição quente ou mensagem venenosa.
+        Esta aula é a do plantão: você aprende a diagnosticar, não a decorar nomes de config.
+      </p>
+      <div class="sessions">
+        <article>
+          <div class="tag">Sessão 1 · 45 min</div>
+          <h4>Rebalance</h4>
+          <p>O que dispara, por que o consumo para, o loop max.poll, CooperativeSticky e group.instance.id. Desenhe o ciclo no papel.</p>
+        </article>
+        <article>
+          <div class="tag">Sessão 2 · 45 min</div>
+          <h4>Lag e hot key</h4>
+          <p>Ordem do diagnóstico. Por que 12 consumidores em 3 partições não drenam lag. Sintoma de partição quente: uma coluna atrasada, as outras zeradas.</p>
+        </article>
+        <article>
+          <div class="tag">Sessão 3 · 45 min</div>
+          <h4>Configs + DLT</h4>
+          <p>O que cada knob realmente controla (durabilidade, lote, heartbeat). Poison pill vs erro transitório. O que alertar.</p>
+        </article>
+      </div>
+
+      <div class="lesson">
+        <h3>Sessão 1 — O filme do rebalance</h3>
+        <p><strong>O que você precisa entender.</strong> O grupo pausa para redistribuir colunas quando alguém entra, sai, perde heartbeat ou estoura <code>max.poll.interval.ms</code>. Durante o rebalance clássico, <em>ninguém</em> lê. O loop: lote lento → broker acha que morreu → rebalance → recomeça o lote → de novo.</p>
+        <p><strong>Exemplo concreto.</strong> Três pods no grupo faturamento, três partições. O pod A1 está cobrando um lote de 500 recados e cada cartão leva 200 ms. Passa <code>max.poll.interval.ms</code> sem um poll novo. O coordenador tira A1, redistribui P0. A2 e A3 também param enquanto a dança acontece. A1 volta, o lote recomeça — e estoura de novo.</p>
+        <div class="pipe">
+          <div class="box">Poll lote 500</div>
+          <div class="arrow" aria-hidden="true">→</div>
+          <div class="box">Processa lento<br><small>sem poll</small></div>
+          <div class="arrow" aria-hidden="true">→</div>
+          <div class="box">Broker: “morreu”</div>
+          <div class="arrow" aria-hidden="true">→</div>
+          <div class="box">Rebalance<br><small>consumo para</small></div>
+        </div>
+        <div class="warn"><strong>Pegadinha.</strong> Subir mais pods para “sair do rebalance”. Mais membros = mais dança se o lote continua lento. A correção é lote menor, trabalho mais rápido, intervalo maior, ou membership estático no restart planejado.</div>
+        <div class="callout"><strong>Agora você (5 min).</strong> Desenhe o ciclo em quatro caixas. Marque onde CooperativeSticky e <code>group.instance.id</code> doem menos — não onde “eliminam” o problema.</div>
+      </div>
+
+      <div class="lesson">
+        <h3>Sessão 2 — Lag e a coluna quente</h3>
+        <p><strong>O que você precisa entender.</strong> Lag alto em todas as colunas ≠ lag numa só. Doze consumidores em três partições não criam doze leitores paralelos: só três trabalham. Partição quente: uma key (um cliente enorme) empilha numa coluna; as outras zeradas.</p>
+        <p><strong>Exemplo concreto.</strong> Produção 2_000 recados/s, consumo 400/s em cada uma das 3 colunas saudáveis — lag sobe nas três. Ou: 90% das keys são <code>cliente-vip</code> → P1 no 50_000 de lag, P0 e P2 em zero. Escalar o Deployment para 12 réplicas não drena P1.</p>
+        <div class="warn"><strong>Pegadinha.</strong> Olhar lag total do grupo e “dar scale”. Se for uma coluna só, scale é teatro.</div>
+        <div class="callout"><strong>Agora você (5 min).</strong> Escreva a ordem: produção vs consumo; dependência lenta; hot key. Só então “mais partições”.</div>
+      </div>
+
+      <div class="lesson">
+        <h3>Sessão 3 — Veneno vs timeout, depois DLT</h3>
+        <p><strong>O que você precisa entender.</strong> JSON quebrado é permanente: tenta N vezes e vai para o tópico cemitério, senão aquela coluna trava para sempre. Timeout de banco é transitório: retry com espera; mandar para o DLT perde o pedido 99 de verdade.</p>
+        <p><strong>Exemplo concreto.</strong> Offset 40 da P0 é <code>{quebrado</code>. Sem DLT o listener grita o mesmo erro; P1 e P2 podem seguir. Com DLT o 40 vai para <code>pedidos.DLT</code> e a marca da P0 anda para 41. Outro dia o Postgres oscila 2 segundos: isso não é veneno — é retry.</p>
+        <div class="warn"><strong>Pegadinha.</strong> Um ErrorHandler que manda <em>qualquer</em> exception para o DLT. Você enterrou cobrança recuperável.</div>
+        <div class="callout"><strong>Agora você (5 min).</strong> Duas linhas: “vai para DLT” vs “retry”. Coloque JSON inválido, schema incompatível, 500 do cartão, timeout do banco, 400 de regra de negócio.</div>
+      </div>
+
+      <article class="term">
+        <h3>Rebalance: o que dispara e por que dói</h3>
+        <p>
+          Entrada/saída de consumidor, queda de heartbeat, ou estouro de <code>max.poll.interval.ms</code>.
+          Durante o rebalance clássico, o consumo para.
+        </p>
+        <p>
+          <strong>Loop clássico:</strong> o lote demora mais que o intervalo máximo de poll →
+          o broker acha que o consumidor morreu → rebalance → o processamento recomeça → ciclo.
+          Correções: reduzir <code>max.poll.records</code>, acelerar o processamento, ou aumentar o intervalo.
+          Também vale checar se o pod foi morto por falta de memória.
+        </p>
+        <p>
+          Para doer menos: assignor cooperativo (redistribui sem parar tudo),
+          membership estático (<code>group.instance.id</code> evita rebalance em restart planejado),
+          processamento rápido. Heartbeat em thread separada já é o padrão do cliente moderno.
+        </p>
+      </article>
+
+      <article class="term">
+        <h3>Lag crescendo: ordem do diagnóstico</h3>
+        <ol>
+          <li>O consumo ficou mais lento ou a produção aumentou?</li>
+          <li>O gargalo está no consumidor ou numa dependência (banco, API)?</li>
+          <li>Há partição quente por key mal distribuída?</li>
+        </ol>
+        <p>
+          Ações: mais partições + mais consumidores, processar em lote, tornar o trabalho assíncrono onde possível, ou escalar a dependência.
+          Aumentar consumidores sem aumentar partições não resolve nada.
+        </p>
+      </article>
+
+      <div class="grid2">
+        <article class="term">
+          <h3>Produtor: o que realmente importa</h3>
+          <ul class="tight">
+            <li><code>acks</code> — 0 perde escrita; 1 o líder gravou; all espera o ISR. É durabilidade, não consumo.</li>
+            <li><code>enable.idempotence</code> — retry do mesmo producer não duplica no log.</li>
+            <li><code>retries</code> + <code>delivery.timeout.ms</code> — até quando insistir. Sem teto, o send fica preso para sempre.</li>
+            <li><code>linger.ms</code> e <code>batch.size</code> — esperar uns milissegundos junta envelopes. Sobe throughput, sobe latência.</li>
+            <li><code>compression.type</code> lz4/zstd — menos bytes na rede e no disco.</li>
+            <li><code>max.in.flight.requests.per.connection</code> — com idempotência, até 5 ainda preserva ordem na partição.</li>
+          </ul>
+        </article>
+        <article class="term">
+          <h3>Consumidor: o que realmente importa</h3>
+          <ul class="tight">
+            <li><code>max.poll.records</code> — tamanho do lote. Lote enorme + processamento lento = rebalance.</li>
+            <li><code>max.poll.interval.ms</code> — quanto tempo você pode ficar sem “oi, ainda estou vivo e processando”.</li>
+            <li><code>session.timeout.ms</code> / <code>heartbeat.interval.ms</code> — o pulso. Heartbeat some → o grupo acha que você morreu.</li>
+            <li><code>auto.offset.reset</code> — earliest para pipeline/histórico; latest para “só o ao vivo”. Só vale sem commit prévio.</li>
+            <li><code>fetch.min.bytes</code> / <code>fetch.max.wait.ms</code> — esperar um pouco para buscar mais linhas de uma vez.</li>
+            <li><code>enable.auto.commit</code> — quase sempre você quer controle manual no serviço de negócio.</li>
+          </ul>
+          <p>Cópia do lab (valores didáticos, 1 broker):</p>
+<pre class="code">spring.kafka.producer.acks: all
+spring.kafka.producer.properties.enable.idempotence: true
+spring.kafka.producer.properties.linger.ms: 5
+spring.kafka.consumer.max-poll-records: 50
+spring.kafka.consumer.properties.max.poll.interval.ms: 300000
+spring.kafka.consumer.properties.session.timeout.ms: 45000
+spring.kafka.listener.concurrency: 3
+spring.kafka.listener.ack-mode: manual</pre>
+          <p class="lab-ref"><strong>No lab.</strong> <code>labs/kafka/pedido-service/src/main/resources/application.yml</code>. <code>concurrency: 3</code> casa com 3 partições. 6 no YAML = 3 ociosos — lab 5.</p>
+        </article>
+      </div>
+
+      <article class="term">
+        <h3>Dead Letter Topic (DLT) e poison pill</h3>
+        <p>
+          Mensagem que falha depois de N tentativas vai para um tópico separado,
+          em vez de travar a partição para sempre (a “pílula venenosa”: um payload inválido no meio da coluna).
+        </p>
+        <p>
+          Erro permanente (JSON quebrado) → DLT direto.
+          Erro transitório (banco fora) → retry com espera crescente.
+          Mandar erro transitório para o DLT perde dado. Ficar tentando erro permanente trava a partição.
+        </p>
+      </article>
+
+      <article class="term">
+        <h3>Como monitorar e o que é partição quente</h3>
+        <p>
+          Olhe: lag por partição, taxa de rebalance, tempo de processamento, taxa de erro e volume no DLT.
+          Alerte em lag crescente e sustentado, não em um pico de um segundo.
+          Offset parado numa partição só = poison pill ou hot key.
+        </p>
+        <p>
+          <strong>Partição quente:</strong> uma coluna recebe muito mais tráfego que as outras
+          (um cliente enorme, ou key constante). Sintoma: lag só nela, as outras em zero.
+          Kafka não rebalanceia carga <em>dentro</em> da partição. A correção é redesenhar a key (cuidado com ordem)
+          ou splittar o trabalho depois da leitura.
+        </p>
+      </article>
+      <article class="term">
+        <h3>Mini-runbook (cole no Notion do time)</h3>
+        <ol>
+          <li><strong>Lag em todas as partições:</strong> produção subiu ou o consumidor ficou lento? Olhe o banco/API. Só então pense em mais partições.</li>
+          <li><strong>Lag numa partição só:</strong> poison pill (erro no log) ou hot key. Não “dá scale” no grupo inteiro.</li>
+          <li><strong>Consumidores restartando:</strong> max.poll, OOM, deploy sem static membership.</li>
+          <li><strong>DLT enchendo:</strong> payload mudou? Schema incompatível? Ou alguém mandou timeout de banco para o cemitério?</li>
+        </ol>
+        <p>Se você não consegue seguir essa ordem num incidente simulado, a aula de operação não fechou — config decorada não opera cluster.</p>
+      </article>
+    </section>

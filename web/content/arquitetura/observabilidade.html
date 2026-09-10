@@ -1,0 +1,92 @@
+<article class="term" id="observabilidade">
+        <div class="tag">Vocabulário</div>
+        <h3>Observabilidade, SLI, SLO</h3>
+        <p class="analogy">Analogia: o painel do carro (métrica) diz que está ruim. O GPS do percurso (trace) diz onde. O diário de bordo (log) diz por quê.</p>
+        <p><strong>Log</strong>: um evento, com contexto (<code>traceId</code>). <strong>Métrica</strong>: número no tempo (barata, agregada). RED: Rate, Errors, Duration. <strong>Trace</strong>: o caminho da request entre serviços. <strong>SLI</strong> é a medida; <strong>SLO</strong> é a meta; <strong>error budget</strong> é quanto de falha o produto aceita no período.</p>
+      </article>
+<section id="s5" class="week">
+      <h2>Observabilidade</h2>
+      <p>
+        Métrica diz <em>que</em> está ruim; trace diz <em>onde</em>; log diz <em>por quê</em>.
+        Alerta de CPU a 80% não é arquitetura — é ruído.
+      </p>
+      <div class="sessions">
+        <article>
+          <div class="tag">Sessão 1</div>
+          <h4>Três pilares</h4>
+          <p>Log estruturado + traceId (inclusive no Kafka). RED no serviço, USE no recurso. OpenTelemetry.</p>
+        </article>
+        <article>
+          <div class="tag">Sessão 2</div>
+          <h4>SLI / SLO / budget</h4>
+          <p>99,9% em 30 dias. Calcule o error budget em minutos. O que o produto para de fazer quando estoura.</p>
+        </article>
+        <article>
+          <div class="tag">Sessão 3</div>
+          <h4>Alerta bom</h4>
+          <p>Sintoma do usuário, acionável, runbook. Alerta que ninguém age: delete.</p>
+        </article>
+      </div>
+      <div class="ok">
+        <strong>No fim desta aula você consegue:</strong>
+        os três pilares; instrumentar sem logar PII; definir SLO e error budget; escrever um alerta de p99 / taxa de erro, não de CPU.
+      </div>
+
+      <div class="lesson">
+        <h3>Sessão 1 — p99 = 3 s: ordem da investigação</h3>
+        <p><strong>O que você precisa entender.</strong> Métrica diz que está ruim. Trace diz onde. Log diz por quê. Não comece por CPU do pod.</p>
+        <p><strong>Exemplo concreto, ordem já resolvida.</strong> Checkout p99 = 3 s. (1) O SLO de 300 ms no p99 foi violado? Sim. (2) Recorte: só <code>POST /pagar</code>, região sa-east-1, clientes do plano enterprise. (3) RED: rate estável, errors 0,5%, duration p99 3 s (p50 80 ms). (4) Trace do percentil ruim: 2,7 s na span <code>risco.avaliar</code>. (5) Log dessa span: timeout 2,5 s no HTTP. (6) Dependência lenta, não GC, não lock local, não hot key do Kafka. Ação: timeout menor + breaker + fallback — não “sobe replica do checkout”.</p>
+        <div class="pipe">
+          <div class="box">SLO?</div>
+          <div class="arrow" aria-hidden="true">→</div>
+          <div class="box">Recorte</div>
+          <div class="arrow" aria-hidden="true">→</div>
+          <div class="box">RED</div>
+          <div class="arrow" aria-hidden="true">→</div>
+          <div class="box">Trace</div>
+          <div class="arrow" aria-hidden="true">→</div>
+          <div class="box">Log / causa</div>
+        </div>
+        <div class="warn"><strong>Pegadinha.</strong> Abrir o Grafana de CPU no primeiro minuto. Você otimiza o sintoma errado.</div>
+        <div class="callout"><strong>Agora você (5 min).</strong> Fale a ordem em voz alta sem olhar. Se pular o recorte, a sessão não fechou.</div>
+      </div>
+
+      <div class="lesson">
+        <h3>Sessão 2 — SLO e error budget em minutos</h3>
+        <p><strong>O que você precisa entender.</strong> SLI mede. SLO é a meta. Error budget é o complemento — vira decisão de produto: parar feature, trabalhar estabilidade.</p>
+        <p><strong>Exemplo concreto.</strong> SLO: 99,9% das <code>POST /pagar</code> em 30 dias abaixo de 300 ms. 30 dias = 43_200 minutos. 0,1% = 43,2 minutos fora do SLI. Na terça o p99 estourou 20 min; restam ~23 min no mês. Product quer lançar checkout novo na quinta: o budget diz “só se o risco de mais 23 min for aceitável”, não “o CI está verde”.</p>
+        <div class="warn"><strong>Pegadinha.</strong> SLO 99,99% sem saber que isso é ~4 min/mês. Você assinou o impossível com o time atual.</div>
+        <div class="callout"><strong>Agora você (5 min).</strong> Calcule o budget de 99,9% em 30 dias em minutos. O que o produto para quando zerar.</div>
+      </div>
+
+      <div class="lesson">
+        <h3>Sessão 3 — Alerta que alguém atende</h3>
+        <p><strong>O que você precisa entender.</strong> Alerta de sintoma do usuário (taxa de erro, p99, lag crescente), acionável, com runbook. CPU 80% pode ser o pico normal da Black Friday.</p>
+        <p><strong>Exemplo concreto.</strong> Bom: “p99 /pagar &gt; 1 s por 5 min” → runbook aponta a ordem da sessão 1. Ruim: “CPU &gt; 80%” a cada deploy. Ninguém age; no incidente real o Slack já é ruído.</p>
+        <div class="warn"><strong>Pegadinha.</strong> Mais alerta = mais observabilidade. Alerta que não gera ação deve ser apagado.</div>
+        <div class="callout"><strong>Agora você (5 min).</strong> Escreva um alerta de p99 e um que você deletaria no seu time.</div>
+      </div>
+
+      <p>Quiz depois da aula. Abra, responda sem olhar.</p>
+
+      <details>
+        <summary>Quais são os três pilares e para que serve cada um?</summary>
+        <p><strong>Logs</strong> (o que aconteceu num evento específico), <strong>métricas</strong> (agregados numéricos ao longo do tempo, baratos de armazenar), <strong>traces</strong> (o caminho de uma requisição através dos serviços). Métrica diz <em>que</em> está ruim; trace diz <em>onde</em>; log diz <em>por quê</em>.</p>
+      </details>
+      <details>
+        <summary>Como você instrumenta corretamente?</summary>
+        <p>Logs estruturados em JSON, com <code>traceId</code> propagado em todo o fluxo (incluindo através do Kafka, via headers). Métricas com Micrometer → Prometheus: <strong>RED</strong> para serviços (Rate, Errors, Duration) e <strong>USE</strong> para recursos (Utilization, Saturation, Errors). Tracing com OpenTelemetry. Nunca logar dado sensível — PII, token, número de cartão.</p>
+      </details>
+      <details>
+        <summary>O que é SLI, SLO e error budget?</summary>
+        <p>SLI é a métrica medida (ex.: % de requisições abaixo de 300ms). SLO é a meta acordada (ex.: 99,9%). O error budget é o complemento (0,1%) — quanto de falha é aceitável no período. É o que traduz confiabilidade em decisão de produto: budget estourado significa parar features e trabalhar em estabilidade.</p>
+      </details>
+      <details>
+        <summary>Como você define um alerta bom?</summary>
+        <p>Alerta sobre <strong>sintoma percebido pelo usuário</strong> (taxa de erro, latência, lag crescente), não sobre causa (CPU a 80% pode ser normal). Todo alerta precisa ser acionável e ter um runbook. Alerta que dispara e ninguém age deve ser deletado — ruído de alerta mata a atenção da equipe.</p>
+      </details>
+      <div class="callout">
+        <strong>Exercício.</strong>
+        Um serviço está com p99 de 3 segundos. Escreva a investigação em ordem: o SLO foi violado? Qual o recorte (endpoint, região, cliente)? Métrica RED. Trace do percentil ruim. Log da span lenta. Dependência? Lock? GC? Hot key? Isso é a pergunta de síntese da trilha — ensaie em voz alta.
+      </div>
+    </section>

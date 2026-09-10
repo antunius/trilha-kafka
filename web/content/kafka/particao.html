@@ -1,0 +1,229 @@
+<article class="term" id="particao">
+        <div class="tag">Vocabulário</div>
+        <h3>Partição</h3>
+        <p>
+          <strong>O que é.</strong> Cada partição é um log independente em disco: uma sequência de
+          <em>segmentos</em> (arquivos <code>.log</code> + índices) no broker líder.
+          Offset 0, 1, 2… só existe <em>dentro</em> daquela partição.
+          O líder recebe o ProduceRequest; os followers copiam.
+          Num consumer group, cada partição é atribuída a no máximo um membro — por isso 1 partição = 1 trabalhador ativo naquele grupo.
+        </p>
+        <p class="analogy">Analogia: as colunas do caderno. Cada coluna é um caderninho com ordem própria.</p>
+        <p><strong>Para que serve.</strong> Escala (mais colunas → mais consumidores em paralelo), distribuição entre brokers, ordem local (só dentro da coluna — a key escolhe a coluna).</p>
+        <p><strong>Na prática.</strong> Conferir as três colunas:</p>
+<pre class="code">docker compose exec kafka /opt/kafka/bin/kafka-topics.sh \
+  --bootstrap-server localhost:9092 \
+  --describe --topic pedidos.criados</pre>
+        <p>Você deve ver <code>PartitionCount: 3</code> e três linhas Partition: 0, 1, 2 com o líder. No Java:</p>
+<pre class="code">TopicBuilder.name("pedidos.criados")
+    .partitions(3)
+    .replicas(1)
+    .build();</pre>
+        <p class="lab-ref"><strong>No lab.</strong> <code>TopicConfig.java</code> e <code>lab.partitions: 3</code> em <code>application.yml</code>. Aula completa de alterar partições: <a href="/kafka/particao">Partições e grupos</a>.</p>
+        <div class="warn">
+          Aumentar partições depois recalcula <code>hash(key) % N</code> com N novo: o pedido 99 pode mudar de coluna e a ordem histórica daquela entidade quebra.
+          O Kafka não diminui partições. Mais partições = mais arquivos, réplicas, memória e rebalance mais caro.
+        </div>
+      </article>
+<section id="s1" class="week">
+      <h2>Do zero ao modelo mental</h2>
+      <p>
+        Esta aula cola o modelo <em>e</em> cria o tópico de verdade.
+        Sem o CLI (ou o <code>NewTopic</code> do lab), “3 partições” continua desenho.
+      </p>
+      <div class="sessions">
+        <article>
+          <div class="tag">Sessão 1 · 45 min</div>
+          <h4>Fila vs caderno</h4>
+          <p>Aula abaixo: o mesmo caderno, duas marcas em offsets diferentes.</p>
+        </article>
+        <article>
+          <div class="tag">Sessão 2 · 45 min</div>
+          <h4>Evento, tópico, partição, offset, key</h4>
+          <p>Pedido 99 entra no caderno. Você nomeia cada caixa com o recado real, não com definição.</p>
+        </article>
+        <article>
+          <div class="tag">Sessão 3 · 45 min</div>
+          <h4>Líder, ISR, acks, retenção e o desenho resolvido</h4>
+          <p>3 partições, grupo A com 4 consumidores, grupo B com 1. O desenho já está feito — você precisa saber por quê.</p>
+        </article>
+      </div>
+      <div class="ok">
+        <strong>No fim desta aula você consegue:</strong>
+        explicar por que faturamento e analytics não brigam; por que 4 consumidores em 3 partições deixam um ocioso;
+        por que ordem não é global; o que o offset guarda e o que o Kafka <em>não</em> executa.
+      </div>
+
+      <div class="lesson" id="aula-s1">
+        <h3>Sessão 1 — Fila vs caderno</h3>
+        <p><strong>O que você precisa entender.</strong> Na fila clássica, pegar o recado o tira da fila. No Kafka o recado continua no caderno. Quem lê só move a marca “já li até aqui”. Dois times podem ter marcas em linhas diferentes no mesmo caderno — e isso é o desenho certo, não um bug.</p>
+        <p><strong>Exemplo concreto.</strong> O tópico <code>pedidos</code> já tem linhas. No desenho compacto abaixo, na partição 0 o faturamento parou no offset 0 e o analytics já foi até o 2. Num caderno grande a mesma ideia vira números de plantão: faturamento no offset 80, analytics no 12 — ou o contrário. As duas marcas estão certas. O caderno não apaga a linha; um grupo atrasado não impede o outro.</p>
+        <figure class="viz">
+          <img src="/diagrams/caderno-duas-marcas.svg" alt="Três colunas do tópico pedidos. Na partição 0 a marca laranja de faturamento parou no offset 0 e a verde de analytics já foi até o 2. As linhas continuam no caderno." width="900" height="520" />
+          <figcaption>Laranja = faturamento. Verde = analytics. Na coluna 0 as duas marcas não estão na mesma linha — e isso está certo. Ninguém rasgou o PedidoCriado A.</figcaption>
+        </figure>
+        <div class="warn"><strong>Pegadinha.</strong> “Analytics já leu, então faturamento não vê mais o PedidoCriado A.” Falso. A linha 0 continua lá. Só a marca laranja ainda não passou dela.</div>
+        <div class="callout"><strong>Agora você (5 min).</strong> Feche a página. No papel: quem escreve, três colunas, duas marcas em offsets diferentes na coluna 0. Se as marcas ficarem na mesma linha “porque é mais limpo”, a analogia da fila ainda está no comando.</div>
+      </div>
+
+      <div class="lesson" id="aula-s2">
+        <h3>Sessão 2 — As cinco palavras no pedido 99</h3>
+        <p><strong>O que você precisa entender.</strong> Evento é o fato. Tópico é o caderno. Partição é a coluna. Offset é o número da linha <em>naquela coluna</em>. Key escolhe a coluna e, com isso, a ordem daquela entidade.</p>
+        <p><strong>Exemplo concreto.</strong> O checkout publica <code>PedidoCriado</code> do pedido 99, key = <code>99</code>, <code>eventId</code> estável. O recado cai na partição 1, vira offset 4. Depois sai <code>PagamentoAprovado</code> do mesmo 99 — mesma key, mesma coluna, offset 5. Analytics e faturamento leem esses dois recados na ordem 4 → 5 nessa coluna. Pedido 40 pode estar na partição 0 no offset 4: é outro recado; o número 4 não é global.</p>
+        <figure class="viz">
+          <img src="/diagrams/pedido-99.svg" alt="Cadeia: evento PedidoCriado com key 99 vai ao tópico pedidos, cai na partição 1 e vira offset 4 só daquela coluna." width="900" height="200" />
+          <figcaption>O 4 não é um ID global. Pedido 40 pode ter offset 4 em outra coluna — é outro recado.</figcaption>
+        </figure>
+        <div class="warn"><strong>Pegadinha.</strong> Publicar sem key “para espalhar carga” no fluxo do pedido 99. Os recados Criado / Pago / Enviado podem cair em colunas diferentes; o consumidor pode ver Pago antes de Criado.</div>
+        <div class="callout"><strong>Agora você (5 min).</strong> Escreva uma frase para cada palavra usando só o pedido 99. Se aparecer “offset é o ID da mensagem no cluster”, volte no <a href="/kafka/modelo-mental">caderno</a>.</div>
+      </div>
+
+      <div class="lesson" id="aula-s3">
+        <h3>Sessão 3 — Réplica e o desenho resolvido</h3>
+        <p><strong>O que você precisa entender.</strong> O broker guarda o caderno. Cada partição tem um líder (quem recebe o append) e seguidores. ISR = quem está em dia. <code>acks=all</code> espera o ISR; não cobra cartão por você. Retenção apaga página velha; compaction deixa só a última linha de cada key.</p>
+        <p><strong>Exemplo concreto.</strong> Tópico <code>pedidos</code>, 3 partições. Grupo A (faturamento) sobe 4 consumidores. Grupo B (analytics) sobe 1. Abaixo está o desenho <em>já resolvido</em> — não é exercício em branco.</p>
+        <figure class="viz">
+          <img src="/diagrams/grupos-consumidores.svg" alt="Três partições no topo. Setas laranja descem para A1, A2 e A3, um por coluna. A4 fica à direita, ocioso, sem coluna. Faixa verde embaixo: B1 sozinho lê as três partições." width="920" height="560" />
+          <figcaption>
+            Leia de cima para baixo. <strong>P0, P1, P2</strong> são as colunas do caderno.
+            A faixa laranja é o time de faturamento: cada pessoa pega <em>uma</em> coluna. A4 entrou no mesmo time, mas não há P3 — por isso fica parado.
+            A faixa verde é outro time (analytics): uma pessoa só, percorrendo as três colunas. Os dois times não se atrasam um ao outro.
+          </figcaption>
+        </figure>
+        <p>Na mesma coluna, A pode estar no offset 80 e B no 12. As marcas não brigam. A key <code>pedido-X</code> permanece na mesma coluna enquanto o número de partições não muda.</p>
+        <div class="warn"><strong>Pegadinha.</strong> “Subo o 4º pod do faturamento e o lag cai.” Sem 4ª partição, o 4º consumidor fica olhando o teto. Outra: achar que <code>acks=all</code> impede cobrança duplicada — isso é a aula de garantias.</div>
+        <div class="callout"><strong>Agora você (5 min).</strong> Redesenhe de memória: 3 colunas, A1–A4, B1. Marque o ocioso. Se A4 ganhar uma fatia, o modelo ainda não colou.</div>
+      </div>
+
+      <div class="lesson" id="aula-s1-lab">
+        <h3>Mão na massa — criar e alterar partições</h3>
+        <p><strong>O que é, no cluster.</strong> <code>--partitions 3</code> cria três logs. O Spring do lab faz o mesmo com <code>TopicBuilder</code>. Alterar para 6 muda o módulo da key: o pedido 99 pode sair da coluna em que estava.</p>
+        <p>Suba o Compose, crie (ou descreva) o tópico:</p>
+<pre class="code">cd labs/kafka
+docker compose up -d
+
+docker compose exec kafka /opt/kafka/bin/kafka-topics.sh \
+  --bootstrap-server localhost:9092 \
+  --create --if-not-exists \
+  --topic pedidos.criados \
+  --partitions 3 --replication-factor 1
+
+docker compose exec kafka /opt/kafka/bin/kafka-topics.sh \
+  --bootstrap-server localhost:9092 \
+  --describe --topic pedidos.criados</pre>
+        <p>No Java (já está no repo — não copie para outro projeto):</p>
+<pre class="code">@Bean
+NewTopic pedidosCriados() {
+  return TopicBuilder.name("pedidos.criados")
+      .partitions(3)
+      .replicas(1)
+      .build();
+}</pre>
+        <p>Só depois de produzir com key <code>99</code> e anotar a partição, experimente (isso <em>quebra</em> a cola histórica):</p>
+<pre class="code">docker compose exec kafka /opt/kafka/bin/kafka-topics.sh \
+  --bootstrap-server localhost:9092 \
+  --alter --topic pedidos.criados --partitions 6</pre>
+        <p class="lab-ref"><strong>No lab.</strong> <code>TopicConfig.java</code>, README seção “Cria o tópico”. Produce: <code>POST /pedidos?pedidoId=99&amp;comKey=true</code> com o <code>pedido-service</code> no ar. Dois grupos no mesmo log: lab 3 na <a href="/kafka/spring">aula Spring</a>.</p>
+        <div class="warn">Não diminua partições: a API do Kafka não oferece <code>--partitions 2</code> depois de 3. Recriar tópico apaga o caderno.</div>
+      </div>
+
+      <p>Quiz depois da aula. Abra, responda sem olhar, só então leia a explicação.</p>
+
+      <details open>
+        <summary>Kafka é uma fila de mensagens?</summary>
+        <p>
+          Não. É um log em que só se acrescenta no fim, fatiado em partições e replicado.
+          A mensagem não some quando é lida. Ela expira por tempo, por tamanho, ou some na compaction.
+          Cada grupo mantém o próprio cursor. Por isso dá para reprocessar, dá para vários leitores independentes,
+          e a leitura não é destrutiva. Na fila clássica, em geral a mensagem é entregue e retirada.
+        </p>
+      </details>
+      <details>
+        <summary>O que é um evento, e o que deve ir nele?</summary>
+        <p>
+          Um fato imutável, com nome (<code>PedidoCriado</code>), um identificador estável (<code>eventId</code> —
+          essencial para não processar duas vezes), a key de particionamento (<code>pedidoId</code>), timestamp,
+          e o estado necessário para o consumidor agir sem ligar de volta — ou só o ID, se for notificação.
+          Não coloque destinatário. Quem se importa se inscreve no tópico.
+        </p>
+      </details>
+      <details>
+        <summary>O que é uma partição e por que ela existe?</summary>
+        <p>
+          Unidade de paralelismo, de ordenação e de replicação. Throughput de escrita e de leitura (por grupo)
+          escala com o número de partições — e é limitado por ele. “Um consumidor por fatia” também nasce daqui.
+        </p>
+      </details>
+      <details>
+        <summary>Offset, committed offset e auto.offset.reset</summary>
+        <p>
+          Offset = posição na partição. Committed = até onde o grupo jura que já processou.
+          <code>auto.offset.reset</code> só vale quando ainda não há commit:
+          <code>earliest</code> relê desde o início ainda retido;
+          <code>latest</code> ignora o passado e cola no fim (stream ao vivo).
+          Escolher <code>latest</code> num job que deveria reprocessar histórico é bug silencioso.
+        </p>
+      </details>
+      <details>
+        <summary>Kafka garante ordem?</summary>
+        <p>
+          Só dentro de uma partição. Não existe ordem global no tópico.
+          Se a ordem importa para uma entidade, use a mesma key — ela cai na mesma partição
+          <em>enquanto o número de partições não muda</em>.
+          “Ordenados” significa: o consumidor vê a sequência de append no líder.
+          Dois produtores no mesmo pedido ao mesmo tempo: a ordem é a de chegada, não a do relógio.
+        </p>
+      </details>
+      <details>
+        <summary>Como funciona um consumer group?</summary>
+        <p>
+          Cada partição é atribuída a exatamente um consumidor do grupo.
+          Grupos diferentes recebem cópias independentes.
+          Mais consumidores que partições = ociosos.
+          Escalar consumo exige aumentar partições — e aumentar partições redistribui keys
+          (quebra ordenação histórica). Decida cedo.
+        </p>
+      </details>
+      <details>
+        <summary>O que é o ISR? E acks?</summary>
+        <p>
+          ISR = réplicas em dia com o líder. Combinado com <code>acks=all</code> e
+          <code>min.insync.replicas=2</code>, a mensagem foi replicada antes de ser confirmada.
+          Se o ISR cair abaixo do mínimo, o produtor recebe erro — melhor do que perder dado em silêncio.
+          <code>acks=0</code>: máximo throughput, pode perder.
+          <code>acks=1</code>: o líder gravou, o follower pode não ter.
+          <code>acks=all</code>: durabilidade de verdade.
+        </p>
+      </details>
+      <details>
+        <summary>Retenção e log compaction</summary>
+        <p>
+          Retenção apaga segmentos antigos. Compaction mantém a última mensagem por key.
+          O tópico passa a representar o estado atual, não o histórico.
+          Não é backup. Tombstone (value nulo) pede para apagar a key.
+        </p>
+      </details>
+      <details>
+        <summary>Producer, consumer, broker — uma frase cada</summary>
+        <p>
+          Broker guarda o log e replica. Producer appenda no líder da partição.
+          Consumer lê o log e move o próprio offset. O Kafka não executa a sua regra de negócio.
+        </p>
+      </details>
+      <div class="callout">
+        <strong>Exercício de papel (não pule).</strong>
+        Desenhe um tópico com 3 partições, 2 grupos, 4 consumidores no grupo A e 1 no grupo B.
+        Grupo A: no máximo 3 trabalham, 1 fica ocioso. Grupo B: o único lê as 3 partições (sozinho, em loop).
+        Offsets independentes: A pode estar no 80 e B no 12 na mesma coluna.
+        Marque um pedido com key <code>pedido-X</code> sempre na mesma coluna.
+        Se não conseguir desenhar, volte ao <a href="/kafka/modelo-mental">mapa mental</a> — o glossário ainda não colou.
+      </div>
+      <article class="term">
+        <h3>Como estudar esta aula de verdade</h3>
+        <ul class="tight">
+          <li>Explique cada palavra do <a href="/kafka/evento">glossário</a> para o espelho: o que é, para que serve, o erro comum.</li>
+          <li>Rode o describe do tópico em <code>labs/kafka</code> até sair <code>PartitionCount: 3</code> sem olhar este texto.</li>
+          <li>No trabalho: pegue um tópico que o time já usa e descubra quantas partições, qual a key, quantos group.id. Se ninguém souber, você já achou o gap do time.</li>
+        </ul>
+      </article>
+    </section>
